@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Yarn &amp; Crochet - Handcrafted with Love</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&amp;family=Playfair+Display:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#eae8e4",
+                        "secondary": "#8e4d31",
+                        "outline": "#76786f",
+                        "tertiary-container": "#877152",
+                        "secondary-fixed-dim": "#ffb598",
+                        "surface-container": "#efeeea",
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed-variant": "#71361d",
+                        "on-background": "#1b1c1a",
+                        "primary": "#585e4c",
+                        "tertiary": "#6d593c",
+                        "on-tertiary-container": "#fffbff",
+                        "primary-fixed-dim": "#c3c9b2",
+                        "surface-bright": "#fbf9f5",
+                        "background": "#fbf9f5",
+                        "primary-container": "#717763",
+                        "primary-fixed": "#dfe5cd",
+                        "on-secondary-container": "#783c22",
+                        "surface-variant": "#e4e2de",
+                        "secondary-container": "#feaa88",
+                        "inverse-primary": "#c3c9b2",
+                        "inverse-surface": "#30312e",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "inverse-on-surface": "#f2f0ed",
+                        "surface-dim": "#dbdad6",
+                        "on-surface-variant": "#464840",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#dec29f",
+                        "on-primary-fixed": "#181d0f",
+                        "secondary-fixed": "#ffdbce",
+                        "surface": "#fbf9f5",
+                        "on-surface": "#1b1c1a",
+                        "on-secondary-fixed": "#370e00",
+                        "on-primary-fixed-variant": "#434937",
+                        "outline-variant": "#c7c7bd",
+                        "surface-container-low": "#f5f3ef",
+                        "surface-tint": "#5b614e",
+                        "tertiary-fixed": "#fbdeb9",
+                        "on-tertiary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#271903",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#564428",
+                        "on-primary-container": "#faffe8",
+                        "surface-container-highest": "#e4e2de"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "2xl": "1rem"
+                    },
+                    "spacing": {
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "margin-desktop": "64px",
+                        "margin-mobile": "20px",
+                        "unit": "8px",
+                        "section-gap": "120px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["DM Sans"],
+                        "label-caps": ["DM Sans"],
+                        "headline-md": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"],
+                        "body-md": ["DM Sans"],
+                        "display-lg-mobile": ["Playfair Display"],
+                        "headline-sm": ["Playfair Display"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "600" }],
+                        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "500" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "headline-sm": ["24px", { "lineHeight": "1.4", "fontWeight": "500" }]
+                    },
+                    "boxShadow": {
+                        "soft": "0px 12px 32px rgba(140, 146, 125, 0.08)"
+                    },
+                    "animation": {
+                        "float": "float 6s ease-in-out infinite",
+                        "fade-in-up": "fadeInUp 0.8s ease-out forwards",
+                    },
+                    "keyframes": {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .reveal-element {
+            opacity: 0;
+        }
+        
+        @media (prefers-reduced-motion: reduce) {
+            .reveal-element {
+                opacity: 1;
+                animation: none !important;
+                transform: none !important;
+            }
+            .animate-float {
+                animation: none !important;
+            }
+            .group:hover img {
+                transform: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased selection:bg-secondary-container selection:text-on-secondary-container overflow-x-hidden">
+<!-- TopNavBar Component -->
+<header class="w-full top-0 sticky bg-surface-bright dark:bg-surface-dim shadow-sm z-50">
+<div class="max-w-container-max mx-auto px-gutter py-4 flex justify-between items-center">
+<!-- Brand Logo -->
+<div class="flex items-center gap-3">
+<img alt="Yarn &amp; Crochet Logo" class="h-10 w-10 object-contain rounded-full" src="https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg"/>
+<span class="font-display-lg text-display-lg text-secondary dark:text-secondary-fixed-dim">Yarn &amp; Crochet</span>
+</div>
+<!-- Navigation Links (Desktop) -->
+<nav class="hidden md:flex gap-8 items-center">
+<!-- Active Item: Collections -->
+<a class="font-body-lg text-body-lg text-secondary border-b-2 border-secondary pb-1 duration-300 ease-in-out hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all" href="#">Collections</a>
+<!-- Inactive Items -->
+<a class="font-body-lg text-body-lg text-on-surface-variant hover:text-secondary transition-colors duration-300 ease-in-out hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all" href="#">Artisans</a>
+<a class="font-body-lg text-body-lg text-on-surface-variant hover:text-secondary transition-colors duration-300 ease-in-out hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all" href="#">Our Story</a>
+<a class="font-body-lg text-body-lg text-on-surface-variant hover:text-secondary transition-colors duration-300 ease-in-out hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all" href="#">Care</a>
+</nav>
+<!-- Trailing Icons -->
+<div class="flex items-center gap-4 text-primary dark:text-primary-fixed-dim">
+<button class="p-2 hover:bg-surface-container-low rounded-full transition-colors duration-300 ease-in-out">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+</button>
+<button class="p-2 hover:bg-surface-container-low rounded-full transition-colors duration-300 ease-in-out relative">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+<span class="absolute top-1 right-1 bg-secondary text-on-secondary text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
+</button>
+</div>
+</div>
+</header>
+<main>
+<!-- Hero Section -->
+<section class="relative w-full max-w-container-max mx-auto px-gutter md:px-margin-desktop py-12 md:py-margin-desktop my-8 reveal-element">
+<div class="relative rounded-2xl overflow-hidden h-[70vh] min-h-[500px] flex items-center shadow-soft">
+<img alt="A serene nursery setting featuring a beautifully crafted handmade crochet baby sweater in warm neutral tones, resting on an ottoman beside a wooden crib, bathed in soft natural light." class="absolute inset-0 w-full h-full object-cover animate-float" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWPIWedTuhLodyUdzPRCyKOH7w56Y35m-epXJSMiLCqUuL1u2WEJaq9Bewr6m6whQEjedSbR6ICQ5uR5sxYa-PPvo0z60gqq2gTv-XXwffZLiPnxYVgIcuu-7ho0w5G1ev9fjK87NaSmKFb6J3no-Atrxfm46G5d01g2-vQKWsqkBZjk-G-Ckks_3dzwWxhxaGLICNFS-EwZtrdwXojxQaO6CYdUxLp0xUmFipOYKO2IAGuFswNfwMvw" style="animation-duration: 8s;"/>
+<!-- Overlay Card -->
+<div class="relative z-10 bg-surface/90 backdrop-blur-md p-8 md:p-12 ml-4 md:ml-16 max-w-lg rounded-2xl shadow-soft border border-surface-variant transition-transform duration-500 hover:scale-[1.02]">
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-widest mb-4 block">New Collection</span>
+<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-6 leading-tight">Handcrafted with Love, Woven for Generations</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8">Discover the warmth of authentic, luxury handmade crochet. Each piece tells a story of dedicated craftsmanship, designed to bring serene beauty to your everyday life.</p>
+<a class="inline-flex items-center justify-center px-8 py-4 bg-primary text-on-primary rounded-lg font-label-caps text-label-caps uppercase hover:bg-surface-tint transition-all duration-300 transform hover:-translate-y-1" href="#">
+                        Explore Collection
+                    </a>
+</div>
+</div>
+</section>
+<!-- Curated Categories (Bento Grid Style) -->
+<section class="max-w-container-max mx-auto px-gutter md:px-margin-desktop py-section-gap reveal-element">
+<div class="text-center mb-16">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-4">Curated Selections</h2>
+<div class="w-12 h-1 bg-secondary mx-auto"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 h-auto md:h-[600px]">
+<!-- Large Item -->
+<div class="md:col-span-8 relative rounded-2xl overflow-hidden group cursor-pointer shadow-soft">
+<img alt="A beautiful, cozy handmade crochet cardigan in a soft sage green color, laid flat on a textured linen surface with sprigs of dried lavender, highlighting the intricate stitch work." class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuChod0IIOIE5zvct7ruYMrDTvXCzMro5lPkrgOOE1PA2TbTwJEr-xbRkEaB-zTBgstsrqaVCSj4j7dI3mqSvPDk1c3c7WnhAprB74eiTwl8MLPelVgsiymcejvLn-AE7DwLqGt9IrvHBh-JQ3dKje9f7kzzbALjbRsnhmaVoxI0-I2iHbmD3RJgQDSh_UZW5WeXge-FQjpbb45GZqMk9xW5qQZpGhAFtszQbeQKfZwLeGavnFohtCBg5A"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent transition-opacity duration-500 group-hover:opacity-80"></div>
+<div class="absolute bottom-8 left-8 transition-transform duration-500 group-hover:translate-y-[-8px]">
+<span class="inline-block px-4 py-1 bg-surface-bright/90 text-primary font-label-caps text-label-caps rounded-full mb-3 backdrop-blur-sm">Adult Apparel</span>
+<h3 class="font-headline-sm text-headline-sm text-surface-bright">Timeless Elegance</h3>
+</div>
+</div>
+<!-- Stacked Items -->
+<div class="md:col-span-4 grid grid-rows-2 gap-6">
+<div class="relative rounded-2xl overflow-hidden group cursor-pointer shadow-soft h-[300px] md:h-auto">
+<img alt="A charming, meticulously crafted handmade crochet amigurumi bunny toy in a warm terracotta color, sitting upright against a clean, minimalist off-white background with soft shadows." class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuALZlUx1-OjCY92DlnHy39k43Hs95bOSK_o3LCrIk0iAjjUNpDHRnbPeItcifB_Q9jOhbcK911hUJgXoC2EswuO23tag-3pnnz2PPKAlggiWdUr7jXq0mcJm5azevT7d6_uR60x-7jdoA32IOOqovyqoLg5CMDxX-IjoSpkvY_6YpH1INUHrAMWiMUOGrajBRdRzEMMLLu1_Ledr3w_qTwbIFPS8R_k1-1DJI_uiG47yb_NDP5srcilHw"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent transition-opacity duration-500 group-hover:opacity-80"></div>
+<div class="absolute bottom-6 left-6 transition-transform duration-500 group-hover:translate-y-[-8px]">
+<h3 class="font-headline-sm text-headline-sm text-surface-bright">Plush Toys</h3>
+</div>
+</div>
+<div class="relative rounded-2xl overflow-hidden group cursor-pointer shadow-soft bg-surface-container-high p-8 flex flex-col justify-center items-center text-center h-[300px] md:h-auto transition-transform duration-300 hover:scale-[1.02]">
+<span class="material-symbols-outlined text-4xl text-secondary mb-4 transition-transform duration-300 group-hover:scale-110">redeem</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">Gift Sets</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">Perfectly packaged joy.</p>
+<button class="font-label-caps text-label-caps text-on-surface border-b border-on-surface pb-1 uppercase tracking-widest hover:text-secondary hover:border-secondary transition-colors duration-300">Shop Gifts</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Featured Products -->
+<section class="max-w-container-max mx-auto px-gutter md:px-margin-desktop py-section-gap bg-surface-container-low rounded-[2.5rem] my-12 reveal-element">
+<div class="flex justify-between items-end mb-12">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-2">Latest Arrivals</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">The newest additions to our handcrafted collection.</p>
+</div>
+<a class="hidden md:inline-block font-label-caps text-label-caps text-on-surface border-b border-on-surface pb-1 uppercase tracking-widest hover:text-secondary hover:border-secondary transition-colors duration-300" href="#">View All</a>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+<!-- Product 1 -->
+<div class="group flex flex-col cursor-pointer transition-transform duration-300 hover:-translate-y-2">
+<div class="relative rounded-2xl overflow-hidden mb-4 bg-surface shadow-soft aspect-[4/5]">
+<img class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" data-alt="A close up shot of a folded, thick, chunky knit handmade blanket in a creamy off-white color, displaying deep rich texture, resting on a rustic wooden bench in a cozy living room." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqH0tBo38L_9O8_ZVemOCfBGsSYMGqBUDvKhjAbmB_oIGLGZoiKm_nCiPgwKSjBDJw_lZa_FkQRcYGR3sg7GvPtjhlPRJceHFQGx3iMiKwnpbAgr255intRyLgDV5EpZiV7OYyTTxptzep3KuYuufU96DGKKrkQNvYLo2JzeI_9qiC63K_jrugiaHTnBanOqsPfJaUkuWh8y6OKsf-TBDkuHo6JZcc97FnzeyiqYSmCNhIhWaeRMAlCQ"/>
+<div class="absolute top-4 left-4 flex flex-col gap-2">
+<span class="bg-primary/10 text-primary px-3 py-1 rounded-xl font-label-caps text-label-caps backdrop-blur-md">New In</span>
+</div>
+<button class="absolute bottom-4 left-4 right-4 bg-surface/90 text-on-surface font-label-caps text-label-caps py-3 rounded-lg opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out hover:bg-primary hover:text-on-primary">Quick Add</button>
+</div>
+<div class="flex justify-between items-start transition-colors duration-300 group-hover:text-primary">
+<div>
+<h3 class="font-body-lg text-body-lg text-on-surface mb-1">Chunky Alpine Throw</h3>
+<div class="flex text-tertiary-container text-sm mb-2">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<span class="font-body-lg text-body-lg font-medium text-secondary">$145.00</span>
+</div>
+</div>
+<!-- Product 2 -->
+<div class="group flex flex-col cursor-pointer transition-transform duration-300 hover:-translate-y-2">
+<div class="relative rounded-2xl overflow-hidden mb-4 bg-surface shadow-soft aspect-[4/5]">
+<img class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" data-alt="A delicate, lacy handmade crochet top in a warm beige color, hanging on a simple wooden hanger against a clean white wall, showcasing airy bohemian style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrnV_7H5k-mXovmO6Ny7H9HX7fl0BEuj7LAT_1gk8PSRKH7go5mV2hXF2oRgA_g4R4g0OYKFC6Vm5uo0qJ8mQFq3zTn4vdZeVuBZwGswXkI-WhB4VQQv30r9_Ts03R5_x5ckcoiHh8KRRlm6bsG0cJgMxc2lWSkSTNi6JQ-prUUFdxQSvMESaL0A4QkxgBmzratCwpkTrmB4ZfjR5jSrsYZQqa3L4AydUwR5XzV1udKsRpCdTg-QiWyw"/>
+<div class="absolute top-4 right-4">
+<button class="p-2 bg-surface rounded-full shadow-sm text-on-surface-variant hover:text-secondary transition-colors duration-300 hover:scale-110">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+</button>
+</div>
+<button class="absolute bottom-4 left-4 right-4 bg-surface/90 text-on-surface font-label-caps text-label-caps py-3 rounded-lg opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out hover:bg-primary hover:text-on-primary">Quick Add</button>
+</div>
+<div class="flex justify-between items-start transition-colors duration-300 group-hover:text-primary">
+<div>
+<h3 class="font-body-lg text-body-lg text-on-surface mb-1">Boho Lace Cami</h3>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-2">Organic Cotton</p>
+</div>
+<span class="font-body-lg text-body-lg font-medium text-secondary">$68.00</span>
+</div>
+</div>
+<!-- Product 3 -->
+<div class="group flex flex-col cursor-pointer transition-transform duration-300 hover:-translate-y-2">
+<div class="relative rounded-2xl overflow-hidden mb-4 bg-surface shadow-soft aspect-[4/5]">
+<img alt="Handmade crochet bunny toy in terracotta." class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuALZlUx1-OjCY92DlnHy39k43Hs95bOSK_o3LCrIk0iAjjUNpDHRnbPeItcifB_Q9jOhbcK911hUJgXoC2EswuO23tag-3pnnz2PPKAlggiWdUr7jXq0mcJm5azevT7d6_uR60x-7jdoA32IOOqovyqoLg5CMDxX-IjoSpkvY_6YpH1INUHrAMWiMUOGrajBRdRzEMMLLu1_Ledr3w_qTwbIFPS8R_k1-1DJI_uiG47yb_NDP5srcilHw"/>
+<button class="absolute bottom-4 left-4 right-4 bg-surface/90 text-on-surface font-label-caps text-label-caps py-3 rounded-lg opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out hover:bg-primary hover:text-on-primary">Quick Add</button>
+</div>
+<div class="flex justify-between items-start transition-colors duration-300 group-hover:text-primary">
+<div>
+<h3 class="font-body-lg text-body-lg text-on-surface mb-1">Cinnamon Bunny</h3>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-2">Amigurumi Collection</p>
+</div>
+<span class="font-body-lg text-body-lg font-medium text-secondary">$42.00</span>
+</div>
+</div>
+<!-- Product 4 -->
+<div class="group flex flex-col cursor-pointer transition-transform duration-300 hover:-translate-y-2">
+<div class="relative rounded-2xl overflow-hidden mb-4 bg-surface shadow-soft aspect-[4/5]">
+<img alt="Handmade baby sweater." class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWPIWedTuhLodyUdzPRCyKOH7w56Y35m-epXJSMiLCqUuL1u2WEJaq9Bewr6m6whQEjedSbR6ICQ5uR5sxYa-PPvo0z60gqq2gTv-XXwffZLiPnxYVgIcuu-7ho0w5G1ev9fjK87NaSmKFb6J3no-Atrxfm46G5d01g2-vQKWsqkBZjk-G-Ckks_3dzwWxhxaGLICNFS-EwZtrdwXojxQaO6CYdUxLp0xUmFipOYKO2IAGuFswNfwMvw"/>
+<div class="absolute top-4 left-4">
+<span class="bg-secondary/10 text-secondary px-3 py-1 rounded-xl font-label-caps text-label-caps backdrop-blur-md">Best Seller</span>
+</div>
+<button class="absolute bottom-4 left-4 right-4 bg-surface/90 text-on-surface font-label-caps text-label-caps py-3 rounded-lg opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out hover:bg-primary hover:text-on-primary">Quick Add</button>
+</div>
+<div class="flex justify-between items-start transition-colors duration-300 group-hover:text-primary">
+<div>
+<h3 class="font-body-lg text-body-lg text-on-surface mb-1">Oatmeal Baby Cardigan</h3>
+<div class="flex text-tertiary-container text-sm mb-2">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<span class="font-body-lg text-body-lg font-medium text-secondary">$55.00</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Brand Story -->
+<section class="max-w-container-max mx-auto px-gutter md:px-margin-desktop py-section-gap reveal-element">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+<div class="relative rounded-[2rem] overflow-hidden shadow-soft h-[500px] md:order-2 group">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A close up, atmospheric portrait of a skilled artisan's hands working intricately with natural yarn and a wooden crochet hook, bathed in warm golden hour light in a rustic studio setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7SzjvgC_aP-WxzGAv6vAndhvJ9j4Kn37VZVELrWKWMSulYKbUau2HB0WKnW4PKh1XoRC83ShXi0-RWjArTIhktDmrHsItXfxdrGdMCbCoIHO1GBnKN6yd5xNirwSRxau7K3Apt-hgsC055oxw3CJbM3ciWEYfGtwJBlvksaNkyDATJnLYfnL_STHjoRoIhbreCnNKdRIrbshGCahZFFXrEWx096Jg9aYBo8uXdy-3ZXSB_rKz00reEQ"/>
+<div class="absolute inset-0 bg-secondary/10 mix-blend-multiply transition-opacity duration-500 group-hover:opacity-50"></div>
+</div>
+<div class="md:order-1 pr-0 md:pr-12">
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-widest mb-6 block">Our Heritage</span>
+<h2 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-8">Empowering Local Artisans</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-6 leading-relaxed">
+                        Every stitch is a testament to the skill and dedication of the women who craft our collections. We believe in slow fashion that honors traditional techniques and provides fair, sustainable livelihoods.
+                    </p>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-10 leading-relaxed">
+                        When you choose Yarn &amp; Crochet, you aren't just buying a garment; you are investing in a community and preserving a beautiful art form.
+                    </p>
+<a class="inline-flex items-center gap-2 font-label-caps text-label-caps text-primary border border-outline px-6 py-3 rounded-lg uppercase hover:bg-primary-fixed hover:text-on-primary-fixed transition-all duration-300 transform hover:-translate-y-1" href="#">
+                        Read Our Story
+                        <span class="material-symbols-outlined text-[18px] transition-transform duration-300 group-hover:translate-x-1">arrow_forward</span>
+</a>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Component -->
+<footer class="w-full mt-section-gap bg-surface-container dark:bg-surface-container-highest text-primary dark:text-primary-fixed-dim font-body-md text-body-md">
+<div class="max-w-container-max mx-auto px-gutter py-margin-desktop grid grid-cols-1 md:grid-cols-3 gap-12 flat no shadows">
+<!-- Brand Column -->
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-3 mb-2">
+<img alt="Yarn &amp; Crochet Logo" class="h-8 w-8 object-contain rounded-full opacity-80" src="https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg"/>
+<span class="font-headline-md text-headline-md text-secondary">Yarn &amp; Crochet</span>
+</div>
+<p class="text-on-surface-variant max-w-sm">
+                    © 2024 Yarn &amp; Crochet. Empowering women through slow fashion.
+                </p>
+</div>
+<!-- Links Column 1 -->
+<div class="flex flex-col gap-3">
+<a class="text-on-surface-variant hover:text-secondary hover:opacity-80 transition-all duration-300 hover:translate-x-1" href="#">The Artisan Story</a>
+<a class="text-on-surface-variant hover:text-secondary hover:opacity-80 transition-all duration-300 hover:translate-x-1" href="#">Sustainability</a>
+</div>
+<!-- Links Column 2 -->
+<div class="flex flex-col gap-3">
+<a class="text-on-surface-variant hover:text-secondary hover:opacity-80 transition-all duration-300 hover:translate-x-1" href="#">Wholesale</a>
+<a class="text-on-surface-variant hover:text-secondary hover:opacity-80 transition-all duration-300 hover:translate-x-1" href="#">Contact Us</a>
+</div>
+</div>
+</footer>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in-up');
+                    entry.target.classList.remove('reveal-element');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal-element').forEach((element) => {
+            observer.observe(element);
+        });
+    });
+</script>
+</body></html>

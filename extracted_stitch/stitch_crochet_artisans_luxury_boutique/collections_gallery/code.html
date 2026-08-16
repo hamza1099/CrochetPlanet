@@ -1,0 +1,513 @@
+<!DOCTYPE html><html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Collections | Yarn &amp; Crochet</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&amp;family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary": "#585e4c",
+                      "on-error": "#ffffff",
+                      "surface-container-highest": "#e4e2de",
+                      "surface-container": "#efeeea",
+                      "on-error-container": "#93000a",
+                      "secondary": "#8e4d31",
+                      "secondary-fixed-dim": "#ffb598",
+                      "background": "#fbf9f5",
+                      "on-secondary-fixed": "#370e00",
+                      "surface-bright": "#fbf9f5",
+                      "on-tertiary-container": "#fffbff",
+                      "on-secondary-container": "#783c22",
+                      "surface-dim": "#dbdad6",
+                      "on-primary-fixed": "#181d0f",
+                      "outline": "#76786f",
+                      "error": "#ba1a1a",
+                      "on-tertiary-fixed": "#271903",
+                      "tertiary-fixed": "#fbdeb9",
+                      "surface-container-high": "#eae8e4",
+                      "tertiary-fixed-dim": "#dec29f",
+                      "primary-container": "#717763",
+                      "on-surface": "#1b1c1a",
+                      "secondary-container": "#feaa88",
+                      "surface-container-lowest": "#ffffff",
+                      "outline-variant": "#c7c7bd",
+                      "tertiary-container": "#877152",
+                      "primary-fixed-dim": "#c3c9b2",
+                      "on-primary-fixed-variant": "#434937",
+                      "inverse-surface": "#30312e",
+                      "on-primary-container": "#faffe8",
+                      "on-surface-variant": "#464840",
+                      "tertiary": "#6d593c",
+                      "on-primary": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "on-secondary-fixed-variant": "#71361d",
+                      "on-tertiary": "#ffffff",
+                      "inverse-on-surface": "#f2f0ed",
+                      "surface-tint": "#5b614e",
+                      "on-background": "#1b1c1a",
+                      "primary-fixed": "#dfe5cd",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-fixed-variant": "#564428",
+                      "surface-variant": "#e4e2de",
+                      "surface-container-low": "#f5f3ef",
+                      "surface": "#fbf9f5",
+                      "inverse-primary": "#c3c9b2",
+                      "secondary-fixed": "#ffdbce"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-mobile": "20px",
+                      "gutter": "24px",
+                      "unit": "8px",
+                      "margin-desktop": "64px",
+                      "container-max": "1280px",
+                      "section-gap": "120px"
+              },
+              "fontFamily": {
+                      "headline-sm": [
+                              "Playfair Display"
+                      ],
+                      "body-md": [
+                              "DM Sans"
+                      ],
+                      "display-lg-mobile": [
+                              "Playfair Display"
+                      ],
+                      "headline-md": [
+                              "Playfair Display"
+                      ],
+                      "label-caps": [
+                              "DM Sans"
+                      ],
+                      "body-lg": [
+                              "DM Sans"
+                      ],
+                      "display-lg": [
+                              "Playfair Display"
+                      ]
+              },
+              "fontSize": {
+                      "headline-sm": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-lg-mobile": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-md": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "0.1em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+            }
+          }
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased overflow-x-hidden min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="bg-surface-bright dark:bg-surface-dim shadow-sm w-full top-0 sticky z-50">
+<div class="max-w-container-max mx-auto px-gutter py-4 flex justify-between items-center">
+<!-- Brand -->
+<a class="font-display-lg text-display-lg text-secondary dark:text-secondary-fixed-dim hover:opacity-80 transition-opacity" href="#"><img src="https://lh3.googleusercontent.com/aida/AP1WRLsCfkChaTtqJXKnQWVMxy6eingOZMOalX64TU-CyuGfCMWG2DRzCo4_YC9GSnKKmRADg25ib4PEbibre8KGh7dHwbPMVe0Amy_JCoFWu_cqPSzsy9F6NTLnDf-TJd0sQCUGlHKs-0-ueRnjZ5-xFG3c3mKqPb7RowyUZx-hAbJJQxkK4MJA4-OQHoMGZiLL6OpfDr0cf9i5XCBcscjt9Lrtk4t35d1nWDPo7fXxXwfvA9-eFpNSF0s2meGm" alt="Yarn &amp; Crochet" class="h-12 w-auto object-contain"></a>
+<!-- Navigation Links (Desktop) -->
+<ul class="hidden md:flex space-x-8 items-center font-body-lg text-body-lg">
+<li class="">
+<a class="text-secondary border-b-2 border-secondary pb-1 transition-colors" href="#">Collections</a>
+</li>
+<li class="">
+<a class="text-on-surface-variant hover:text-secondary transition-colors duration-300 ease-in-out hover:bg-surface-container-low dark:hover:bg-surface-container-high px-3 py-2 rounded-lg" href="#">Artisans</a>
+</li>
+<li class="">
+<a class="text-on-surface-variant hover:text-secondary transition-colors duration-300 ease-in-out hover:bg-surface-container-low dark:hover:bg-surface-container-high px-3 py-2 rounded-lg" href="#">Our Story</a>
+</li>
+<li class="">
+<a class="text-on-surface-variant hover:text-secondary transition-colors duration-300 ease-in-out hover:bg-surface-container-low dark:hover:bg-surface-container-high px-3 py-2 rounded-lg" href="#">Care</a>
+</li>
+</ul>
+<!-- Trailing Icons -->
+<div class="flex items-center space-x-4 text-primary dark:text-primary-fixed-dim">
+<button aria-label="Favorites" class="p-2 hover:bg-surface-container-low dark:hover:bg-surface-container-high rounded-full transition-all duration-300 ease-in-out">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+</button>
+<button aria-label="Shopping Bag" class="p-2 hover:bg-surface-container-low dark:hover:bg-surface-container-high rounded-full transition-all duration-300 ease-in-out" onclick="document.getElementById('side-nav').classList.remove('translate-x-full'); document.getElementById('overlay').classList.remove('hidden')">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+</button>
+</div>
+</div>
+</nav>
+<!-- SideNavBar (Cart/Wishlist) -->
+<div class="fixed inset-0 bg-inverse-surface/20 backdrop-blur-sm z-50 hidden transition-opacity" id="overlay" onclick="document.getElementById('side-nav').classList.add('translate-x-full'); this.classList.add('hidden')"></div>
+<aside class="bg-surface-container-lowest dark:bg-surface-container-high shadow-2xl fixed right-0 h-full w-96 rounded-l-2xl z-50 translate-x-full transition-transform duration-500 ease-in-out flex flex-col p-8 font-body-md text-body-md" id="side-nav">
+<div class="flex justify-between items-start mb-8 border-b border-surface-variant pb-6">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-secondary mb-1">Your Selection</h2>
+<p class="text-on-surface-variant text-sm">Supporting local women artisans</p>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors p-2" onclick="document.getElementById('side-nav').classList.add('translate-x-full'); document.getElementById('overlay').classList.add('hidden')">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<ul class="flex flex-col space-y-6 flex-grow">
+<li class="">
+<button class="flex items-center space-x-4 w-full text-left group">
+<span class="material-symbols-outlined text-secondary font-semibold" data-icon="shopping_cart">shopping_cart</span>
+<span class="text-secondary font-semibold group-hover:text-primary transition-colors">Cart</span>
+</button>
+</li>
+<li class="">
+<button class="flex items-center space-x-4 w-full text-left group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="favorite">favorite</span>
+<span class="text-on-surface-variant group-hover:text-primary transition-colors">Wishlist</span>
+</button>
+</li>
+<li class="">
+<button class="flex items-center space-x-4 w-full text-left group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="payments">payments</span>
+<span class="text-on-surface-variant group-hover:text-primary transition-colors">Currency: PKR</span>
+</button>
+</li>
+<li class="">
+<button class="flex items-center space-x-4 w-full text-left group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="local_shipping">local_shipping</span>
+<span class="text-on-surface-variant group-hover:text-primary transition-colors">Shipping Info</span>
+</button>
+</li>
+</ul>
+<div class="mt-auto pt-6 border-t border-surface-variant">
+<button class="w-full bg-[#8C927D] hover:bg-[#7a806c] text-white rounded-lg py-4 font-body-md text-body-md transition-colors shadow-sm">
+                Checkout Now
+            </button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-grow max-w-container-max mx-auto px-gutter w-full py-margin-desktop">
+<!-- Header Section -->
+<header class="text-center mb-16 md:mb-section-gap max-w-3xl mx-auto">
+<h1 class="font-display-lg text-display-lg md:text-[64px] text-primary mb-6 leading-tight">Curated Collections</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">
+                Discover our thoughtfully hand-crafted pieces, woven with intention and care. Each collection represents hours of dedication by our women artisans, bringing warmth and texture to your everyday life.
+            </p>
+</header>
+<!-- Layout Grid: Sidebar Filters + Product Grid -->
+<div class="flex flex-col lg:flex-row gap-12 lg:gap-gutter">
+<!-- Filter Sidebar -->
+<aside class="w-full lg:w-64 flex-shrink-0">
+<div class="sticky top-32 bg-surface-container-lowest border border-[#D4B996] rounded-2xl p-6 shadow-[0px_12px_32px_rgba(140,146,125,0.08)]">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-sm text-headline-sm text-primary">Filters</h3>
+<button class="text-sm text-secondary hover:underline font-body-md">Clear all</button>
+</div>
+<!-- Filter Category: Collection -->
+<div class="mb-8 border-b border-[#D4B996] pb-6">
+<h4 class="font-label-caps text-label-caps text-primary tracking-widest uppercase mb-4">Collection</h4>
+<ul class="space-y-3 font-body-md text-body-md text-on-surface-variant">
+<li class="">
+<label class="flex items-center space-x-3 cursor-pointer group">
+<input checked="" class="form-checkbox text-[#8C927D] border-[#D4B996] focus:ring-[#8C927D] rounded" type="checkbox">
+<span class="group-hover:text-primary transition-colors">All Pieces</span>
+</label>
+</li>
+<li class="">
+<label class="flex items-center space-x-3 cursor-pointer group">
+<input class="form-checkbox text-[#8C927D] border-[#D4B996] focus:ring-[#8C927D] rounded" type="checkbox">
+<span class="group-hover:text-primary transition-colors">Baby</span>
+</label>
+</li>
+<li class="">
+<label class="flex items-center space-x-3 cursor-pointer group">
+<input class="form-checkbox text-[#8C927D] border-[#D4B996] focus:ring-[#8C927D] rounded" type="checkbox">
+<span class="group-hover:text-primary transition-colors">Adult Apparel</span>
+</label>
+</li>
+<li class="">
+<label class="flex items-center space-x-3 cursor-pointer group">
+<input class="form-checkbox text-[#8C927D] border-[#D4B996] focus:ring-[#8C927D] rounded" type="checkbox">
+<span class="group-hover:text-primary transition-colors">Amigurumi</span>
+</label>
+</li>
+<li class="">
+<label class="flex items-center space-x-3 cursor-pointer group">
+<input class="form-checkbox text-[#8C927D] border-[#D4B996] focus:ring-[#8C927D] rounded" type="checkbox">
+<span class="group-hover:text-primary transition-colors">Gifts &amp; Home</span>
+</label>
+</li>
+</ul>
+</div>
+<!-- Filter Category: Yarn Type -->
+<div class="mb-8 border-b border-[#D4B996] pb-6">
+<h4 class="font-label-caps text-label-caps text-primary tracking-widest uppercase mb-4">Yarn Type</h4>
+<ul class="space-y-3 font-body-md text-body-md text-on-surface-variant">
+<li class="">
+<label class="flex items-center space-x-3 cursor-pointer group">
+<input class="form-checkbox text-[#8C927D] border-[#D4B996] focus:ring-[#8C927D] rounded" type="checkbox">
+<span class="group-hover:text-primary transition-colors">Organic Wool</span>
+</label>
+</li>
+<li class="">
+<label class="flex items-center space-x-3 cursor-pointer group">
+<input class="form-checkbox text-[#8C927D] border-[#D4B996] focus:ring-[#8C927D] rounded" type="checkbox">
+<span class="group-hover:text-primary transition-colors">Pima Cotton</span>
+</label>
+</li>
+<li class="">
+<label class="flex items-center space-x-3 cursor-pointer group">
+<input class="form-checkbox text-[#8C927D] border-[#D4B996] focus:ring-[#8C927D] rounded" type="checkbox">
+<span class="group-hover:text-primary transition-colors">Merino Blend</span>
+</label>
+</li>
+</ul>
+</div>
+<!-- Filter Category: Price -->
+<div>
+<h4 class="font-label-caps text-label-caps text-primary tracking-widest uppercase mb-4">Price Range</h4>
+<div class="flex items-center space-x-4">
+<input class="w-full bg-surface-bright border border-[#D4B996] focus:border-[#8C927D] focus:ring-0 rounded-lg text-sm p-2 text-on-surface" placeholder="Min" type="number">
+<span class="text-on-surface-variant">-</span>
+<input class="w-full bg-surface-bright border border-[#D4B996] focus:border-[#8C927D] focus:ring-0 rounded-lg text-sm p-2 text-on-surface" placeholder="Max" type="number">
+</div>
+</div>
+</div>
+</aside>
+<!-- Product Grid -->
+<div class="flex-grow">
+<!-- Sorting & Results Count -->
+<div class="flex justify-between items-center mb-8 pb-4 border-b border-surface-variant">
+<span class="font-body-md text-on-surface-variant">Showing 24 pieces</span>
+<div class="flex items-center space-x-3">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Sort by</span>
+<select class="bg-transparent border-none text-primary font-body-md focus:ring-0 cursor-pointer pr-8 py-0">
+<option>Newest Arrivals</option>
+<option>Price: Low to High</option>
+<option>Price: High to Low</option>
+<option>Most Popular</option>
+</select>
+</div>
+</div>
+<!-- The Grid (Staggered/Asymmetric feel using grid-cols and varying heights/placements where possible, though basic grid here for consistency) -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-16">
+<!-- Product Card 1 -->
+<article class="group cursor-pointer">
+<div class="relative w-full aspect-[4/5] mb-6 overflow-hidden rounded-2xl bg-surface-container shadow-[0px_12px_32px_rgba(140,146,125,0.08)]">
+<img alt="Product Image" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700 ease-in-out" data-alt="A beautiful, soft cream-colored hand-crocheted baby blanket neatly folded. The lighting is bright, soft, and natural, creating a serene, high-end editorial vibe. The background is a minimalist, warm off-white studio setting. Delicate stitches and tactile textures are clearly visible." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnXX5PO--YAQOTg52hHc6isfkQtlzl1wF96R_O6DBRKb_f2ab_YLZv0h6htZSd0qzWsK_1RdewQfxblGoT60NpvC3GRzji81ntDG29NKeSoUbbopDbIhaqWHh0HQ3t05MjTRashRx3wYula-12C3pHzC2cTbUJyFR_ZlgwTKGb2BN_df9mV0nrEn_GM5SVFYPm8b__XSV8eMJmrHkmFngx3eO2rmnl_RX-xLQPKN-eFy52LX1On6Xtxg">
+<!-- Badges -->
+<div class="absolute top-4 left-4 flex flex-col gap-2">
+<span class="bg-primary-fixed text-[#8C927D] px-3 py-1 rounded-full font-label-caps text-[10px] tracking-wider uppercase">New In</span>
+<span class="bg-primary-fixed text-[#8C927D] px-3 py-1 rounded-full font-label-caps text-[10px] tracking-wider uppercase">Organic Cotton</span>
+</div>
+<!-- Quick Add Button (Hover) -->
+<button class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-surface-container-lowest/90 backdrop-blur-sm border border-[#D4B996] text-primary px-6 py-3 rounded-lg font-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-[#8C927D] hover:text-white hover:border-transparent whitespace-nowrap">
+                                Quick Add
+                            </button>
+</div>
+<div class="flex flex-col text-center">
+<h3 class="font-headline-sm text-[20px] text-primary mb-2">Heirloom Baby Blanket</h3>
+<div class="flex justify-center items-center space-x-1 mb-2 text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="text-on-surface-variant text-sm ml-2 font-body-md">(12)</span>
+</div>
+<span class="font-body-md text-on-surface-variant">$125.00</span>
+</div>
+</article>
+<!-- Product Card 2 -->
+<article class="group cursor-pointer">
+<div class="relative w-full aspect-[4/5] mb-6 overflow-hidden rounded-2xl bg-surface-container shadow-[0px_12px_32px_rgba(140,146,125,0.08)]">
+<img alt="Product Image" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700 ease-in-out" data-alt="An intricately crocheted amigurumi woodland fox sitting on a smooth wooden stool. Warm beige and terracotta yarn tones. The lighting is soft and airy, creating a minimalist, cozy luxury aesthetic against a bright white background. High resolution showcasing the yarn texture." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCfltglqiOvS6H7gazjXaTVrBbCSZnCywjQlAAVV5E8HJ3dPvyseaSfcOA-c6J1k5l0AL9l_XWTFEo-cLNgxtAmEzElEoWVoNLDTuS9LE7mIAfDocUl_znl6-pLUm1iV9NMZxF38LgW2T2ugh8IKfmxwDZl0DtKlYBylQQNpyFxRSAlneEDo2oWjYQKMAI8iF31G8ENqv_voK3NiaFI74-QlMOAD4wByXLBL7CxpjgucU4ibL_9DFS9g">
+<div class="absolute top-4 left-4 flex flex-col gap-2">
+<span class="bg-primary-fixed text-[#8C927D] px-3 py-1 rounded-full font-label-caps text-[10px] tracking-wider uppercase">Handmade</span>
+</div>
+<button class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-surface-container-lowest/90 backdrop-blur-sm border border-[#D4B996] text-primary px-6 py-3 rounded-lg font-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-[#8C927D] hover:text-white hover:border-transparent whitespace-nowrap">
+                                Quick Add
+                            </button>
+</div>
+<div class="flex flex-col text-center">
+<h3 class="font-headline-sm text-[20px] text-primary mb-2">Woodland Fox Amigurumi</h3>
+<div class="flex justify-center items-center space-x-1 mb-2 text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star_half</span>
+<span class="text-on-surface-variant text-sm ml-2 font-body-md">(8)</span>
+</div>
+<span class="font-body-md text-on-surface-variant">$45.00</span>
+</div>
+</article>
+<!-- Product Card 3 -->
+<article class="group cursor-pointer">
+<div class="relative w-full aspect-[4/5] mb-6 overflow-hidden rounded-2xl bg-surface-container shadow-[0px_12px_32px_rgba(140,146,125,0.08)]">
+<img alt="Product Image" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700 ease-in-out" data-alt="A chunky knit oversized women's cardigan in a muted sage green color draped over a minimalist chair. The lighting is diffused studio daylight highlighting the heavy texture of the organic wool. Clean, neutral off-white background with a sense of quiet luxury." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDw6KNJn5LXk_z1o1CNBLRRqstYtjfuBijFOZSrCiWBbIVB9fDSy3O8uoyUs_xB_WkAfPGjQetV4ETXmezKRpxmPtnFc3XtkC3kx_55RmNuB10dlchBR8NZS_wlQ3aKI1MerLTdrAWFH5Cv9TuGxY4OJg4cs76iD8d7iYHuiuWh0AdBStLhEhPPpb5yWAL7kfMYekovTHS9Ypr4XsjoDp49LI6gFUv2H5bPawfx0fAGMF1ToznndVpy1g">
+<div class="absolute top-4 left-4 flex flex-col gap-2">
+<span class="bg-primary-fixed text-[#8C927D] px-3 py-1 rounded-full font-label-caps text-[10px] tracking-wider uppercase">Bestseller</span>
+<span class="bg-primary-fixed text-[#8C927D] px-3 py-1 rounded-full font-label-caps text-[10px] tracking-wider uppercase">Merino Wool</span>
+</div>
+<button class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-surface-container-lowest/90 backdrop-blur-sm border border-[#D4B996] text-primary px-6 py-3 rounded-lg font-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-[#8C927D] hover:text-white hover:border-transparent whitespace-nowrap">
+                                Quick Add
+                            </button>
+</div>
+<div class="flex flex-col text-center">
+<h3 class="font-headline-sm text-[20px] text-primary mb-2">Chunky Sage Cardigan</h3>
+<div class="flex justify-center items-center space-x-1 mb-2 text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="text-on-surface-variant text-sm ml-2 font-body-md">(34)</span>
+</div>
+<span class="font-body-md text-on-surface-variant">$210.00</span>
+</div>
+</article>
+<!-- Product Card 4 -->
+<article class="group cursor-pointer">
+<div class="relative w-full aspect-[4/5] mb-6 overflow-hidden rounded-2xl bg-surface-container shadow-[0px_12px_32px_rgba(140,146,125,0.08)]">
+<img alt="Product Image" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700 ease-in-out" data-alt="A detailed view of a crocheted market tote bag in a natural sandy beige tone, hanging on a simple peg. Soft directional light casts subtle shadows, emphasizing the open lacework pattern of the bag. The mood is earthy, sustainable, and premium slow-fashion." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZjXoyFqITWtyeBf9_x06LRjGwIOKutGVmgUINwqIWgosdtZgNACUwfC6P6r9j9i870N3djxECshur5IYL0nGVLb7QgJ3KhPsqv8fdrvXJMUF5O25KeG_ynbplJhHeRYl8HilOs2uo7F7MiUEOsLOrs9r8b6B1YVS2_q5BmJ4gf0wg0prRhNm4dBJF6z7m4iXjusLPwu3FnVMmsjcJ8SGtOzxOMwhJ1OGhwMEJJeV3F3phWTNQeTEuGQ">
+<button class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-surface-container-lowest/90 backdrop-blur-sm border border-[#D4B996] text-primary px-6 py-3 rounded-lg font-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-[#8C927D] hover:text-white hover:border-transparent whitespace-nowrap">
+                                Quick Add
+                            </button>
+</div>
+<div class="flex flex-col text-center">
+<h3 class="font-headline-sm text-[20px] text-primary mb-2">Artisan Market Tote</h3>
+<div class="flex justify-center items-center space-x-1 mb-2 text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="material-symbols-outlined" style="font-size: 16px;">star</span>
+<span class="text-on-surface-variant text-sm ml-2 font-body-md">(5)</span>
+</div>
+<span class="font-body-md text-on-surface-variant">$65.00</span>
+</div>
+</article>
+<!-- Product Card 5 -->
+<article class="group cursor-pointer">
+<div class="relative w-full aspect-[4/5] mb-6 overflow-hidden rounded-2xl bg-surface-container shadow-[0px_12px_32px_rgba(140,146,125,0.08)]">
+<img alt="Product Image" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700 ease-in-out" data-alt="A pair of hand-crocheted baby booties in a soft dusty rose color, resting on a textured linen cloth. The composition is intimate and warm, bathed in soft, diffused morning light. The aesthetic communicates delicate craftsmanship and luxury baby gifting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA59rs3J79oKZNF8wdpBiTLuzc_DlIG9d6hpTXwdBUmY30xiiO9a8xhlLaCA2Bx9V4IRmacJ8SCkXTQYtRCni3M7dpmL-8aCbyGzAvlQyPKkwhsCfGv3wBJKHM4qCqq3sseO-3JcOkOlvaikN_t97ZxUPVSvsKX4UYwl6vW3c0LOZmkNcX_JcUjimFK3GBXshMQ1myVnwgxlZo91RKpDuAAgoY77ohM93PBdLA3k20jTC4EN853iYCvBg">
+<div class="absolute top-4 left-4 flex flex-col gap-2">
+<span class="bg-primary-fixed text-[#8C927D] px-3 py-1 rounded-full font-label-caps text-[10px] tracking-wider uppercase">Pima Cotton</span>
+</div>
+<button class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-surface-container-lowest/90 backdrop-blur-sm border border-[#D4B996] text-primary px-6 py-3 rounded-lg font-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-[#8C927D] hover:text-white hover:border-transparent whitespace-nowrap">
+                                Quick Add
+                            </button>
+</div>
+<div class="flex flex-col text-center">
+<h3 class="font-headline-sm text-[20px] text-primary mb-2">Dusty Rose Booties</h3>
+<div class="flex justify-center items-center space-x-1 mb-2 text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="text-on-surface-variant text-sm ml-2 font-body-md">(22)</span>
+</div>
+<span class="font-body-md text-on-surface-variant">$38.00</span>
+</div>
+</article>
+<!-- Product Card 6 -->
+<article class="group cursor-pointer">
+<div class="relative w-full aspect-[4/5] mb-6 overflow-hidden rounded-2xl bg-surface-container shadow-[0px_12px_32px_rgba(140,146,125,0.08)]">
+<img alt="Product Image" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700 ease-in-out" data-alt="A beautifully crocheted decorative throw pillow featuring intricate mandala patterns in ivory and warm earthy beige tones. Resting elegantly on a minimalist modern sofa. Natural, soft window light creates a serene, upscale interior design aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtqiOkqSwjayhLpdndy4_D3zF-slJaay2zGaHsrpIcnlT5UvPxQNe6TUR7Hd1JKVs7aVOABgOgWUTuS5g9cPh43AgHfJgHvJMERDF5XR3qPJYZXlMo1U_BexuX9carjHWmyc2Qlgkp-WmpSpynJjUloB8mCpEg01BR7tckz5l3oyIwVnWnmm8UqKga_8cSc2jjoPRoiEp1V8KmZNK3maowu4VrkqHdJN_r4yNdPskpwOZykfBDl7NCRw">
+<button class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-surface-container-lowest/90 backdrop-blur-sm border border-[#D4B996] text-primary px-6 py-3 rounded-lg font-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-[#8C927D] hover:text-white hover:border-transparent whitespace-nowrap">
+                                Quick Add
+                            </button>
+</div>
+<div class="flex flex-col text-center">
+<h3 class="font-headline-sm text-[20px] text-primary mb-2">Mandala Throw Pillow</h3>
+<div class="flex justify-center items-center space-x-1 mb-2 text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 16px;">star</span>
+<span class="text-on-surface-variant text-sm ml-2 font-body-md">(15)</span>
+</div>
+<span class="font-body-md text-on-surface-variant">$85.00</span>
+</div>
+</article>
+</div>
+<!-- Pagination / Load More -->
+<div class="mt-16 flex justify-center">
+<button class="border border-[#D4B996] text-primary hover:bg-[#8C927D] hover:text-white hover:border-transparent transition-colors px-8 py-3 rounded-lg font-body-md">
+                        Load More Pieces
+                    </button>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container dark:bg-surface-container-highest w-full mt-section-gap">
+<div class="max-w-container-max mx-auto px-gutter py-margin-desktop grid grid-cols-1 md:grid-cols-3 gap-12 text-primary dark:text-primary-fixed-dim font-body-md text-body-md">
+<div class="flex flex-col items-start md:items-center">
+<span class="font-headline-md text-headline-md text-secondary mb-4">Yarn &amp; Crochet</span>
+</div>
+<div class="flex flex-col items-start md:items-center">
+<ul class="flex flex-col space-y-4 text-center md:text-left">
+<li class=""><a class="text-on-surface-variant hover:text-secondary hover:opacity-80 transition-opacity" href="#">The Artisan Story</a></li>
+<li class=""><a class="text-on-surface-variant hover:text-secondary hover:opacity-80 transition-opacity" href="#">Sustainability</a></li>
+<li class=""><a class="text-on-surface-variant hover:text-secondary hover:opacity-80 transition-opacity" href="#">Wholesale</a></li>
+<li class=""><a class="text-on-surface-variant hover:text-secondary hover:opacity-80 transition-opacity" href="#">Contact Us</a></li>
+</ul>
+</div>
+<div class="flex flex-col items-start md:items-end md:text-right">
+<p class="text-sm text-on-surface-variant max-w-xs">© 2024 Yarn &amp; Crochet. Empowering women through slow fashion.</p>
+</div>
+</div>
+</footer>
+
+
+</body></html>

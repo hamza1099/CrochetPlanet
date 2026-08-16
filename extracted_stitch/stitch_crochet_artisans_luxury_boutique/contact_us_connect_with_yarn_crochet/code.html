@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Contact Us - Yarn &amp; Crochet</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed-variant": "#564428",
+                        "inverse-on-surface": "#f2f0ed",
+                        "surface-bright": "#fbf9f5",
+                        "on-surface": "#1b1c1a",
+                        "surface-tint": "#5b614e",
+                        "tertiary-fixed": "#fbdeb9",
+                        "on-primary-fixed-variant": "#434937",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#ffb598",
+                        "primary-fixed-dim": "#c3c9b2",
+                        "on-secondary-fixed-variant": "#71361d",
+                        "surface": "#fbf9f5",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed-dim": "#dec29f",
+                        "primary": "#585e4c",
+                        "on-secondary-container": "#783c22",
+                        "on-background": "#1b1c1a",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed": "#271903",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#c3c9b2",
+                        "secondary-fixed": "#ffdbce",
+                        "on-secondary": "#ffffff",
+                        "surface-variant": "#e4e2de",
+                        "error-container": "#ffdad6",
+                        "tertiary": "#6d593c",
+                        "on-primary-fixed": "#181d0f",
+                        "background": "#fbf9f5",
+                        "secondary": "#8e4d31",
+                        "tertiary-container": "#877152",
+                        "secondary-container": "#feaa88",
+                        "primary-container": "#717763",
+                        "outline": "#76786f",
+                        "surface-dim": "#dbdad6",
+                        "surface-container-high": "#eae8e4",
+                        "on-primary-container": "#faffe8",
+                        "surface-container": "#efeeea",
+                        "surface-container-highest": "#e4e2de",
+                        "on-error": "#ffffff",
+                        "on-surface-variant": "#464840",
+                        "outline-variant": "#c7c7bd",
+                        "inverse-surface": "#30312e",
+                        "primary-fixed": "#dfe5cd",
+                        "on-tertiary-container": "#fffbff",
+                        "on-secondary-fixed": "#370e00",
+                        "surface-container-low": "#f5f3ef"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "64px",
+                        "container-max": "1280px",
+                        "margin-mobile": "20px",
+                        "gutter": "24px",
+                        "unit": "8px",
+                        "section-gap": "120px"
+                    },
+                    "fontFamily": {
+                        "headline-md": [
+                            "Playfair Display"
+                        ],
+                        "label-caps": [
+                            "DM Sans"
+                        ],
+                        "body-md": [
+                            "DM Sans"
+                        ],
+                        "headline-sm": [
+                            "Playfair Display"
+                        ],
+                        "body-lg": [
+                            "DM Sans"
+                        ],
+                        "display-lg-mobile": [
+                            "Playfair Display"
+                        ],
+                        "display-lg": [
+                            "Playfair Display"
+                        ]
+                    },
+                    "fontSize": {
+                        "headline-md": [
+                            "32px",
+                            {
+                                "lineHeight": "1.3",
+                                "fontWeight": "500"
+                            }
+                        ],
+                        "label-caps": [
+                            "12px",
+                            {
+                                "lineHeight": "1",
+                                "letterSpacing": "0.1em",
+                                "fontWeight": "600"
+                            }
+                        ],
+                        "body-md": [
+                            "16px",
+                            {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                            }
+                        ],
+                        "headline-sm": [
+                            "24px",
+                            {
+                                "lineHeight": "1.4",
+                                "fontWeight": "500"
+                            }
+                        ],
+                        "body-lg": [
+                            "18px",
+                            {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                            }
+                        ],
+                        "display-lg-mobile": [
+                            "32px",
+                            {
+                                "lineHeight": "1.2",
+                                "fontWeight": "600"
+                            }
+                        ],
+                        "display-lg": [
+                            "48px",
+                            {
+                                "lineHeight": "1.1",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "600"
+                            }
+                        ]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="bg-surface dark:bg-surface-dim text-primary dark:text-primary-fixed-dim font-label-caps text-label-caps sticky top-0 z-50 w-full transition-shadow duration-300" id="top-nav">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-gutter max-w-container-max mx-auto bg-surface dark:bg-surface-dim">
+<!-- Navigation Links (Hidden on Mobile) -->
+<div class="hidden md:flex items-center gap-8">
+<a class="text-on-surface-variant dark:text-outline-variant pb-1 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-300" href="#">Collections</a>
+<a class="text-on-surface-variant dark:text-outline-variant pb-1 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-300" href="#">Learning Hub</a>
+<a class="text-on-surface-variant dark:text-outline-variant pb-1 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-300" href="#">Our Story</a>
+<a class="text-primary dark:text-primary-fixed-dim border-b-2 border-primary dark:border-primary-fixed-dim pb-1 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-300 opacity-80 transition-opacity" href="#">Contact</a>
+</div>
+<!-- Mobile Menu Toggle -->
+<button class="md:hidden text-primary focus:outline-none">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+<!-- Brand Logo -->
+<a class="font-headline-md text-headline-md text-primary dark:text-primary-fixed-dim tracking-tight text-center flex-grow md:flex-grow-0" href="#">
+                Yarn &amp; Crochet
+            </a>
+<!-- Trailing Icons -->
+<div class="flex items-center gap-6">
+<button aria-label="shopping_bag" class="text-primary hover:text-primary transition-colors duration-300 focus:outline-none">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">shopping_bag</span>
+</button>
+<button aria-label="person" class="text-primary hover:text-primary transition-colors duration-300 focus:outline-none">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">person</span>
+</button>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow">
+<!-- Hero Section -->
+<section class="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-section-gap flex flex-col items-center text-center">
+<h1 class="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg text-primary mb-6">Let's Connect</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+                Whether you have a question about our artisanal collections, need care advice for your textiles, or wish to explore a collaboration, our team is here to assist you with intention and care.
+            </p>
+</section>
+<!-- Contact Form & Details Section -->
+<section class="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop pb-section-gap">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-32">
+<!-- Contact Form -->
+<div class="bg-surface-container-low p-8 md:p-12 rounded-2xl shadow-sm border border-outline-variant/30 relative overflow-hidden">
+<h2 class="font-headline-md text-headline-md text-primary mb-8">Send a Message</h2>
+<form action="#" class="space-y-6 relative z-10" method="POST">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-2" for="first-name">First Name</label>
+<input class="w-full bg-surface-container-lowest border border-[#D4B996] rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" id="first-name" name="first-name" required="" type="text"/>
+</div>
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-2" for="last-name">Last Name</label>
+<input class="w-full bg-surface-container-lowest border border-[#D4B996] rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" id="last-name" name="last-name" required="" type="text"/>
+</div>
+</div>
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-2" for="email">Email Address</label>
+<input class="w-full bg-surface-container-lowest border border-[#D4B996] rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" id="email" name="email" required="" type="email"/>
+</div>
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-2" for="inquiry-type">Inquiry Type</label>
+<select class="w-full bg-surface-container-lowest border border-[#D4B996] rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors appearance-none" id="inquiry-type" name="inquiry-type">
+<option value="general">General Question</option>
+<option value="order">Order Support</option>
+<option value="care">Product Care</option>
+<option value="wholesale">Wholesale Inquiry</option>
+<option value="collaboration">Artisan Collaboration</option>
+</select>
+</div>
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-2" for="message">Message</label>
+<textarea class="w-full bg-surface-container-lowest border border-[#D4B996] rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors resize-none" id="message" name="message" required="" rows="5"></textarea>
+</div>
+<button class="w-full bg-primary hover:bg-primary-container text-on-primary font-label-caps text-label-caps py-4 rounded-lg transition-colors duration-300" type="submit">
+                            Send Inquiry
+                        </button>
+</form>
+</div>
+<!-- Contact Details & Studios -->
+<div class="flex flex-col justify-center space-y-16">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-6">Our Studios</h3>
+<div class="space-y-8">
+<!-- Studio 1 -->
+<div class="flex items-start gap-4">
+<div class="p-3 bg-surface-container rounded-full text-primary shrink-0">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">location_on</span>
+</div>
+<div>
+<h4 class="font-body-lg text-body-lg text-primary font-medium mb-1">The London Studio</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">15 Textile Row, Shoreditch<br/>London, UK E1 6QN</p>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2 text-sm">By appointment only.</p>
+</div>
+</div>
+<!-- Studio 2 -->
+<div class="flex items-start gap-4">
+<div class="p-3 bg-surface-container rounded-full text-primary shrink-0">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">location_on</span>
+</div>
+<div>
+<h4 class="font-body-lg text-body-lg text-primary font-medium mb-1">The Brooklyn Atelier</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">42 Maker's Lane, Williamsburg<br/>Brooklyn, NY 11211</p>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2 text-sm">Open Tue-Sat, 10am - 6pm.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="h-px bg-outline-variant/30 w-full"></div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-6">Direct Contact</h3>
+<div class="space-y-6">
+<div class="flex items-center gap-4">
+<div class="p-3 bg-surface-container rounded-full text-primary shrink-0">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">mail</span>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Email Us</p>
+<a class="font-body-lg text-body-lg text-primary hover:text-secondary transition-colors" href="mailto:hello@yarnandcrochet.com">hello@yarnandcrochet.com</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="p-3 bg-surface-container rounded-full text-primary shrink-0">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">call</span>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Call Us</p>
+<a class="font-body-lg text-body-lg text-primary hover:text-secondary transition-colors" href="tel:+442079460000">+44 20 7946 0000</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Collaborations & Wholesale Section -->
+<section class="bg-surface-container py-section-gap border-y border-outline-variant/30">
+<div class="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-16">
+<!-- Wholesale -->
+<div class="text-center md:text-left flex flex-col items-center md:items-start">
+<div class="mb-6 p-4 bg-surface rounded-full inline-block text-primary">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 0;">inventory_2</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-4">Wholesale Inquiries</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8 max-w-md">
+                            Interested in stocking our curated collections in your boutique? We partner with select retailers who share our passion for sustainable craftsmanship.
+                        </p>
+<a class="font-label-caps text-label-caps text-primary border-b border-primary pb-1 hover:text-secondary hover:border-secondary transition-all" href="#">Apply for Wholesale</a>
+</div>
+<!-- Artisan Collab -->
+<div class="text-center md:text-left flex flex-col items-center md:items-start">
+<div class="mb-6 p-4 bg-surface rounded-full inline-block text-primary">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 0;">palette</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-4">Artisan Collaborations</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8 max-w-md">
+                            We are always looking to connect with independent textile artists and makers for limited-edition drops and creative partnerships.
+                        </p>
+<a class="font-label-caps text-label-caps text-primary border-b border-primary pb-1 hover:text-secondary hover:border-secondary transition-all" href="#">Submit Portfolio</a>
+</div>
+</div>
+</div>
+</section>
+<!-- Image / Vibe Section (Optional, adds to the luxury feel) -->
+<section class="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-section-gap">
+<div class="w-full h-96 rounded-2xl overflow-hidden relative group">
+<img class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" data-alt="A close-up, high-resolution photograph of hands delicately crocheting a complex pattern using thick, organic cream-colored yarn. The lighting is soft, warm, and natural, coming from an off-camera window, highlighting the texture of the yarn and the careful craftsmanship. The mood is serene, focused, and deeply artisanal, set against a blurred, minimalist background of natural wood tones and muted sage greenery, perfectly capturing a luxury slow-fashion aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVAN70g2M_HTGCFA-txC7r78jwMj28TRM0FoCAleGor-iu9CXlntbDNm7evJrOkG39rIM-0NjNr3iCSfXMqJrwCF_g30fUkqHyXFWmVtYbxALe4-m709i28g8Uv-dQH0jfOB9jNndsbpmdGUoQtzYr9ajxgoeimmZxJEs6XAYyJEzIPlHZhpvNbcR9TDCRZPdl4dOAE6zMU9f9JqOJFGz9684kucfTlYAqc-Avj5dqz4XAXxuKaNM9Ow"/>
+<div class="absolute inset-0 bg-black/10 transition-opacity duration-500 group-hover:bg-black/0"></div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container dark:bg-surface-container-high border-t border-outline-variant/30 w-full py-section-gap px-margin-mobile md:px-margin-desktop flex flex-col items-center gap-gutter text-center">
+<a class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed-dim focus:ring-1 focus:ring-primary focus:outline-none mb-4" href="#">
+            Yarn &amp; Crochet
+        </a>
+<div class="flex flex-wrap justify-center gap-6 md:gap-8 mb-8">
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-all focus:ring-1 focus:ring-primary focus:outline-none" href="#">Shipping &amp; Returns</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-all focus:ring-1 focus:ring-primary focus:outline-none" href="#">Privacy Policy</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-all focus:ring-1 focus:ring-primary focus:outline-none" href="#">Artisanal Care Guide</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-all focus:ring-1 focus:ring-primary focus:outline-none" href="#">Wholesale Inquiry</a>
+</div>
+<p class="font-body-md text-body-md text-secondary dark:text-secondary-fixed-dim">
+            © 2024 Yarn &amp; Crochet. Crafted with Intention.
+        </p>
+</footer>
+<script>
+        // Simple scroll effect for TopNav shadow
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('top-nav');
+            if (window.scrollY > 10) {
+                nav.classList.add('shadow-sm');
+            } else {
+                nav.classList.remove('shadow-sm');
+            }
+        });
+    </script>
+</body></html>

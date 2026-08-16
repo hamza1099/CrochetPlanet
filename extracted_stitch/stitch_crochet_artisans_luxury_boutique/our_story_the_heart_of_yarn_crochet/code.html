@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Our Story | Yarn &amp; Crochet</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600&amp;family=Playfair+Display:wght@500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed-variant": "#564428",
+                    "inverse-on-surface": "#f2f0ed",
+                    "surface-bright": "#fbf9f5",
+                    "on-surface": "#1b1c1a",
+                    "surface-tint": "#5b614e",
+                    "tertiary-fixed": "#fbdeb9",
+                    "on-primary-fixed-variant": "#434937",
+                    "error": "#ba1a1a",
+                    "secondary-fixed-dim": "#ffb598",
+                    "primary-fixed-dim": "#c3c9b2",
+                    "on-secondary-fixed-variant": "#71361d",
+                    "surface": "#fbf9f5",
+                    "on-primary": "#ffffff",
+                    "tertiary-fixed-dim": "#dec29f",
+                    "primary": "#585e4c",
+                    "on-secondary-container": "#783c22",
+                    "on-background": "#1b1c1a",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-fixed": "#271903",
+                    "on-error-container": "#93000a",
+                    "inverse-primary": "#c3c9b2",
+                    "secondary-fixed": "#ffdbce",
+                    "on-secondary": "#ffffff",
+                    "surface-variant": "#e4e2de",
+                    "error-container": "#ffdad6",
+                    "tertiary": "#6d593c",
+                    "on-primary-fixed": "#181d0f",
+                    "background": "#fbf9f5",
+                    "secondary": "#8e4d31",
+                    "tertiary-container": "#877152",
+                    "secondary-container": "#feaa88",
+                    "primary-container": "#717763",
+                    "outline": "#76786f",
+                    "surface-dim": "#dbdad6",
+                    "surface-container-high": "#eae8e4",
+                    "on-primary-container": "#faffe8",
+                    "surface-container": "#efeeea",
+                    "surface-container-highest": "#e4e2de",
+                    "on-error": "#ffffff",
+                    "on-surface-variant": "#464840",
+                    "outline-variant": "#c7c7bd",
+                    "inverse-surface": "#30312e",
+                    "primary-fixed": "#dfe5cd",
+                    "on-tertiary-container": "#fffbff",
+                    "on-secondary-fixed": "#370e00",
+                    "surface-container-low": "#f5f3ef"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "64px",
+                    "container-max": "1280px",
+                    "margin-mobile": "20px",
+                    "gutter": "24px",
+                    "unit": "8px",
+                    "section-gap": "120px"
+            },
+            "fontFamily": {
+                    "headline-md": [
+                            "Playfair Display"
+                    ],
+                    "label-caps": [
+                            "DM Sans"
+                    ],
+                    "body-md": [
+                            "DM Sans"
+                    ],
+                    "headline-sm": [
+                            "Playfair Display"
+                    ],
+                    "body-lg": [
+                            "DM Sans"
+                    ],
+                    "display-lg-mobile": [
+                            "Playfair Display"
+                    ],
+                    "display-lg": [
+                            "Playfair Display"
+                    ]
+            },
+            "fontSize": {
+                    "headline-md": [
+                            "32px",
+                            {
+                                    "lineHeight": "1.3",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "label-caps": [
+                            "12px",
+                            {
+                                    "lineHeight": "1",
+                                    "letterSpacing": "0.1em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "1.6",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-sm": [
+                            "24px",
+                            {
+                                    "lineHeight": "1.4",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "1.6",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "display-lg-mobile": [
+                            "32px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "display-lg": [
+                            "48px",
+                            {
+                                    "lineHeight": "1.1",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "600"
+                            }
+                    ]
+            }
+    },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .text-underline-animation {
+            display: inline-block;
+            position: relative;
+        }
+        .text-underline-animation::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            transform: scaleX(0);
+            height: 1px;
+            bottom: 0;
+            left: 0;
+            background-color: currentColor;
+            transform-origin: bottom right;
+            transition: transform 0.25s ease-out;
+        }
+        .text-underline-animation:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<nav class="bg-surface dark:bg-surface-dim sticky top-0 z-50 w-full transition-shadow duration-300 shadow-none border-b border-surface-variant" id="top-nav">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-gutter max-w-container-max mx-auto">
+<a class="font-headline-md text-headline-md text-primary dark:text-primary-fixed-dim tracking-tight" href="#">
+                Yarn &amp; Crochet
+            </a>
+<div class="hidden md:flex gap-gutter items-center">
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-outline-variant pb-1 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-300" href="#">Collections</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-outline-variant pb-1 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-300" href="#">Learning Hub</a>
+<a class="font-label-caps text-label-caps text-primary dark:text-primary-fixed-dim border-b-2 border-primary dark:border-primary-fixed-dim pb-1 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-300" href="#">Our Story</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-outline-variant pb-1 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-300" href="#">Contact</a>
+</div>
+<div class="flex gap-unit items-center text-primary dark:text-primary-fixed-dim">
+<button aria-label="shopping_bag" class="p-2 hover:opacity-80 transition-opacity rounded-full focus:ring-1 focus:ring-primary focus:outline-none">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+</button>
+<button aria-label="person" class="p-2 hover:opacity-80 transition-opacity rounded-full focus:ring-1 focus:ring-primary focus:outline-none">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</button>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col">
+<!-- Hero Section -->
+<section class="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-section-gap flex flex-col md:flex-row items-center gap-margin-desktop">
+<div class="w-full md:w-1/2 flex flex-col gap-gutter">
+<span class="font-label-caps text-label-caps text-primary tracking-widest uppercase">The Heritage</span>
+<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface">
+                    Crafting slow luxury with intention and soul.
+                </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-lg mt-unit">
+                    We believe in the quiet power of handmade textiles. Every stitch is a testament to the artisan's dedication, weaving narratives of tradition, empowerment, and organic beauty into wearable art.
+                </p>
+</div>
+<div class="w-full md:w-1/2 relative h-[600px] rounded-2xl overflow-hidden group">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A close-up, highly detailed photograph of an artisan's hands carefully crocheting a delicate, intricate pattern using natural, un-dyed organic cotton yarn. The lighting is soft and diffused, creating a warm, airy light-mode aesthetic indicative of a serene, slow-fashion atelier. The background is a soft blur of natural textures and soft beige tones, emphasizing craftsmanship and tactile luxury." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAETdy2a0dAi5SzOar-8VTWG2_8jfXpatDcNjfgN7lq3y2-x5xjGtpCZ8Xiknsf3-xrZraps7x11ftE-klo67tOVN-bxHimfr9GALLFm-rf1XRs8mx3XiT7MtNPS0HfhafqTNBTmX_2omv_-gvBEF3Yd6Xfi2yBGeWksS3hgfstFjNZPyVY9Cq9rGCvdWd3dDwk4vSqIZPhDHp4XdxOS6t_0SHbO5iQjA9c8R1GezVrd6oQbCTvspL0tg"/>
+</div>
+</section>
+<!-- Our Mission Section (Asymmetric Layout) -->
+<section class="w-full bg-surface-container-low py-section-gap">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex flex-col gap-margin-desktop">
+<div class="flex flex-col md:flex-row gap-margin-desktop items-center">
+<div class="w-full md:w-5/12 order-2 md:order-1">
+<img class="w-full h-[500px] object-cover rounded-2xl shadow-[0px_12px_32px_rgba(140,146,125,0.08)]" data-alt="A portrait of a serene female artisan in a sunlit workshop, surrounded by spools of natural yarn in varying shades of cream, sage, and warm earth tones. She is smiling gently while examining a finished crochet piece. The aesthetic is bright, editorial luxury, with high-key lighting, capturing a mood of peaceful empowerment and artisanal pride." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnxEX8l_kbLxIdbKqiUoNDL6Xx47pd10soJHrETiIfsuCA7oMwKSu9fHA_W4ZwrlpveZgraRcpVeLtql0N1UBOdVZQO8KJPxZLq8YYYoN0sMr0MABdSgKCRdRq7gtO_-5rKEA0iPpYgjm2B6R91Iq8FfgJ6qxnTHneo34fz0uSplCTUwsMhrHY8IlpeIysOC6PRCU16Sw2w_42sBpMS-8FmLTzGgEuDlxjRoxMN7wsOknpIBfgAPex1g"/>
+</div>
+<div class="w-full md:w-7/12 order-1 md:order-2 flex flex-col gap-gutter md:pl-margin-desktop">
+<h2 class="font-headline-md text-headline-md text-on-surface">Our Mission</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                            Yarn &amp; Crochet was born from a desire to return to mindful consumption. In a world of fleeting trends, we anchor ourselves in the enduring elegance of artisanal craft. Our mission is twofold: to provide discerning individuals with exquisite, sustainable garments, and to economically empower the skilled women who bring these designs to life.
+                        </p>
+<p class="font-body-md text-body-md text-on-surface-variant mt-unit">
+                            By fostering a community of makers and valuing their time and expertise, we preserve ancient techniques while designing for the modern, conscious wardrobe.
+                        </p>
+<a class="inline-flex items-center gap-2 font-label-caps text-label-caps text-primary text-underline-animation mt-gutter self-start" href="#">
+                            Discover our impact <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container dark:bg-surface-container-high border-t border-outline-variant/30 w-full py-section-gap px-margin-desktop flex flex-col items-center gap-gutter text-center">
+<h3 class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed-dim">
+            Yarn &amp; Crochet
+        </h3>
+<div class="flex flex-wrap justify-center gap-gutter mt-unit">
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-all focus:ring-1 focus:ring-primary focus:outline-none px-2 py-1 rounded" href="#">Shipping &amp; Returns</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-all focus:ring-1 focus:ring-primary focus:outline-none px-2 py-1 rounded" href="#">Privacy Policy</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-all focus:ring-1 focus:ring-primary focus:outline-none px-2 py-1 rounded" href="#">Artisanal Care Guide</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-all focus:ring-1 focus:ring-primary focus:outline-none px-2 py-1 rounded" href="#">Wholesale Inquiry</a>
+</div>
+<p class="font-body-md text-body-md text-secondary dark:text-secondary-fixed-dim mt-gutter opacity-80">
+            © 2024 Yarn &amp; Crochet. Crafted with Intention.
+        </p>
+</footer>
+<script>
+        // Simple script to handle nav scroll shadow
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('top-nav');
+            if (window.scrollY > 10) {
+                nav.classList.add('shadow-sm');
+                nav.classList.remove('shadow-none');
+            } else {
+                nav.classList.remove('shadow-sm');
+                nav.classList.add('shadow-none');
+            }
+        });
+    </script>
+</body></html>
