@@ -11,7 +11,7 @@ const MasterclassScreen: React.FC = () => {
   };
 
   return (
-    <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12 font-body text-[#1b1c1a] space-y-12">
+    <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-12 font-body text-[#1b1c1a] space-y-12">
       {/* Hero Section: Split Layout */}
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
         {/* Left Column: Imagery Bento Grid */}

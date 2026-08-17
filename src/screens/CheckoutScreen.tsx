@@ -41,7 +41,7 @@ const CheckoutScreen: React.FC = () => {
   }
 
   return (
-    <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12 font-body text-[#1b1c1a]">
+    <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-12 font-body text-[#1b1c1a]">
       <h1 className="font-display text-3xl md:text-4xl font-semibold mb-8 text-center md:text-left">
         Secure Checkout
       </h1>

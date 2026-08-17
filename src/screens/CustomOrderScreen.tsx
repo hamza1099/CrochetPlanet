@@ -9,7 +9,7 @@ const CustomOrderScreen: React.FC = () => {
   };
 
   return (
-    <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-16 font-body text-[#1b1c1a]">
+    <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-16 font-body text-[#1b1c1a]">
       <div className="max-w-2xl mx-auto bg-white p-8 md:p-12 rounded-3xl border border-[#e4e2de] shadow-xl space-y-8">
         <div className="text-center space-y-3">
           <span className="text-xs font-bold uppercase tracking-widest text-[#8e4d31]">

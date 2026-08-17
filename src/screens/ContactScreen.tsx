@@ -4,7 +4,7 @@ const ContactScreen: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
 
   return (
-    <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-16 font-body text-[#1b1c1a]">
+    <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-16 font-body text-[#1b1c1a]">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-start">
         {/* Contact Info */}
         <div className="md:col-span-5 space-y-8 bg-[#f5f3ef] p-8 md:p-12 rounded-3xl border border-[#e4e2de]">

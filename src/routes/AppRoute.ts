@@ -11,6 +11,9 @@ import LearningHubScreen from "../screens/LearningHubScreen";
 import MasterclassScreen from "../screens/MasterclassScreen";
 import ContactScreen from "../screens/ContactScreen";
 import CheckoutScreen from "../screens/CheckoutScreen";
+import AuthModalScreen from "../screens/AuthModalScreen";
+import ProfileDashboardScreen from "../screens/ProfileDashboardScreen";
+import MyOrdersScreen from "../screens/MyOrdersScreen";
 
 export interface RouteConfig {
   path: string;
@@ -61,5 +64,17 @@ export const AppRoute: RouteConfig[] = [
   {
     path: RouteName.CHECKOUT,
     element: CheckoutScreen,
+  },
+  {
+    path: RouteName.AUTH,
+    element: AuthModalScreen,
+  },
+  {
+    path: RouteName.PROFILE,
+    element: ProfileDashboardScreen,
+  },
+  {
+    path: RouteName.MY_ORDERS,
+    element: MyOrdersScreen,
   },
 ];

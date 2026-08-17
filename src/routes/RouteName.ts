@@ -10,5 +10,8 @@ export const RouteName = {
   LEARNING_HUB: "/learning-hub",
   CONTACT: "/contact",
   CHECKOUT: "/checkout",
+  AUTH: "/auth",
+  PROFILE: "/profile",
+  MY_ORDERS: "/my-orders",
   NOT_FOUND: "*",
 };

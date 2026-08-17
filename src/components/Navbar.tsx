@@ -59,7 +59,8 @@ const Navbar: React.FC = () => {
     { name: "COLLECTIONS", path: RouteName.COLLECTIONS },
     { name: "CATEGORIES", path: RouteName.COLLECTIONS, hasDropdown: true },
     { name: "LEARNING HUB", path: RouteName.LEARNING_HUB },
-    { name: "MY ORDERS", path: RouteName.CUSTOM_ORDER },
+    { name: "CUSTOM INQUIRY", path: RouteName.CUSTOM_ORDER },
+    { name: "MY ORDERS", path: RouteName.MY_ORDERS },
     { name: "CONTACT", path: RouteName.CONTACT },
   ];
 
@@ -79,7 +80,7 @@ const Navbar: React.FC = () => {
     <>
       <header className="sticky top-0 z-40 bg-[#fbf9f5]/95 backdrop-blur-md border-b border-[#e4e2de] transition-all">
         {/* Original Layout Top Bar */}
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between gap-4">
+        <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-2.5 flex items-center justify-between gap-4">
           {/* Brand Logo with image */}
           <Link to={RouteName.HOME} className="flex items-center gap-3 shrink-0 group">
             <div className="bg-white p-1.5 rounded-xl border border-[#e4e2de] shadow-sm group-hover:border-[#8e4d31] transition-all">
@@ -152,17 +153,56 @@ const Navbar: React.FC = () => {
             )}
           </div>
 
-          {/* Right Actions: Location, Login, Cart */}
+          {/* Right Actions: User Avatar Dropdown & Cart */}
           <div className="flex items-center gap-4 sm:gap-6 text-[#464840] shrink-0 text-xs">
-            <div className="hidden md:flex flex-col items-center cursor-pointer hover:text-[#8e4d31]">
-              <span className="material-symbols-outlined text-xl">location_on</span>
-              <span className="text-[10px]">Location</span>
-            </div>
+            {/* User Avatar with Initial & Dropdown Menu */}
+            <div className="relative group">
+              <Link
+                to={RouteName.PROFILE}
+                className="flex items-center gap-2 text-[#464840] hover:text-[#8e4d31] transition-colors py-1 px-1 rounded-full group"
+              >
+                {/* Circular Avatar with User Initial */}
+                <div className="w-8 h-8 rounded-full bg-[#585e4c] text-white flex items-center justify-center font-bold text-xs shadow-sm group-hover:bg-[#8e4d31] transition-colors">
+                  T
+                </div>
+                <span className="hidden sm:inline font-semibold text-xs text-[#1b1c1a] group-hover:text-[#8e4d31]">
+                  Tayyaba Hamza
+                </span>
+                <span className="material-symbols-outlined text-sm text-[#76786f]">
+                  expand_more
+                </span>
+              </Link>
 
-            <Link to={RouteName.CONTACT} className="hidden md:flex flex-col items-center hover:text-[#8e4d31]">
-              <span className="material-symbols-outlined text-xl">person</span>
-              <span className="text-[10px]">Login</span>
-            </Link>
+              {/* Account Dropdown Menu */}
+              <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-[#e4e2de] rounded-2xl shadow-xl p-2 z-50 hidden group-hover:block animate-in fade-in slide-in-from-top-2 duration-150">
+                <div className="px-3 py-2 border-b border-[#f5f3ef] mb-1">
+                  <p className="font-semibold text-xs text-[#1b1c1a]">Tayyaba Hamza</p>
+                  <p className="text-[10px] text-[#76786f] truncate">tayyaba.hamza@example.com</p>
+                </div>
+                <Link
+                  to={RouteName.PROFILE}
+                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#464840] hover:bg-[#f5f3ef] hover:text-[#8e4d31] transition-colors"
+                >
+                  <span className="material-symbols-outlined text-base">person</span>
+                  My Profile
+                </Link>
+                <Link
+                  to={RouteName.MY_ORDERS}
+                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#464840] hover:bg-[#f5f3ef] hover:text-[#8e4d31] transition-colors"
+                >
+                  <span className="material-symbols-outlined text-base">local_shipping</span>
+                  My Orders
+                </Link>
+                <div className="border-t border-[#f5f3ef] my-1" />
+                <Link
+                  to={RouteName.AUTH}
+                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors"
+                >
+                  <span className="material-symbols-outlined text-base">logout</span>
+                  Logout
+                </Link>
+              </div>
+            </div>
 
             {/* Cart Icon */}
             <button
@@ -193,7 +233,7 @@ const Navbar: React.FC = () => {
 
         {/* Original Horizontal Menu Links Bar */}
         <div className="hidden lg:block border-t border-[#efeeea] bg-[#fbf9f5]">
-          <nav className="max-w-[1400px] mx-auto px-6 py-2 flex items-center justify-center gap-6">
+          <nav className="max-w-[1440px] mx-auto px-4 md:px-8 py-2 flex items-center justify-center gap-6">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.path;
               if (link.hasDropdown) {
@@ -282,7 +322,7 @@ const Navbar: React.FC = () => {
       </header>
       {/* Sticky Floating WhatsApp Button on Bottom Right */}
       <a
-        href="https://wa.me/923173004661?text=Hello%20Yarn%20%26%20Crochet!%20I%20want%20to%20inquire%20about%20a%20product."
+        href="https://wa.me/923173004661?text=Hello%20CrochCosmo!%20I%20want%20to%20inquire%20about%20a%20product."
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-[9999] bg-[#25D366] text-white p-3.5 rounded-full shadow-2xl hover:scale-110 hover:bg-[#20ba5a] transition-all flex items-center justify-center group"

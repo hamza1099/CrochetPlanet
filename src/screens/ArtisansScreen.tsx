@@ -21,7 +21,7 @@ const artisans = [
 
 const ArtisansScreen: React.FC = () => {
   return (
-    <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-16 font-body text-[#1b1c1a] space-y-16">
+    <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-16 font-body text-[#1b1c1a] space-y-16">
       <header className="text-center max-w-3xl mx-auto space-y-4">
         <span className="text-xs font-bold uppercase tracking-widest text-[#8e4d31]">
           The Hands Behind The Craft

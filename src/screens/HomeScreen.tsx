@@ -17,9 +17,17 @@ import dealAsset2 from "../assets/b4d37b644ab42da78f9a3d42a5a8fdbd.jpg";
 import dealAsset4 from "../assets/1e395a4512140c8e752d25cdaaff7bd6.jpg";
 import sideBannerImg from "../assets/side banner.jpg";
 
+import { ProductCardSkeleton, HeroSkeleton, CategoryGridSkeleton } from "../components/Skeletons";
+
 const HomeScreen: React.FC = () => {
   const { addToCart } = useCart();
   const fashionSectionRef = useRef<HTMLDivElement>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Hero Sliding Carousel State & Data
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -267,74 +275,78 @@ const HomeScreen: React.FC = () => {
           SECTION 1: SLIDING HERO CAROUSEL & POPULAR CATEGORIES GRID
          ========================================================================= */}
       <section className="relative max-w-[1440px] mx-auto px-4 md:px-8 pt-6 space-y-12">
-        {/* Sliding Hero Panel (Smooth horizontal track animation) */}
-        <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-[#e4e2de] bg-[#1b1c1a] group cursor-pointer">
-          {/* Smooth Sliding Track Container */}
-          <div
-            className="flex transition-transform duration-700 ease-in-out w-full"
-            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-          >
-            {heroSlides.map((slide) => (
-              <Link
-                key={slide.id}
-                to={RouteName.COLLECTIONS}
-                className="w-full flex-shrink-0 relative block"
-              >
-                <img
-                  src={slide.image}
-                  alt="Hero Banner"
-                  className="w-full h-auto object-cover object-center block"
+        {isLoading ? (
+          <HeroSkeleton />
+        ) : (
+          /* Sliding Hero Panel (Smooth horizontal track animation) */
+          <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-[#e4e2de] bg-[#1b1c1a] group cursor-pointer">
+            {/* Smooth Sliding Track Container */}
+            <div
+              className="flex transition-transform duration-700 ease-in-out w-full"
+              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+            >
+              {heroSlides.map((slide) => (
+                <Link
+                  key={slide.id}
+                  to={RouteName.COLLECTIONS}
+                  className="w-full flex-shrink-0 relative block"
+                >
+                  <img
+                    src={slide.image}
+                    alt="Hero Banner"
+                    className="w-full h-auto object-cover object-center block"
+                  />
+                </Link>
+              ))}
+            </div>
+
+            {/* Navigation Controls: Prev / Next Buttons */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setCurrentSlide((prev) => (prev === 0 ? heroSlides.length - 1 : prev - 1));
+              }}
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 backdrop-blur-md hover:bg-white text-white hover:text-[#1b1c1a] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shadow-md z-20"
+              aria-label="Previous Slide"
+            >
+              <span className="material-symbols-outlined">chevron_left</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setCurrentSlide((prev) => (prev === heroSlides.length - 1 ? 0 : prev + 1));
+              }}
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 backdrop-blur-md hover:bg-white text-white hover:text-[#1b1c1a] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shadow-md z-20"
+              aria-label="Next Slide"
+            >
+              <span className="material-symbols-outlined">chevron_right</span>
+            </button>
+
+            {/* Slide Indicator Dots */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20">
+              {heroSlides.map((_, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setCurrentSlide(idx);
+                  }}
+                  className={`h-2.5 rounded-full transition-all ${
+                    currentSlide === idx ? "w-8 bg-[#8e4d31]" : "w-2.5 bg-white/70 hover:bg-white"
+                  }`}
+                  aria-label={`Go to slide ${idx + 1}`}
                 />
-              </Link>
-            ))}
+              ))}
+            </div>
           </div>
-
-          {/* Navigation Controls: Prev / Next Buttons */}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setCurrentSlide((prev) => (prev === 0 ? heroSlides.length - 1 : prev - 1));
-            }}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 backdrop-blur-md hover:bg-white text-white hover:text-[#1b1c1a] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shadow-md z-20"
-            aria-label="Previous Slide"
-          >
-            <span className="material-symbols-outlined">chevron_left</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setCurrentSlide((prev) => (prev === heroSlides.length - 1 ? 0 : prev + 1));
-            }}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 backdrop-blur-md hover:bg-white text-white hover:text-[#1b1c1a] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shadow-md z-20"
-            aria-label="Next Slide"
-          >
-            <span className="material-symbols-outlined">chevron_right</span>
-          </button>
-
-          {/* Slide Indicator Dots */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20">
-            {heroSlides.map((_, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setCurrentSlide(idx);
-                }}
-                className={`h-2.5 rounded-full transition-all ${
-                  currentSlide === idx ? "w-8 bg-[#8e4d31]" : "w-2.5 bg-white/70 hover:bg-white"
-                }`}
-                aria-label={`Go to slide ${idx + 1}`}
-              />
-            ))}
-          </div>
-        </div>
+        )}
 
         {/* Popular Categories Grid (Matching User Screenshot design) */}
         <div className="space-y-6 pt-4">
@@ -347,29 +359,33 @@ const HomeScreen: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {popularCategories.map((cat) => (
-              <Link
-                key={cat.title}
-                to={`/collections?category=${encodeURIComponent(cat.category)}`}
-                className="group bg-white rounded-2xl overflow-hidden border border-[#e4e2de] shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 text-center"
-              >
-                <div className="relative aspect-[4/5] overflow-hidden bg-[#f5f3ef]">
-                  <img
-                    src={cat.image}
-                    alt={cat.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
-                </div>
-                <div className="p-4 bg-[#fbf9f5] border-t border-[#f5f3ef]">
-                  <h4 className="font-display text-base font-bold text-[#1b1c1a] group-hover:text-[#8e4d31] transition-colors">
-                    {cat.title}
-                  </h4>
-                </div>
-              </Link>
-            ))}
-          </div>
+          {isLoading ? (
+            <CategoryGridSkeleton />
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {popularCategories.map((cat) => (
+                <Link
+                  key={cat.title}
+                  to={`/collections?category=${encodeURIComponent(cat.category)}`}
+                  className="group bg-white rounded-2xl overflow-hidden border border-[#e4e2de] shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 text-center"
+                >
+                  <div className="relative aspect-[4/5] overflow-hidden bg-[#f5f3ef]">
+                    <img
+                      src={cat.image}
+                      alt={cat.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
+                  </div>
+                  <div className="p-4 bg-[#fbf9f5] border-t border-[#f5f3ef]">
+                    <h4 className="font-display text-base font-bold text-[#1b1c1a] group-hover:text-[#8e4d31] transition-colors">
+                      {cat.title}
+                    </h4>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Feature Highlights Bar (Ultra Crisp & Prominent matching screenshot) */}
@@ -465,10 +481,17 @@ const HomeScreen: React.FC = () => {
         </div>
 
         {/* Product Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {newArrivalsList
-            .filter((item) => newArrivalFilter === "All" || item.category === newArrivalFilter)
-            .map((prod) => (
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[1, 2, 3, 4].map((n) => (
+              <ProductCardSkeleton key={n} />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {newArrivalsList
+              .filter((item) => newArrivalFilter === "All" || item.category === newArrivalFilter)
+              .map((prod) => (
               <div
                 key={prod.id}
                 className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1.5 border border-[#e4e2de] flex flex-col justify-between"
@@ -521,7 +544,8 @@ const HomeScreen: React.FC = () => {
                 </div>
               </div>
             ))}
-        </div>
+          </div>
+        )}
       </section>
 
 

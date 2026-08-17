@@ -29,7 +29,7 @@ const ProductDetailScreen: React.FC = () => {
   const [activeImg, setActiveImg] = useState(product.images[0]);
 
   return (
-    <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12 font-body text-[#1b1c1a] space-y-16">
+    <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-12 font-body text-[#1b1c1a] space-y-16">
       {/* Breadcrumb */}
       <nav className="text-xs text-[#76786f] flex items-center gap-2">
         <Link to={RouteName.HOME} className="hover:text-[#8e4d31]">Home</Link>

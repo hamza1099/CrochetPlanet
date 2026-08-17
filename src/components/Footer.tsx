@@ -5,7 +5,7 @@ import { RouteName } from "../routes/RouteName";
 const Footer: React.FC = () => {
   return (
     <footer className="w-full bg-[#efeeea] border-t border-[#e4e2de] text-[#1b1c1a] font-body mt-20">
-      <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-16 grid grid-cols-1 md:grid-cols-4 gap-10">
+      <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-16 grid grid-cols-1 md:grid-cols-4 gap-10">
         {/* Brand info */}
         <div className="space-y-4 md:col-span-1">
           <div className="flex items-center gap-3">
@@ -69,6 +69,11 @@ const Footer: React.FC = () => {
             <li>
               <Link to={RouteName.LEARNING_HUB} className="hover:text-[#8e4d31] transition-colors">
                 Masterclass & Learning Hub
+              </Link>
+            </li>
+            <li>
+              <Link to={RouteName.CUSTOM_ORDER} className="hover:text-[#8e4d31] transition-colors">
+                Bespoke & Custom Order Inquiry
               </Link>
             </li>
           </ul>

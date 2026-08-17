@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Crochet Artisans - Order History &amp; Tracking</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&amp;family=Playfair+Display:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary": "#6d593c",
+                        "tertiary-container": "#877152",
+                        "on-primary-fixed-variant": "#434937",
+                        "on-primary-container": "#faffe8",
+                        "on-tertiary-fixed": "#271903",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#783c22",
+                        "surface-tint": "#5b614e",
+                        "on-primary-fixed": "#181d0f",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed-variant": "#564428",
+                        "surface-container-low": "#f5f3ef",
+                        "on-surface-variant": "#464840",
+                        "primary-fixed": "#dfe5cd",
+                        "error-container": "#ffdad6",
+                        "surface-bright": "#fbf9f5",
+                        "background": "#fbf9f5",
+                        "secondary": "#8e4d31",
+                        "surface-container-high": "#eae8e4",
+                        "outline": "#76786f",
+                        "surface-container-highest": "#e4e2de",
+                        "on-surface": "#1b1c1a",
+                        "inverse-surface": "#30312e",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#fffbff",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed": "#ffdbce",
+                        "secondary-fixed-dim": "#ffb598",
+                        "on-secondary-fixed-variant": "#71361d",
+                        "on-background": "#1b1c1a",
+                        "primary": "#585e4c",
+                        "inverse-primary": "#c3c9b2",
+                        "outline-variant": "#c7c7bd",
+                        "surface-variant": "#e4e2de",
+                        "surface-dim": "#dbdad6",
+                        "tertiary-fixed": "#fbdeb9",
+                        "surface": "#fbf9f5",
+                        "inverse-on-surface": "#f2f0ed",
+                        "primary-fixed-dim": "#c3c9b2",
+                        "tertiary-fixed-dim": "#dec29f",
+                        "on-secondary": "#ffffff",
+                        "surface-container": "#efeeea",
+                        "error": "#ba1a1a",
+                        "secondary-container": "#feaa88",
+                        "primary-container": "#717763",
+                        "on-secondary-fixed": "#370e00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "2xl": "1rem"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "margin-mobile": "20px",
+                        "margin-desktop": "64px",
+                        "section-gap": "120px",
+                        "gutter": "24px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["DM Sans"],
+                        "body-md": ["DM Sans"],
+                        "display-lg-mobile": ["Playfair Display"],
+                        "headline-sm": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"],
+                        "headline-md": ["Playfair Display"],
+                        "label-caps": ["DM Sans"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "display-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "600"}]
+                    },
+                    boxShadow: {
+                        'ambient-high': '0px 12px 32px rgba(140, 146, 125, 0.08)',
+                        'ambient-low': '0px 4px 12px rgba(140, 146, 125, 0.04)',
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Smooth transitions for tracking expansion */
+        .tracking-details {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.5s ease-out;
+        }
+        .tracking-details.expanded {
+            grid-template-rows: 1fr;
+        }
+        .tracking-inner {
+            overflow: hidden;
+        }
+        
+        /* Progress Bar Styles */
+        .progress-line {
+            height: 2px;
+            background: linear-gradient(to right, theme('colors.primary') 50%, theme('colors.outline-variant') 50%);
+            background-size: 200% 100%;
+            background-position: 100% 0;
+            transition: background-position 0.8s ease-in-out;
+        }
+        .progress-line.step-1 { background-position: 100% 0; }
+        .progress-line.step-2 { background-position: 75% 0; }
+        .progress-line.step-3 { background-position: 50% 0; }
+        .progress-line.step-4 { background-position: 25% 0; }
+        .progress-line.step-5 { background-position: 0% 0; }
+        
+        .progress-dot {
+            transition: all 0.4s ease;
+        }
+        .progress-dot.active {
+            background-color: theme('colors.primary');
+            border-color: theme('colors.primary');
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopNavBar -->
+<header class="w-full top-0 sticky bg-surface-bright dark:bg-surface-dim z-50 shadow-sm">
+<div class="max-w-container-max mx-auto px-gutter py-4 flex justify-between items-center">
+<nav class="hidden md:flex space-x-8">
+<a class="text-on-surface-variant hover:text-secondary transition-colors font-body-lg text-body-lg" href="#">Collections</a>
+<a class="text-on-surface-variant hover:text-secondary transition-colors font-body-lg text-body-lg" href="#">Artisans</a>
+<a class="text-on-surface-variant hover:text-secondary transition-colors font-body-lg text-body-lg" href="#">Our Story</a>
+<a class="text-on-surface-variant hover:text-secondary transition-colors font-body-lg text-body-lg" href="#">Care</a>
+</nav>
+<div class="font-display-lg text-display-lg text-secondary dark:text-secondary-fixed-dim">
+                Crochet Artisans
+            </div>
+<div class="flex items-center space-x-6 text-primary dark:text-primary-fixed-dim">
+<button class="hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all p-2 rounded-full duration-300 ease-in-out">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+</button>
+<button class="hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all p-2 rounded-full duration-300 ease-in-out">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-section-gap min-h-screen">
+<!-- Page Header -->
+<div class="mb-16 md:mb-24 text-center md:text-left">
+<h1 class="font-display-lg text-display-lg text-on-background mb-4">Your Journey</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+                Track the progress of your handcrafted pieces. Each stitch takes time, and we appreciate your patience as our artisans create your unique garments.
+            </p>
+</div>
+<!-- Orders Grid -->
+<div class="grid grid-cols-1 gap-8 md:gap-12 relative z-10">
+<!-- Order Card 1: Active Tracking (Expanded by default) -->
+<div class="order-card bg-surface-container-lowest rounded-2xl shadow-ambient-high border border-outline-variant/30 overflow-hidden" data-order="1">
+<!-- Order Header (Clickable) -->
+<div class="p-6 md:p-8 cursor-pointer flex flex-col md:flex-row justify-between items-start md:items-center group hover:bg-surface-container-low transition-colors duration-300" onclick="toggleTracking(1)">
+<div class="flex flex-col mb-4 md:mb-0">
+<div class="flex items-center gap-3 mb-2">
+<span class="font-headline-sm text-headline-sm text-on-background">Order #CR-9482</span>
+<span class="px-3 py-1 bg-primary-fixed/20 text-primary font-label-caps text-label-caps rounded-xl">In Progress</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant">Placed on Oct 12, 2024 • 2 items</span>
+</div>
+<div class="flex items-center gap-6 w-full md:w-auto justify-between md:justify-end">
+<span class="font-headline-md text-headline-md text-on-background">Rs. 14,500</span>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors transform rotate-180" id="icon-1">expand_more</span>
+</div>
+</div>
+<!-- Tracking Details (Expanded) -->
+<div class="tracking-details expanded" id="details-1">
+<div class="tracking-inner bg-surface border-t border-outline-variant/30">
+<div class="p-6 md:p-12">
+<!-- Progress Bar Container -->
+<div class="relative w-full max-w-4xl mx-auto mb-16 mt-8">
+<!-- Connecting Line -->
+<div class="absolute top-1/2 left-0 w-full -translate-y-1/2 z-0 px-4 md:px-8">
+<div class="progress-line step-3 w-full rounded-full"></div>
+</div>
+<!-- Steps -->
+<div class="relative z-10 flex justify-between w-full">
+<!-- Step 1 -->
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full border-2 border-primary bg-primary text-on-primary flex items-center justify-center mb-4 progress-dot active">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+<span class="font-label-caps text-label-caps text-primary text-center hidden md:block">Pending</span>
+</div>
+<!-- Step 2 -->
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full border-2 border-primary bg-primary text-on-primary flex items-center justify-center mb-4 progress-dot active">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+<span class="font-label-caps text-label-caps text-primary text-center hidden md:block">Confirmed</span>
+</div>
+<!-- Step 3 (Current) -->
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full border-2 border-primary bg-surface flex items-center justify-center mb-4 progress-dot active shadow-[0_0_0_4px_rgba(88,94,76,0.1)]">
+<div class="w-3 h-3 bg-primary rounded-full"></div>
+</div>
+<span class="font-label-caps text-label-caps text-on-background text-center hidden md:block">In Progress</span>
+</div>
+<!-- Step 4 -->
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full border-2 border-outline-variant bg-surface flex items-center justify-center mb-4 progress-dot">
+</div>
+<span class="font-label-caps text-label-caps text-outline text-center hidden md:block">Shipped</span>
+</div>
+<!-- Step 5 -->
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full border-2 border-outline-variant bg-surface flex items-center justify-center mb-4 progress-dot">
+</div>
+<span class="font-label-caps text-label-caps text-outline text-center hidden md:block">Delivered</span>
+</div>
+</div>
+</div>
+<!-- Artisan Update Card -->
+<div class="bg-surface-container-low rounded-2xl p-6 md:p-8 flex flex-col md:flex-row gap-8 items-start">
+<div class="w-full md:w-1/3 rounded-xl overflow-hidden shadow-ambient-low">
+<img class="w-full h-48 object-cover object-center" data-alt="A close-up, high-quality, editorial style photograph of hands delicately crocheting a rich, warm beige yarn. The lighting is soft and natural, casting gentle shadows that highlight the intricate texture of the stitches. The background is slightly blurred, maintaining a minimalist and serene light-mode aesthetic focused on the craftsmanship." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAhTrVrb6d3Z79N1SF0kdIf4WRo_1cvDKfYr-HBEELa8ZYofu8KKWTocsRLRmSMO06VakdLx3GnuJ6stF5sbyrhQDEMl5IfqznNb75y7rhpqMwUnkeMeW2rcOpO6jJoczba71UuKLXcPvKQ7UA326UKlqXNbUWFqUvszCtxKI8Z0YseEPhOznzAOYAPzUwTqPXNSPu8n24Ckk7Qe6nvLXaxkFaD5d27V-cJa2NGgwS5bRJWCDyDZF71Q"/>
+</div>
+<div class="flex-1">
+<h3 class="font-headline-sm text-headline-sm text-on-background mb-2">Artisan Update: Crafting your Cardigan</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">
+                                        Your 'Midnight Bloom' cardigan is currently on the loom. Amina, your artisan, has completed the intricate floral motifs for the sleeves and is now assembling the main body panels. The organic cotton yarn responds beautifully to her experienced tension.
+                                    </p>
+<button class="font-label-caps text-label-caps text-primary border-b border-primary pb-1 hover:text-secondary hover:border-secondary transition-colors">
+                                        READ AMINA'S STORY
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Order Card 2: Delivered (Collapsed) -->
+<div class="order-card bg-surface-container-lowest rounded-2xl shadow-ambient-low border border-outline-variant/20 hover:shadow-ambient-high transition-shadow duration-300 overflow-hidden" data-order="2">
+<!-- Order Header -->
+<div class="p-6 md:p-8 cursor-pointer flex flex-col md:flex-row justify-between items-start md:items-center group hover:bg-surface-container-low transition-colors duration-300" onclick="toggleTracking(2)">
+<div class="flex flex-col mb-4 md:mb-0">
+<div class="flex items-center gap-3 mb-2">
+<span class="font-headline-sm text-headline-sm text-on-background">Order #CR-8102</span>
+<span class="px-3 py-1 bg-surface-container-highest text-on-surface-variant font-label-caps text-label-caps rounded-xl">Delivered</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant">Placed on Aug 04, 2024 • 1 item</span>
+</div>
+<div class="flex items-center gap-6 w-full md:w-auto justify-between md:justify-end">
+<span class="font-headline-md text-headline-md text-on-surface-variant">Rs. 8,200</span>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" id="icon-2">expand_more</span>
+</div>
+</div>
+<!-- Tracking Details (Collapsed) -->
+<div class="tracking-details" id="details-2">
+<div class="tracking-inner bg-surface border-t border-outline-variant/20">
+<div class="p-6 md:p-8 text-center text-on-surface-variant py-12">
+<span class="material-symbols-outlined text-[48px] text-tertiary mb-4">check_circle</span>
+<h4 class="font-headline-sm text-headline-sm text-on-background mb-2">Delivered Safely</h4>
+<p class="font-body-md text-body-md max-w-md mx-auto">This item was delivered on Aug 22, 2024. We hope it brings warmth and joy to your days.</p>
+<button class="mt-6 px-6 py-3 bg-transparent border border-tertiary-container text-on-background rounded-lg font-label-caps text-label-caps hover:bg-surface-container-highest transition-colors">
+                                LEAVE A REVIEW
+                             </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full mt-section-gap bg-surface-container dark:bg-surface-container-highest">
+<div class="max-w-container-max mx-auto px-gutter py-margin-desktop grid grid-cols-1 md:grid-cols-3 gap-12">
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md text-secondary mb-4">Crochet Artisans</span>
+<p class="font-body-md text-body-md text-primary dark:text-primary-fixed-dim">
+                    © 2024 Crochet Artisans. Empowering women through slow fashion.
+                </p>
+</div>
+<div class="flex flex-col space-y-4">
+<a class="text-on-surface-variant hover:text-secondary font-body-md text-body-md transition-opacity hover:opacity-80" href="#">The Artisan Story</a>
+<a class="text-on-surface-variant hover:text-secondary font-body-md text-body-md transition-opacity hover:opacity-80" href="#">Sustainability</a>
+</div>
+<div class="flex flex-col space-y-4">
+<a class="text-on-surface-variant hover:text-secondary font-body-md text-body-md transition-opacity hover:opacity-80" href="#">Wholesale</a>
+<a class="text-on-surface-variant hover:text-secondary font-body-md text-body-md transition-opacity hover:opacity-80" href="#">Contact Us</a>
+</div>
+</div>
+</footer>
+<script>
+        function toggleTracking(orderId) {
+            const details = document.getElementById(`details-${orderId}`);
+            const icon = document.getElementById(`icon-${orderId}`);
+            
+            if (details.classList.contains('expanded')) {
+                details.classList.remove('expanded');
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                details.classList.add('expanded');
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+    </script>
+</body></html>

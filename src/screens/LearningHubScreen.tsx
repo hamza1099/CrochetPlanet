@@ -60,7 +60,7 @@ const LearningHubScreen: React.FC = () => {
   });
 
   return (
-    <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-16 font-body text-[#1b1c1a] space-y-16">
+    <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-16 font-body text-[#1b1c1a] space-y-16">
       {/* Header Section */}
       <header className="text-center max-w-3xl mx-auto space-y-4">
         <h1 className="font-display text-4xl md:text-6xl font-semibold text-[#1b1c1a]">

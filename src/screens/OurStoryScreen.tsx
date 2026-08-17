@@ -4,7 +4,7 @@ import { RouteName } from "../routes/RouteName";
 
 const OurStoryScreen: React.FC = () => {
   return (
-    <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-16 font-body text-[#1b1c1a] space-y-20">
+    <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-16 font-body text-[#1b1c1a] space-y-20">
       {/* Hero Section */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <div className="space-y-6">

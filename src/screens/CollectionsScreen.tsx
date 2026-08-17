@@ -12,6 +12,8 @@ import dealAsset2 from "../assets/b4d37b644ab42da78f9a3d42a5a8fdbd.jpg";
 import dealAsset3 from "../assets/00e8740777397293dda3482477592c66.jpg";
 import dealAsset4 from "../assets/1e395a4512140c8e752d25cdaaff7bd6.jpg";
 
+import { ProductCardSkeleton } from "../components/Skeletons";
+
 const allProducts = [
   {
     id: "fw-1",
@@ -138,8 +140,13 @@ const CollectionsScreen: React.FC = () => {
   const yarnTypes = ["All", "Organic Wool", "Pima Cotton", "Merino Blend"];
 
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Sync Category & Search from URL query parameter
+  useEffect(() => {
+    setIsLoading(true);
+    const timer = setTimeout(() => setIsLoading(false), 600);
+    return () => clearTimeout(timer);
+  }, [selectedCategory, selectedYarn, sortBy, searchQuery]);
   useEffect(() => {
     const catQuery = searchParams.get("category");
     const searchQueryParam = searchParams.get("search");
@@ -208,7 +215,7 @@ const CollectionsScreen: React.FC = () => {
     });
 
   return (
-    <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12 font-body text-[#1b1c1a]">
+    <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-12 font-body text-[#1b1c1a]">
       {/* Header */}
       <header className="text-center max-w-3xl mx-auto mb-16 space-y-4">
         <span className="text-xs font-bold uppercase tracking-widest text-[#8e4d31]">
@@ -333,8 +340,15 @@ const CollectionsScreen: React.FC = () => {
           </div>
 
           {/* Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProducts.map((prod) => (
+          {isLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <ProductCardSkeleton key={i} />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredProducts.map((prod) => (
               <div
                 key={prod.id}
                 className="group flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-[#e4e2de]"
@@ -384,6 +398,7 @@ const CollectionsScreen: React.FC = () => {
               </div>
             ))}
           </div>
+        )}
         </main>
       </div>
     </div>
