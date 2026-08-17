@@ -387,65 +387,6 @@ const HomeScreen: React.FC = () => {
             </div>
           )}
         </div>
-
-        {/* Feature Highlights Bar (Ultra Crisp & Prominent matching screenshot) */}
-        <div className="bg-white p-8 sm:p-10 rounded-3xl border border-[#e4e2de] shadow-xl">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 md:gap-0 text-center">
-            {/* Worldwide Shipping */}
-            <div className="flex flex-col items-center justify-center p-4 space-y-2 md:border-r md:border-[#efeeea]">
-              <span className="material-symbols-outlined text-3xl sm:text-4xl text-[#8e4d31]">
-                local_shipping
-              </span>
-              <h4 className="font-display text-base sm:text-lg font-bold text-[#1b1c1a] tracking-wide">
-                Worldwide Shipping
-              </h4>
-              <p className="text-xs sm:text-sm text-[#52544a] font-medium">
-                Free shipping on orders over $100
-              </p>
-            </div>
-
-            {/* 100% Organic Yarns */}
-            <div className="flex flex-col items-center justify-center p-4 space-y-2 md:border-r md:border-[#efeeea]">
-              <span className="material-symbols-outlined text-3xl sm:text-4xl text-[#8e4d31]">
-                eco
-              </span>
-              <h4 className="font-display text-base sm:text-lg font-bold text-[#1b1c1a] tracking-wide">
-                100% Organic Yarns
-              </h4>
-              <p className="text-xs sm:text-sm text-[#52544a] font-medium">
-                Pure merino wool & pima cotton
-              </p>
-            </div>
-
-            {/* Artisan Empowered */}
-            <div className="flex flex-col items-center justify-center p-4 space-y-2 md:border-r md:border-[#efeeea]">
-              <span className="material-symbols-outlined text-3xl sm:text-4xl text-[#8e4d31]">
-                diversity_1
-              </span>
-              <h4 className="font-display text-base sm:text-lg font-bold text-[#1b1c1a] tracking-wide">
-                Artisan Empowered
-              </h4>
-              <p className="text-xs sm:text-sm text-[#52544a] font-medium">
-                Fair wages for women weavers
-              </p>
-            </div>
-
-            {/* Lifetime Quality */}
-            <div className="flex flex-col items-center justify-center p-4 space-y-2">
-              <div className="relative">
-                <span className="material-symbols-outlined text-3xl sm:text-4xl text-[#8e4d31]">
-                  verified_user
-                </span>
-              </div>
-              <h4 className="font-display text-base sm:text-lg font-bold text-[#1b1c1a] tracking-wide">
-                Lifetime Quality
-              </h4>
-              <p className="text-xs sm:text-sm text-[#52544a] font-medium">
-                Durable heirloom craftsmanship
-              </p>
-            </div>
-          </div>
-        </div>
       </section>
 
 
@@ -750,7 +691,65 @@ const HomeScreen: React.FC = () => {
       {/* =========================================================================
           SECTION 4.5: OUR HERITAGE (WEAVING STORIES INTO EVERY STITCH)
          ========================================================================= */}
-      <section className="max-w-[1440px] mx-auto px-4 md:px-8 py-12">
+      <section className="max-w-[1440px] mx-auto px-4 md:px-8 py-12 space-y-12">
+        {/* Feature Highlights Bar (Placed directly above 'Weaving Stories Into Every Stitch') */}
+        <div className="bg-white p-8 sm:p-10 rounded-3xl border border-[#e4e2de] shadow-xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 md:gap-0 text-center">
+            {/* Worldwide Shipping */}
+            <div className="flex flex-col items-center justify-center p-4 space-y-2 md:border-r md:border-[#efeeea]">
+              <span className="material-symbols-outlined text-3xl sm:text-4xl text-[#8e4d31]">
+                local_shipping
+              </span>
+              <h4 className="font-display text-base sm:text-lg font-bold text-[#1b1c1a] tracking-wide">
+                Worldwide Shipping
+              </h4>
+              <p className="text-xs sm:text-sm text-[#52544a] font-medium">
+                Free shipping on orders over $100
+              </p>
+            </div>
+
+            {/* 100% Organic Yarns */}
+            <div className="flex flex-col items-center justify-center p-4 space-y-2 md:border-r md:border-[#efeeea]">
+              <span className="material-symbols-outlined text-3xl sm:text-4xl text-[#8e4d31]">
+                eco
+              </span>
+              <h4 className="font-display text-base sm:text-lg font-bold text-[#1b1c1a] tracking-wide">
+                100% Organic Yarns
+              </h4>
+              <p className="text-xs sm:text-sm text-[#52544a] font-medium">
+                Pure merino wool & pima cotton
+              </p>
+            </div>
+
+            {/* Artisan Empowered */}
+            <div className="flex flex-col items-center justify-center p-4 space-y-2 md:border-r md:border-[#efeeea]">
+              <span className="material-symbols-outlined text-3xl sm:text-4xl text-[#8e4d31]">
+                diversity_1
+              </span>
+              <h4 className="font-display text-base sm:text-lg font-bold text-[#1b1c1a] tracking-wide">
+                Artisan Empowered
+              </h4>
+              <p className="text-xs sm:text-sm text-[#52544a] font-medium">
+                Fair wages for women weavers
+              </p>
+            </div>
+
+            {/* Lifetime Quality */}
+            <div className="flex flex-col items-center justify-center p-4 space-y-2">
+              <div className="relative">
+                <span className="material-symbols-outlined text-3xl sm:text-4xl text-[#8e4d31]">
+                  verified_user
+                </span>
+              </div>
+              <h4 className="font-display text-base sm:text-lg font-bold text-[#1b1c1a] tracking-wide">
+                Lifetime Quality
+              </h4>
+              <p className="text-xs sm:text-sm text-[#52544a] font-medium">
+                Durable heirloom craftsmanship
+              </p>
+            </div>
+          </div>
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center bg-[#fcfbf9] p-8 md:p-12 rounded-3xl border border-[#e4e2de]">
           {/* Left Column Text Content */}
           <div className="lg:col-span-6 space-y-6">
