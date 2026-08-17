@@ -89,34 +89,39 @@ const Navbar: React.FC = () => {
 
           </Link>
 
-          {/* Center Search Bar with Popular Suggestions */}
-          <div ref={searchRef} className="relative flex-1 max-w-xl mx-2 sm:mx-6">
-            <form onSubmit={handleSearchSubmit} className="relative flex items-center">
-              <span className="material-symbols-outlined absolute left-3 text-[#76786f] text-lg pointer-events-none">
+          {/* Center Search Bar with Popular Suggestions (Desktop only) */}
+          <div ref={searchRef} className="hidden lg:flex relative flex-grow max-w-md mx-4">
+            <div className="relative w-full">
+              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#76786f] text-lg">
                 search
               </span>
               <input
                 type="text"
-                placeholder="Search for products"
+                placeholder="Search artisanal crochet, baby wear..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setIsSearchFocused(true)}
-                className="w-full bg-[#f3f0e8] hover:bg-white focus:bg-white text-[#1b1c1a] placeholder-[#76786f] text-xs sm:text-sm pl-10 pr-10 py-2 rounded-md border border-[#c7c7bd] focus:border-[#8e4d31] outline-none transition-all"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && searchQuery.trim()) {
+                    navigate(`${RouteName.COLLECTIONS}?search=${encodeURIComponent(searchQuery)}`);
+                    setIsSearchFocused(false);
+                  }
+                }}
+                className="w-full pl-9 pr-8 py-2 bg-[#f5f3ef] border border-[#e4e2de] rounded-full text-xs text-[#1b1c1a] placeholder-[#76786f] focus:outline-none focus:border-[#8e4d31] transition-all"
               />
               {searchQuery && (
                 <button
-                  type="button"
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-3 text-[#76786f] hover:text-[#1b1c1a]"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#76786f] hover:text-[#1b1c1a]"
                 >
-                  <span className="material-symbols-outlined text-base">close</span>
+                  <span className="material-symbols-outlined text-sm">close</span>
                 </button>
               )}
-            </form>
+            </div>
 
-            {/* Popular Suggestions Popover */}
+            {/* Live Search Autocomplete Popup */}
             {isSearchFocused && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-[#e4e2de] rounded-xl shadow-xl p-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-[#e4e2de] rounded-2xl shadow-2xl p-4 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                 <div className="flex items-center justify-between mb-3 pb-2 border-b border-[#f5f3ef]">
                   <span className="text-xs font-bold uppercase tracking-wider text-[#8e4d31] flex items-center gap-1">
                     <span className="material-symbols-outlined text-sm">trending_up</span>
@@ -153,16 +158,14 @@ const Navbar: React.FC = () => {
             )}
           </div>
 
-          {/* Right Actions: Currency Switcher, User Avatar & Cart */}
+          {/* Right Actions: Currency Switcher, User Avatar & Cart (Desktop) + Burger Button (Mobile) */}
           <div className="flex items-center gap-3 sm:gap-5 text-[#464840] shrink-0 text-xs">
-            {/* Currency Selector Pill */}
-            <div className="flex items-center bg-[#f5f3ef] border border-[#e4e2de] rounded-full p-1 text-[11px] font-bold">
+            {/* Desktop Currency Selector Pill */}
+            <div className="hidden lg:flex items-center bg-[#f5f3ef] border border-[#e4e2de] rounded-full p-1 text-[11px] font-bold">
               <button
                 onClick={() => setCurrency("PKR")}
                 className={`px-2.5 py-1 rounded-full transition-all ${
-                  currency === "PKR"
-                    ? "bg-[#585e4c] text-white shadow-sm"
-                    : "text-[#76786f] hover:text-[#1b1c1a]"
+                  currency === "PKR" ? "bg-[#585e4c] text-white shadow-sm" : "text-[#76786f] hover:text-[#1b1c1a]"
                 }`}
               >
                 PKR (Rs)
@@ -170,22 +173,19 @@ const Navbar: React.FC = () => {
               <button
                 onClick={() => setCurrency("USD")}
                 className={`px-2.5 py-1 rounded-full transition-all ${
-                  currency === "USD"
-                    ? "bg-[#585e4c] text-white shadow-sm"
-                    : "text-[#76786f] hover:text-[#1b1c1a]"
+                  currency === "USD" ? "bg-[#585e4c] text-white shadow-sm" : "text-[#76786f] hover:text-[#1b1c1a]"
                 }`}
               >
                 USD ($)
               </button>
             </div>
 
-            {/* User Avatar with Initial & Dropdown Menu */}
-            <div className="relative group">
+            {/* Desktop User Avatar */}
+            <div className="hidden lg:block relative group">
               <Link
                 to={RouteName.PROFILE}
                 className="flex items-center gap-2 text-[#464840] hover:text-[#8e4d31] transition-colors py-1 px-1 rounded-full group"
               >
-                {/* Circular Avatar with User Initial */}
                 <div className="w-8 h-8 rounded-full bg-[#585e4c] text-white flex items-center justify-center font-bold text-xs shadow-sm group-hover:bg-[#8e4d31] transition-colors">
                   T
                 </div>
@@ -228,10 +228,10 @@ const Navbar: React.FC = () => {
               </div>
             </div>
 
-            {/* Cart Icon */}
+            {/* Desktop Cart Button */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative flex flex-col items-center hover:text-[#8e4d31]"
+              className="hidden lg:flex relative flex-col items-center hover:text-[#8e4d31]"
               aria-label="Open Cart"
             >
               <span className="material-symbols-outlined text-xl">shopping_cart</span>
@@ -243,19 +243,20 @@ const Navbar: React.FC = () => {
               )}
             </button>
 
-            {/* Mobile Menu Button */}
+            {/* Mobile Menu Button (ONLY visible element on mobile right side) */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-1 text-[#1b1c1a] hover:bg-[#eae8e4] rounded-lg transition-colors"
+              className="lg:hidden w-10 h-10 flex items-center justify-center text-[#1b1c1a] bg-white border border-[#e4e2de] rounded-xl hover:bg-[#eae8e4] active:scale-95 transition-all shadow-sm"
+              aria-label="Toggle Menu"
             >
-              <span className="material-symbols-outlined text-2xl">
+              <span className="material-symbols-outlined text-xl leading-none flex items-center justify-center">
                 {mobileMenuOpen ? "close" : "menu"}
               </span>
             </button>
           </div>
         </div>
 
-        {/* Original Horizontal Menu Links Bar */}
+        {/* Desktop Menu Links Bar */}
         <div className="hidden lg:block border-t border-[#efeeea] bg-[#fbf9f5]">
           <nav className="max-w-[1440px] mx-auto px-4 md:px-8 py-2 flex items-center justify-center gap-6">
             {navLinks.map((link) => {
@@ -270,14 +271,11 @@ const Navbar: React.FC = () => {
                   >
                     <button
                       onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
-                      className={`text-[11px] font-semibold tracking-wider transition-all flex items-center gap-1 ${isActive ? "text-[#8e4d31]" : "text-[#464840] hover:text-[#8e4d31]"
-                        }`}
+                      className={`text-[11px] font-semibold tracking-wider transition-all flex items-center gap-1 ${isActive ? "text-[#8e4d31]" : "text-[#464840] hover:text-[#8e4d31]"}`}
                     >
                       <span>{link.name}</span>
                       <span className="material-symbols-outlined text-xs">keyboard_arrow_down</span>
                     </button>
-
-                    {/* Dropdown Menu Box */}
                     {categoryDropdownOpen && (
                       <div className="absolute top-full left-0 w-60 bg-white border border-[#e4e2de] rounded-2xl shadow-2xl p-3 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
                         <div className="text-[11px] font-bold uppercase tracking-wider text-[#8e4d31] mb-2 px-3 pt-1">
@@ -295,10 +293,7 @@ const Navbar: React.FC = () => {
                                   navigate(`${RouteName.COLLECTIONS}?category=${encodeURIComponent(cat)}`);
                                 }
                               }}
-                              className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${idx === 0
-                                ? "bg-[#8e4d31] text-white shadow-sm"
-                                : "text-[#464840] hover:bg-[#f5f3ef] hover:text-[#8e4d31]"
-                                }`}
+                              className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${idx === 0 ? "bg-[#8e4d31] text-white shadow-sm" : "text-[#464840] hover:bg-[#f5f3ef] hover:text-[#8e4d31]"}`}
                             >
                               {cat}
                             </button>
@@ -309,15 +304,11 @@ const Navbar: React.FC = () => {
                   </div>
                 );
               }
-
               return (
                 <Link
                   key={link.name}
                   to={link.path}
-                  className={`text-[11px] font-semibold tracking-wider transition-all py-1 flex items-center gap-1 ${isActive
-                    ? "text-[#8e4d31] border-b-2 border-[#8e4d31]"
-                    : "text-[#464840] hover:text-[#8e4d31]"
-                    }`}
+                  className={`text-[11px] font-semibold tracking-wider transition-all py-1 flex items-center gap-1 ${isActive ? "text-[#8e4d31] border-b-2 border-[#8e4d31]" : "text-[#464840] hover:text-[#8e4d31]"}`}
                 >
                   <span>{link.name}</span>
                 </Link>
@@ -326,24 +317,133 @@ const Navbar: React.FC = () => {
           </nav>
         </div>
 
-        {/* Mobile Drawer Navigation */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden bg-[#fbf9f5] border-b border-[#e4e2de] px-6 py-4 space-y-3">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                to={link.path}
-                onClick={() => setMobileMenuOpen(false)}
-                className={`block text-xs font-bold tracking-wider py-2 border-b border-[#efeeea] ${location.pathname === link.path ? "text-[#8e4d31]" : "text-[#464840]"
-                  }`}
-              >
-                {link.name}
-              </Link>
-            ))}
-          </div>
-        )}
-
       </header>
+
+      {/* Full-Screen Mobile Menu Drawer (Outside Header for proper fixed stacking) */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden fixed inset-0 z-[99999] bg-[#fbf9f5] flex flex-col justify-between overflow-y-auto animate-in fade-in duration-200">
+          {/* Mobile Drawer Top Bar */}
+          <div className="px-4 py-3 bg-[#fbf9f5] border-b border-[#e4e2de] flex items-center justify-between sticky top-0 z-10">
+            <Link to={RouteName.HOME} onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2">
+              <div className="bg-white p-1 rounded-lg border border-[#e4e2de] shadow-sm">
+                <img src={logoImg} alt="CrochCosmo" className="h-10 w-auto object-contain" />
+              </div>
+            </Link>
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="w-10 h-10 flex items-center justify-center text-[#1b1c1a] bg-white border border-[#e4e2de] rounded-xl shadow-sm hover:bg-[#eae8e4] active:scale-95 transition-all"
+              aria-label="Close Menu"
+            >
+              <span className="material-symbols-outlined text-xl leading-none flex items-center justify-center">close</span>
+            </button>
+          </div>
+
+          {/* Drawer Body Content */}
+          <div className="px-6 py-6 space-y-6 flex-1">
+            {/* 1. Mobile Search Bar */}
+            <div className="relative w-full">
+              <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-[#76786f] text-lg">
+                search
+              </span>
+              <input
+                type="text"
+                placeholder="Search artisanal crochet, baby wear..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && searchQuery.trim()) {
+                    navigate(`${RouteName.COLLECTIONS}?search=${encodeURIComponent(searchQuery)}`);
+                    setMobileMenuOpen(false);
+                  }
+                }}
+                className="w-full pl-10 pr-8 py-3 bg-white border border-[#e4e2de] rounded-xl text-xs text-[#1b1c1a] placeholder-[#76786f] focus:outline-none focus:border-[#8e4d31] shadow-sm"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#76786f]"
+                >
+                  <span className="material-symbols-outlined text-sm">close</span>
+                </button>
+              )}
+            </div>
+
+            {/* 2. Currency Switcher & Cart Action Card */}
+            <div className="flex items-center justify-between bg-white p-3 rounded-2xl border border-[#e4e2de] shadow-sm">
+              <div className="flex items-center bg-[#f5f3ef] border border-[#e4e2de] rounded-full p-1 text-xs font-bold">
+                <button
+                  onClick={() => setCurrency("PKR")}
+                  className={`px-3 py-1 rounded-full transition-all ${
+                    currency === "PKR" ? "bg-[#585e4c] text-white shadow-sm" : "text-[#76786f]"
+                  }`}
+                >
+                  PKR (Rs)
+                </button>
+                <button
+                  onClick={() => setCurrency("USD")}
+                  className={`px-3 py-1 rounded-full transition-all ${
+                    currency === "USD" ? "bg-[#585e4c] text-white shadow-sm" : "text-[#76786f]"
+                  }`}
+                >
+                  USD ($)
+                </button>
+              </div>
+
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setIsCartOpen(true);
+                }}
+                className="flex items-center gap-2 bg-[#8e4d31] text-white px-4 py-2 rounded-xl text-xs font-bold shadow-md active:scale-95 transition-transform"
+              >
+                <span className="material-symbols-outlined text-base">shopping_cart</span>
+                <span>Cart ({totalCount})</span>
+              </button>
+            </div>
+
+            {/* 3. User Account Tile */}
+            <div className="bg-white p-3.5 rounded-2xl border border-[#e4e2de] shadow-sm flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#585e4c] text-white flex items-center justify-center font-bold text-sm">
+                  T
+                </div>
+                <div>
+                  <p className="font-semibold text-xs text-[#1b1c1a]">Tayyaba Hamza</p>
+                  <p className="text-[10px] text-[#76786f]">tayyaba.hamza@example.com</p>
+                </div>
+              </div>
+              <Link
+                to={RouteName.PROFILE}
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-xs font-bold text-[#8e4d31] hover:underline"
+              >
+                Profile →
+              </Link>
+            </div>
+
+            {/* 4. Mobile Navigation Links */}
+            <div className="space-y-1 pt-2">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  to={link.path}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`block text-sm font-bold tracking-wider py-3 border-b border-[#efeeea] ${
+                    location.pathname === link.path ? "text-[#8e4d31]" : "text-[#464840]"
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile Drawer Footer */}
+          <div className="p-6 border-t border-[#e4e2de] text-center text-xs text-[#76786f] bg-[#f5f3ef]">
+            © 2026 CrochCosmo Luxury Boutique. Handcrafted with Love.
+          </div>
+        </div>
+      )}
       {/* Sticky Floating WhatsApp Button on Bottom Right */}
       <a
         href="https://wa.me/923173004661?text=Hello%20CrochCosmo!%20I%20want%20to%20inquire%20about%20a%20product."
