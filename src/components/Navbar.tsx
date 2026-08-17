@@ -7,7 +7,7 @@ import logoImg from "../assets/Logo.jpg";
 const Navbar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { setIsCartOpen, totalCount } = useCart();
+  const { setIsCartOpen, totalCount, currency, setCurrency } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Search Bar state & suggestions
@@ -153,8 +153,32 @@ const Navbar: React.FC = () => {
             )}
           </div>
 
-          {/* Right Actions: User Avatar Dropdown & Cart */}
-          <div className="flex items-center gap-4 sm:gap-6 text-[#464840] shrink-0 text-xs">
+          {/* Right Actions: Currency Switcher, User Avatar & Cart */}
+          <div className="flex items-center gap-3 sm:gap-5 text-[#464840] shrink-0 text-xs">
+            {/* Currency Selector Pill */}
+            <div className="flex items-center bg-[#f5f3ef] border border-[#e4e2de] rounded-full p-1 text-[11px] font-bold">
+              <button
+                onClick={() => setCurrency("PKR")}
+                className={`px-2.5 py-1 rounded-full transition-all ${
+                  currency === "PKR"
+                    ? "bg-[#585e4c] text-white shadow-sm"
+                    : "text-[#76786f] hover:text-[#1b1c1a]"
+                }`}
+              >
+                PKR (Rs)
+              </button>
+              <button
+                onClick={() => setCurrency("USD")}
+                className={`px-2.5 py-1 rounded-full transition-all ${
+                  currency === "USD"
+                    ? "bg-[#585e4c] text-white shadow-sm"
+                    : "text-[#76786f] hover:text-[#1b1c1a]"
+                }`}
+              >
+                USD ($)
+              </button>
+            </div>
+
             {/* User Avatar with Initial & Dropdown Menu */}
             <div className="relative group">
               <Link

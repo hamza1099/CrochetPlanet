@@ -10,6 +10,8 @@ export interface CartItem {
   category?: string;
 }
 
+export type Currency = "PKR" | "USD";
+
 interface CartContextType {
   cart: CartItem[];
   addToCart: (item: Omit<CartItem, "quantity">) => void;
@@ -20,6 +22,9 @@ interface CartContextType {
   setIsCartOpen: (open: boolean) => void;
   totalCount: number;
   subtotal: number;
+  currency: Currency;
+  setCurrency: (c: Currency) => void;
+  formatPrice: (amountInUSD: number) => string;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -46,6 +51,23 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     },
   ]);
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
+  const [currency, setCurrencyState] = useState<Currency>(() => {
+    return (localStorage.getItem("croch_currency") as Currency) || "PKR";
+  });
+
+  const setCurrency = (c: Currency) => {
+    setCurrencyState(c);
+    localStorage.setItem("croch_currency", c);
+  };
+
+  // 1 USD = 280 PKR conversion rate for clean calculations
+  const formatPrice = (amountInUSD: number) => {
+    if (currency === "PKR") {
+      const pkrAmount = Math.round(amountInUSD * 280);
+      return `Rs. ${pkrAmount.toLocaleString()}`;
+    }
+    return `$${amountInUSD.toFixed(2)}`;
+  };
 
   const addToCart = (product: Omit<CartItem, "quantity">) => {
     setCart((prev) => {
@@ -95,6 +117,9 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setIsCartOpen,
         totalCount,
         subtotal,
+        currency,
+        setCurrency,
+        formatPrice,
       }}
     >
       {children}

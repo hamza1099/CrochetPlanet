@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { RouteName } from "../routes/RouteName";
 
 const CartDrawer: React.FC = () => {
-  const { cart, removeFromCart, updateQuantity, isCartOpen, setIsCartOpen, subtotal, totalCount } =
+  const { cart, removeFromCart, updateQuantity, isCartOpen, setIsCartOpen, subtotal, totalCount, formatPrice } =
     useCart();
 
   if (!isCartOpen) return null;
@@ -74,7 +74,7 @@ const CartDrawer: React.FC = () => {
                     {item.name}
                   </h4>
                   <p className="text-xs font-semibold text-[#8e4d31] mb-2">
-                    ${item.price.toFixed(2)}
+                    {formatPrice(item.price)}
                   </p>
                   <div className="flex items-center gap-3">
                     <div className="flex items-center border border-[#c7c7bd] rounded-lg overflow-hidden bg-[#fbf9f5]">
@@ -113,7 +113,7 @@ const CartDrawer: React.FC = () => {
             <div className="flex justify-between items-center text-sm">
               <span className="text-[#76786f]">Subtotal</span>
               <span className="font-display text-xl font-semibold text-[#1b1c1a]">
-                ${subtotal.toFixed(2)}
+                {formatPrice(subtotal)}
               </span>
             </div>
             <p className="text-xs text-[#76786f] text-center">
