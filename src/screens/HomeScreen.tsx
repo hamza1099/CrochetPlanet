@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { RouteName } from "../routes/RouteName";
 import { useCart } from "../context/CartContext";
@@ -15,10 +15,60 @@ import sunflowerImg from "../assets/Sunflower embroidery 🌻.jpeg";
 import dealAsset1 from "../assets/66e6aeeec3152c92d24b10fe5084a16d.jpg";
 import dealAsset2 from "../assets/b4d37b644ab42da78f9a3d42a5a8fdbd.jpg";
 import dealAsset4 from "../assets/1e395a4512140c8e752d25cdaaff7bd6.jpg";
+import sideBannerImg from "../assets/side banner.jpg";
 
 const HomeScreen: React.FC = () => {
   const { addToCart } = useCart();
   const fashionSectionRef = useRef<HTMLDivElement>(null);
+
+  // Hero Sliding Carousel State & Data
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const heroSlides = [
+    {
+      id: 1,
+      image: mainBannerImg,
+      badge: "Art in Every Stitch",
+      title: "Cute. Crafted. Just for You.",
+      subtitle: "Handmade with Love • Soft & Durable • Perfect Gift For Anyone",
+      cta: "Shop Now 🛒",
+      link: "/collections",
+    },
+    {
+      id: 2,
+      image: womenBannerImg,
+      badge: "Women's Collection",
+      title: "Exclusive Women's Fashion & Knitwear",
+      subtitle: "Handcrafted Cardigans, Sweaters, & Artisanal Accessories",
+      cta: "Explore Women's Wear",
+      link: "/collections?category=Women's Fashion",
+    },
+    {
+      id: 3,
+      image: menBannerImg,
+      badge: "Men's Collection",
+      title: "Vintage Knitted Menswear & Overshirts",
+      subtitle: "Breathable hand-knitted luxury for every season",
+      cta: "Explore Men's Wear",
+      link: "/collections?category=Men's Fashion",
+    },
+  ];
+
+  // Auto-play timer for Hero Carousel
+  useEffect(() => {
+    const slideTimer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 5000);
+    return () => clearInterval(slideTimer);
+  }, [heroSlides.length]);
+
+  // Popular Categories list matching user screenshot
+  const popularCategories = [
+    { title: "Bag Charms", category: "Gifts & Home", image: hoodedCardiganImg },
+    { title: "Blanket Bouquets", category: "Baby Apparel", image: daisyCrochetImg },
+    { title: "Book Lovers", category: "Gifts & Home", image: dealAsset1 },
+    { title: "Bottle Holder", category: "Gifts & Home", image: sunflowerImg },
+  ];
 
   // State for Gender Tab in Men & Women section (Only Women and Men tabs)
   const [genderTab, setGenderTab] = useState<"women" | "men">("women");
@@ -212,64 +262,172 @@ const HomeScreen: React.FC = () => {
 
   return (
     <div className="space-y-20 font-body text-[#1b1c1a] bg-[#fbf9f5] min-h-screen pb-20">
-      
+
       {/* =========================================================================
-          SECTION 1: HERO SPOTLIGHT (Clean Full Banner.png Display)
+          SECTION 1: SLIDING HERO CAROUSEL & POPULAR CATEGORIES GRID
          ========================================================================= */}
-      <section className="relative max-w-[1280px] mx-auto px-6 md:px-12 pt-6">
-        <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-[#e4e2de]">
-          
-          {/* Main Clean Banner Image Display */}
-          <div className="relative w-full overflow-hidden bg-[#2c2d28]">
-            <img
-              src={mainBannerImg}
-              alt="Exclusive Men & Women Crochet Collection 40% Special Offer"
-              className="w-full h-auto object-cover object-center block"
-            />
+      <section className="relative max-w-[1440px] mx-auto px-4 md:px-8 pt-6 space-y-12">
+        {/* Sliding Hero Panel (Smooth horizontal track animation) */}
+        <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-[#e4e2de] bg-[#1b1c1a] group cursor-pointer">
+          {/* Smooth Sliding Track Container */}
+          <div
+            className="flex transition-transform duration-700 ease-in-out w-full"
+            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+          >
+            {heroSlides.map((slide) => (
+              <Link
+                key={slide.id}
+                to={RouteName.COLLECTIONS}
+                className="w-full flex-shrink-0 relative block"
+              >
+                <img
+                  src={slide.image}
+                  alt="Hero Banner"
+                  className="w-full h-auto object-cover object-center block"
+                />
+              </Link>
+            ))}
           </div>
 
-          {/* Sleek Under-Banner Action Strip */}
-          <div className="bg-[#1b1c1a] text-white px-6 md:px-10 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-[#8e4d31]/40">
-            <div className="flex items-center gap-3">
-              <span className="px-3.5 py-1 bg-[#8e4d31] text-white rounded-full text-xs font-bold uppercase tracking-widest animate-pulse">
-                🔥 40% SPECIAL OFFER
-              </span>
-              <span className="text-xs text-gray-300 font-medium hidden md:inline">
-                Direct Seasonal Discount Applied Across Men & Women Collections
-              </span>
-            </div>
+          {/* Navigation Controls: Prev / Next Buttons */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setCurrentSlide((prev) => (prev === 0 ? heroSlides.length - 1 : prev - 1));
+            }}
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 backdrop-blur-md hover:bg-white text-white hover:text-[#1b1c1a] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shadow-md z-20"
+            aria-label="Previous Slide"
+          >
+            <span className="material-symbols-outlined">chevron_left</span>
+          </button>
 
-            <Link
-              to="/collections?category=Women"
-              className="px-6 py-2.5 bg-[#8e4d31] hover:bg-[#a65b3b] text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-all shadow-md flex items-center gap-2"
-            >
-              Explore 40% Off Items
-              <span className="material-symbols-outlined text-sm">arrow_forward</span>
-            </Link>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setCurrentSlide((prev) => (prev === heroSlides.length - 1 ? 0 : prev + 1));
+            }}
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 backdrop-blur-md hover:bg-white text-white hover:text-[#1b1c1a] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shadow-md z-20"
+            aria-label="Next Slide"
+          >
+            <span className="material-symbols-outlined">chevron_right</span>
+          </button>
+
+          {/* Slide Indicator Dots */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20">
+            {heroSlides.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setCurrentSlide(idx);
+                }}
+                className={`h-2.5 rounded-full transition-all ${
+                  currentSlide === idx ? "w-8 bg-[#8e4d31]" : "w-2.5 bg-white/70 hover:bg-white"
+                }`}
+                aria-label={`Go to slide ${idx + 1}`}
+              />
+            ))}
           </div>
         </div>
 
-        {/* Feature Highlights Bar */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 bg-white p-6 rounded-2xl border border-[#e4e2de] shadow-sm text-center">
-          <div className="p-3">
-            <span className="material-symbols-outlined text-3xl text-[#8e4d31] mb-2">local_shipping</span>
-            <h4 className="font-display text-sm font-semibold text-[#1b1c1a]">Worldwide Shipping</h4>
-            <p className="text-xs text-[#76786f]">Free shipping on orders over $100</p>
+        {/* Popular Categories Grid (Matching User Screenshot design) */}
+        <div className="space-y-6 pt-4">
+          <div className="text-center max-w-2xl mx-auto space-y-2">
+            <h3 className="font-display text-2xl sm:text-3xl font-bold text-[#1b1c1a]">
+              Popular Categories
+            </h3>
+            <p className="text-xs sm:text-sm text-[#76786f]">
+              Click any category to explore curated artisanal collections
+            </p>
           </div>
-          <div className="p-3 border-l border-[#f5f3ef]">
-            <span className="material-symbols-outlined text-3xl text-[#8e4d31] mb-2">eco</span>
-            <h4 className="font-display text-sm font-semibold text-[#1b1c1a]">100% Organic Yarns</h4>
-            <p className="text-xs text-[#76786f]">Pure merino wool & pima cotton</p>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {popularCategories.map((cat) => (
+              <Link
+                key={cat.title}
+                to={`/collections?category=${encodeURIComponent(cat.category)}`}
+                className="group bg-white rounded-2xl overflow-hidden border border-[#e4e2de] shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 text-center"
+              >
+                <div className="relative aspect-[4/5] overflow-hidden bg-[#f5f3ef]">
+                  <img
+                    src={cat.image}
+                    alt={cat.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
+                </div>
+                <div className="p-4 bg-[#fbf9f5] border-t border-[#f5f3ef]">
+                  <h4 className="font-display text-base font-bold text-[#1b1c1a] group-hover:text-[#8e4d31] transition-colors">
+                    {cat.title}
+                  </h4>
+                </div>
+              </Link>
+            ))}
           </div>
-          <div className="p-3 border-l border-[#f5f3ef]">
-            <span className="material-symbols-outlined text-3xl text-[#8e4d31] mb-2">diversity_1</span>
-            <h4 className="font-display text-sm font-semibold text-[#1b1c1a]">Artisan Empowered</h4>
-            <p className="text-xs text-[#76786f]">Fair wages for women weavers</p>
-          </div>
-          <div className="p-3 border-l border-[#f5f3ef]">
-            <span className="material-symbols-outlined text-3xl text-[#8e4d31] mb-2">verified_user</span>
-            <h4 className="font-display text-sm font-semibold text-[#1b1c1a]">Lifetime Quality</h4>
-            <p className="text-xs text-[#76786f]">Durable heirloom craftsmanship</p>
+        </div>
+
+        {/* Feature Highlights Bar (Ultra Crisp & Prominent matching screenshot) */}
+        <div className="bg-white p-8 sm:p-10 rounded-3xl border border-[#e4e2de] shadow-xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 md:gap-0 text-center">
+            {/* Worldwide Shipping */}
+            <div className="flex flex-col items-center justify-center p-4 space-y-2 md:border-r md:border-[#efeeea]">
+              <span className="material-symbols-outlined text-3xl sm:text-4xl text-[#8e4d31]">
+                local_shipping
+              </span>
+              <h4 className="font-display text-base sm:text-lg font-bold text-[#1b1c1a] tracking-wide">
+                Worldwide Shipping
+              </h4>
+              <p className="text-xs sm:text-sm text-[#52544a] font-medium">
+                Free shipping on orders over $100
+              </p>
+            </div>
+
+            {/* 100% Organic Yarns */}
+            <div className="flex flex-col items-center justify-center p-4 space-y-2 md:border-r md:border-[#efeeea]">
+              <span className="material-symbols-outlined text-3xl sm:text-4xl text-[#8e4d31]">
+                eco
+              </span>
+              <h4 className="font-display text-base sm:text-lg font-bold text-[#1b1c1a] tracking-wide">
+                100% Organic Yarns
+              </h4>
+              <p className="text-xs sm:text-sm text-[#52544a] font-medium">
+                Pure merino wool & pima cotton
+              </p>
+            </div>
+
+            {/* Artisan Empowered */}
+            <div className="flex flex-col items-center justify-center p-4 space-y-2 md:border-r md:border-[#efeeea]">
+              <span className="material-symbols-outlined text-3xl sm:text-4xl text-[#8e4d31]">
+                diversity_1
+              </span>
+              <h4 className="font-display text-base sm:text-lg font-bold text-[#1b1c1a] tracking-wide">
+                Artisan Empowered
+              </h4>
+              <p className="text-xs sm:text-sm text-[#52544a] font-medium">
+                Fair wages for women weavers
+              </p>
+            </div>
+
+            {/* Lifetime Quality */}
+            <div className="flex flex-col items-center justify-center p-4 space-y-2">
+              <div className="relative">
+                <span className="material-symbols-outlined text-3xl sm:text-4xl text-[#8e4d31]">
+                  verified_user
+                </span>
+              </div>
+              <h4 className="font-display text-base sm:text-lg font-bold text-[#1b1c1a] tracking-wide">
+                Lifetime Quality
+              </h4>
+              <p className="text-xs sm:text-sm text-[#52544a] font-medium">
+                Durable heirloom craftsmanship
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -278,7 +436,7 @@ const HomeScreen: React.FC = () => {
       {/* =========================================================================
           SECTION 2: NEW ARRIVALS ("new arrival")
          ========================================================================= */}
-      <section className="max-w-[1280px] mx-auto px-6 md:px-12">
+      <section className="max-w-[1440px] mx-auto px-4 md:px-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
           <div>
             <span className="text-xs font-bold uppercase tracking-widest text-[#8e4d31] block mb-2">
@@ -295,11 +453,10 @@ const HomeScreen: React.FC = () => {
               <button
                 key={cat}
                 onClick={() => setNewArrivalFilter(cat)}
-                className={`px-4 py-2 rounded-full text-xs font-bold tracking-wider uppercase transition-all ${
-                  newArrivalFilter === cat
+                className={`px-4 py-2 rounded-full text-xs font-bold tracking-wider uppercase transition-all ${newArrivalFilter === cat
                     ? "bg-[#8e4d31] text-white shadow-md"
                     : "bg-white text-[#464840] border border-[#e4e2de] hover:bg-[#f5f3ef]"
-                }`}
+                  }`}
               >
                 {cat}
               </button>
@@ -372,8 +529,8 @@ const HomeScreen: React.FC = () => {
           SECTION 3: BABY ARTICLES SECTION ("baby articals")
          ========================================================================= */}
       <section className="bg-gradient-to-b from-[#f3f0e8] to-[#fbf9f5] py-16 border-y border-[#e4e2de]">
-        <div className="max-w-[1280px] mx-auto px-6 md:px-12">
-          
+        <div className="max-w-[1440px] mx-auto px-4 md:px-8">
+
           {/* Header Banner */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-12">
             <div className="lg:col-span-8 space-y-4">
@@ -414,7 +571,7 @@ const HomeScreen: React.FC = () => {
                   <span className="absolute top-3 left-3 bg-[#585e4c] text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-sm">
                     {item.badge}
                   </span>
-                  
+
                   <span className="absolute top-3 right-3 bg-red-600 text-white text-[10px] font-bold uppercase px-2.5 py-1 rounded-md shadow-sm">
                     SAVE ${(item.oldPrice - item.price).toFixed(0)}
                   </span>
@@ -457,8 +614,8 @@ const HomeScreen: React.FC = () => {
       {/* =========================================================================
           SECTION 4: MEN AND WOMEN ARTICLES WITH DYNAMIC WOMEN/MEN TABS & BANNERS
          ========================================================================= */}
-      <section ref={fashionSectionRef} className="max-w-[1280px] mx-auto px-6 md:px-12 space-y-12 scroll-mt-24">
-        
+      <section ref={fashionSectionRef} className="max-w-[1440px] mx-auto px-4 md:px-8 space-y-12 scroll-mt-24">
+
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
           <span className="text-xs font-bold uppercase tracking-widest text-[#8e4d31]">
@@ -475,21 +632,19 @@ const HomeScreen: React.FC = () => {
           <div className="inline-flex p-1.5 bg-[#eae8e4] rounded-2xl border border-[#e4e2de] mt-4">
             <button
               onClick={() => handleGenderTabChange("women")}
-              className={`px-8 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
-                genderTab === "women"
+              className={`px-8 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${genderTab === "women"
                   ? "bg-[#8e4d31] text-white shadow-md"
                   : "text-[#464840] hover:text-[#1b1c1a]"
-              }`}
+                }`}
             >
               Women's Wear
             </button>
             <button
               onClick={() => handleGenderTabChange("men")}
-              className={`px-8 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
-                genderTab === "men"
+              className={`px-8 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${genderTab === "men"
                   ? "bg-[#8e4d31] text-white shadow-md"
                   : "text-[#464840] hover:text-[#1b1c1a]"
-              }`}
+                }`}
             >
               Men's Wear
             </button>
@@ -530,7 +685,7 @@ const HomeScreen: React.FC = () => {
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
-                
+
                 <span className="absolute top-4 left-4 bg-white/90 backdrop-blur-md text-[#1b1c1a] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-sm">
                   {item.badge}
                 </span>
@@ -569,11 +724,66 @@ const HomeScreen: React.FC = () => {
 
 
       {/* =========================================================================
+          SECTION 4.5: OUR HERITAGE (WEAVING STORIES INTO EVERY STITCH)
+         ========================================================================= */}
+      <section className="max-w-[1440px] mx-auto px-4 md:px-8 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center bg-[#fcfbf9] p-8 md:p-12 rounded-3xl border border-[#e4e2de]">
+          {/* Left Column Text Content */}
+          <div className="lg:col-span-6 space-y-6">
+            <span className="text-xs font-bold uppercase tracking-widest text-[#8e4d31] block">
+              OUR HERITAGE
+            </span>
+            <h2 className="font-display text-4xl md:text-5xl font-bold text-[#1b1c1a] leading-tight">
+              Weaving Stories Into Every Stitch
+            </h2>
+            <p className="text-sm md:text-base text-[#52544a] leading-relaxed">
+              CrochCosmo by Tayyaba was born from a simple belief: true luxury lies in the time, intention, and cosmic inspiration woven into handcrafted art. We are a slow fashion sanctuary dedicated to preserving the delicate craft of crochet while infusing it with modern elegance.
+            </p>
+            <p className="text-sm md:text-base text-[#52544a] leading-relaxed">
+              Every piece in our collection—from our signature sunflower totes to our intricately detailed floral bouquets—is a labor of love. We source only premium, organic yarns, ensuring each creation not only looks breathtaking but feels incredibly soft against the skin and gentle on the earth.
+            </p>
+            <div className="pt-2">
+              <Link
+                to={RouteName.COLLECTIONS}
+                className="inline-block px-7 py-3.5 bg-[#4c5446] hover:bg-[#3d4438] text-white text-xs font-bold tracking-wider rounded-xl transition-all shadow-md"
+              >
+                Explore The Collection
+              </Link>
+            </div>
+          </div>
+
+          {/* Right Column Image & Artisanal Badge Box */}
+          <div className="lg:col-span-6 relative">
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-[#e4e2de]">
+              <img
+                src={sideBannerImg}
+                alt="Weaving Stories Into Every Stitch"
+                className="w-full h-auto object-cover max-h-[580px]"
+              />
+            </div>
+
+            {/* Artisanal Process Overlay Card */}
+            <div className="absolute -bottom-6 -left-6 md:-left-8 bg-white p-5 rounded-2xl border border-[#e4e2de] shadow-xl max-w-xs space-y-2 z-10">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-[#f5f3ef] flex items-center justify-center text-[#8e4d31]">
+                  <span className="material-symbols-outlined text-lg">build</span>
+                </div>
+                <h4 className="font-display text-sm font-bold text-[#1b1c1a]">Artisanal Process</h4>
+              </div>
+              <p className="text-xs text-[#76786f] leading-snug">
+                Over 40 hours of dedicated craftsmanship go into our signature pieces.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================================
           SECTION 5: OUR BEST ARTICLES ("our best articals")
          ========================================================================= */}
-      <section className="max-w-[1280px] mx-auto px-6 md:px-12">
+      <section className="max-w-[1440px] mx-auto px-4 md:px-8">
         <div className="bg-[#eae8e4] rounded-3xl p-8 md:p-14 border border-[#e4e2de] shadow-inner space-y-12">
-          
+
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 pb-6 border-b border-[#c7c7bd]">
             <div>
               <span className="text-xs font-bold uppercase tracking-widest text-[#8e4d31] block mb-2">

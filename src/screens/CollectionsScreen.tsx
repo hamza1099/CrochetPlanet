@@ -137,9 +137,19 @@ const CollectionsScreen: React.FC = () => {
 
   const yarnTypes = ["All", "Organic Wool", "Pima Cotton", "Merino Blend"];
 
-  // Sync Category from URL query parameter (e.g. ?category=Women's Fashion or ?category=Women)
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  // Sync Category & Search from URL query parameter
   useEffect(() => {
     const catQuery = searchParams.get("category");
+    const searchQueryParam = searchParams.get("search");
+
+    if (searchQueryParam) {
+      setSearchQuery(searchQueryParam);
+    } else {
+      setSearchQuery("");
+    }
+
     if (catQuery) {
       if (catQuery.toLowerCase().includes("women")) {
         setSelectedCategory("Women's Fashion");
@@ -165,7 +175,8 @@ const CollectionsScreen: React.FC = () => {
       searchParams.delete("category");
       setSearchParams(searchParams);
     } else {
-      setSearchParams({ category: cat });
+      searchParams.set("category", cat);
+      setSearchParams(searchParams);
     }
   };
 
@@ -181,6 +192,15 @@ const CollectionsScreen: React.FC = () => {
       return prod.category === selectedCategory;
     })
     .filter((prod) => selectedYarn === "All" || prod.yarn === selectedYarn)
+    .filter((prod) => {
+      if (!searchQuery.trim()) return true;
+      const q = searchQuery.toLowerCase().trim();
+      return (
+        prod.name.toLowerCase().includes(q) ||
+        prod.category.toLowerCase().includes(q) ||
+        prod.yarn.toLowerCase().includes(q)
+      );
+    })
     .sort((a, b) => {
       if (sortBy === "price-low") return a.price - b.price;
       if (sortBy === "price-high") return b.price - a.price;
@@ -270,15 +290,32 @@ const CollectionsScreen: React.FC = () => {
         {/* Product Grid */}
         <main className="lg:col-span-9 space-y-6">
           {/* Top Control Bar */}
-          <div className="flex justify-between items-center pb-4 border-b border-[#e4e2de] text-sm">
-            <span className="text-[#76786f]">
-              Showing <strong className="text-[#1b1c1a]">{filteredProducts.length}</strong> handcrafted pieces
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#e4e2de] text-sm">
+            <div className="flex flex-wrap items-center gap-2 text-[#76786f]">
+              <span>
+                Showing <strong className="text-[#1b1c1a]">{filteredProducts.length}</strong> handcrafted pieces
+              </span>
               {selectedCategory !== "All" && (
-                <span className="ml-2 font-semibold text-[#8e4d31]">
+                <span className="font-semibold text-[#8e4d31]">
                   in {selectedCategory}
                 </span>
               )}
-            </span>
+              {searchQuery && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#8e4d31]/10 text-[#8e4d31] border border-[#8e4d31]/30 rounded-full text-xs font-semibold">
+                  Search: "{searchQuery}"
+                  <button
+                    onClick={() => {
+                      searchParams.delete("search");
+                      setSearchParams(searchParams);
+                    }}
+                    className="hover:text-black font-bold ml-1"
+                    title="Clear search"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+            </div>
             <div className="flex items-center gap-3">
               <span className="text-xs font-bold uppercase tracking-wider text-[#76786f]">
                 Sort by:
