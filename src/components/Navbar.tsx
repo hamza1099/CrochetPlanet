@@ -36,13 +36,6 @@ const Navbar: React.FC = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      setIsSearchFocused(false);
-      navigate(`${RouteName.COLLECTIONS}?search=${encodeURIComponent(searchQuery.trim())}`);
-    }
-  };
 
   const handleSuggestionClick = (query: string, category?: string) => {
     setSearchQuery(query);
@@ -164,17 +157,15 @@ const Navbar: React.FC = () => {
             <div className="hidden lg:flex items-center bg-[#f5f3ef] border border-[#e4e2de] rounded-full p-1 text-[11px] font-bold">
               <button
                 onClick={() => setCurrency("PKR")}
-                className={`px-2.5 py-1 rounded-full transition-all ${
-                  currency === "PKR" ? "bg-[#585e4c] text-white shadow-sm" : "text-[#76786f] hover:text-[#1b1c1a]"
-                }`}
+                className={`px-2.5 py-1 rounded-full transition-all ${currency === "PKR" ? "bg-[#585e4c] text-white shadow-sm" : "text-[#76786f] hover:text-[#1b1c1a]"
+                  }`}
               >
                 PKR (Rs)
               </button>
               <button
                 onClick={() => setCurrency("USD")}
-                className={`px-2.5 py-1 rounded-full transition-all ${
-                  currency === "USD" ? "bg-[#585e4c] text-white shadow-sm" : "text-[#76786f] hover:text-[#1b1c1a]"
-                }`}
+                className={`px-2.5 py-1 rounded-full transition-all ${currency === "USD" ? "bg-[#585e4c] text-white shadow-sm" : "text-[#76786f] hover:text-[#1b1c1a]"
+                  }`}
               >
                 USD ($)
               </button>
@@ -373,17 +364,15 @@ const Navbar: React.FC = () => {
               <div className="flex items-center bg-[#f5f3ef] border border-[#e4e2de] rounded-full p-1 text-xs font-bold">
                 <button
                   onClick={() => setCurrency("PKR")}
-                  className={`px-3 py-1 rounded-full transition-all ${
-                    currency === "PKR" ? "bg-[#585e4c] text-white shadow-sm" : "text-[#76786f]"
-                  }`}
+                  className={`px-3 py-1 rounded-full transition-all ${currency === "PKR" ? "bg-[#585e4c] text-white shadow-sm" : "text-[#76786f]"
+                    }`}
                 >
                   PKR (Rs)
                 </button>
                 <button
                   onClick={() => setCurrency("USD")}
-                  className={`px-3 py-1 rounded-full transition-all ${
-                    currency === "USD" ? "bg-[#585e4c] text-white shadow-sm" : "text-[#76786f]"
-                  }`}
+                  className={`px-3 py-1 rounded-full transition-all ${currency === "USD" ? "bg-[#585e4c] text-white shadow-sm" : "text-[#76786f]"
+                    }`}
                 >
                   USD ($)
                 </button>
@@ -428,9 +417,8 @@ const Navbar: React.FC = () => {
                   key={link.name}
                   to={link.path}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`block text-sm font-bold tracking-wider py-3 border-b border-[#efeeea] ${
-                    location.pathname === link.path ? "text-[#8e4d31]" : "text-[#464840]"
-                  }`}
+                  className={`block text-sm font-bold tracking-wider py-3 border-b border-[#efeeea] ${location.pathname === link.path ? "text-[#8e4d31]" : "text-[#464840]"
+                    }`}
                 >
                   {link.name}
                 </Link>
