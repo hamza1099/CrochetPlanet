@@ -78,27 +78,36 @@ const HomeScreen: React.FC = () => {
     { title: "Bottle Holder", category: "Gifts & Home", image: sunflowerImg },
   ];
 
-  // State for Gender Tab in Men & Women section (Only Women and Men tabs)
-  const [genderTab, setGenderTab] = useState<"women" | "men">("women");
+  // State for Gender Tab in Men & Women section (Women, Men, Baby tabs)
+  const [genderTab, setGenderTab] = useState<"women" | "men" | "baby">("women");
 
   // State for New Arrivals Filter
   const [newArrivalFilter, setNewArrivalFilter] = useState("All");
 
-  // Dynamic Banner for Men & Women Section based on active tab
-  const activeFashionBanner = genderTab === "women" ? womenBannerImg : menBannerImg;
+  // Dynamic Banner for Fashion Section based on active tab
+  const activeFashionBanner =
+    genderTab === "women"
+      ? womenBannerImg
+      : genderTab === "men"
+      ? menBannerImg
+      : daisyCrochetImg;
 
   const activeFashionBannerText =
     genderTab === "women"
       ? "Exclusive Women's Line • Handcrafted Cardigans, Sweaters & Apparel"
-      : "Exclusive Men's Line • Vintage Crochet Overshirts & Heavy Knits";
+      : genderTab === "men"
+      ? "Exclusive Men's Line • Vintage Crochet Overshirts & Heavy Knits"
+      : "Exclusive Baby & Kids Line • Gentle Organic Cotton & Soft Wool Sets";
 
   // Target collection link based on active tab
   const activeFashionCategoryLink =
     genderTab === "women"
       ? "/collections?category=Women"
-      : "/collections?category=Men";
+      : genderTab === "men"
+      ? "/collections?category=Men"
+      : "/collections?category=Baby";
 
-  const handleGenderTabChange = (tab: "women" | "men") => {
+  const handleGenderTabChange = (tab: "women" | "men" | "baby") => {
     setGenderTab(tab);
     if (fashionSectionRef.current) {
       fashionSectionRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -593,11 +602,11 @@ const HomeScreen: React.FC = () => {
             Discover tailored hand-knitted cardigans, structured sweaters, and vintage unisex overshirts.
           </p>
 
-          {/* Gender Toggle Tabs (Women's Wear & Men's Wear Only) */}
-          <div className="inline-flex p-1.5 bg-[#eae8e4] rounded-2xl border border-[#e4e2de] mt-4">
+          {/* Gender Toggle Tabs (Women's Wear, Men's Wear & Baby Wear) */}
+          <div className="inline-flex p-1.5 bg-[#eae8e4] rounded-2xl border border-[#e4e2de] mt-4 flex-wrap justify-center gap-1">
             <button
               onClick={() => handleGenderTabChange("women")}
-              className={`px-8 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${genderTab === "women"
+              className={`px-6 sm:px-8 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${genderTab === "women"
                   ? "bg-[#8e4d31] text-white shadow-md"
                   : "text-[#464840] hover:text-[#1b1c1a]"
                 }`}
@@ -606,22 +615,31 @@ const HomeScreen: React.FC = () => {
             </button>
             <button
               onClick={() => handleGenderTabChange("men")}
-              className={`px-8 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${genderTab === "men"
+              className={`px-6 sm:px-8 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${genderTab === "men"
                   ? "bg-[#8e4d31] text-white shadow-md"
                   : "text-[#464840] hover:text-[#1b1c1a]"
                 }`}
             >
               Men's Wear
             </button>
+            <button
+              onClick={() => handleGenderTabChange("baby")}
+              className={`px-6 sm:px-8 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${genderTab === "baby"
+                  ? "bg-[#8e4d31] text-white shadow-md"
+                  : "text-[#464840] hover:text-[#1b1c1a]"
+                }`}
+            >
+              Baby Wear
+            </button>
           </div>
         </div>
 
-        {/* Dynamic Banner (women.jpg for Women, Menbanner.jpg for Men) */}
+        {/* Dynamic Banner (Standardized fixed height for Women, Men & Baby banners) */}
         <div className="relative rounded-3xl overflow-hidden shadow-xl border border-[#e4e2de] bg-[#1b1c1a] transition-all duration-500">
           <img
             src={activeFashionBanner}
-            alt={`${genderTab === "women" ? "Women's" : "Men's"} Fashion Banner`}
-            className="w-full h-auto object-cover transition-all duration-700"
+            alt={`${genderTab} Fashion Banner`}
+            className="w-full h-[280px] sm:h-[380px] md:h-[480px] object-cover object-center transition-all duration-700 block"
           />
           <div className="bg-[#1b1c1a] px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-[#8e4d31]/40 text-white">
             <span className="text-sm font-semibold text-gray-200">
