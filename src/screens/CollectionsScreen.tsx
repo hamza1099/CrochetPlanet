@@ -14,7 +14,9 @@ import dealAsset4 from "../assets/1e395a4512140c8e752d25cdaaff7bd6.jpg";
 
 import { ProductCardSkeleton } from "../components/Skeletons";
 
-const allProducts = [
+import { fetchProductsApi } from "../service/networkService";
+
+const initialProducts = [
   {
     id: "fw-1",
     name: "Hooded Dark Chocolate Patchwork Cardigan",
@@ -123,6 +125,7 @@ const CollectionsScreen: React.FC = () => {
   const { addToCart } = useCart();
   const [searchParams, setSearchParams] = useSearchParams();
 
+  const [productsList, setProductsList] = useState<any[]>(initialProducts);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [selectedYarn, setSelectedYarn] = useState<string>("All");
   const [sortBy, setSortBy] = useState<string>("newest");
@@ -142,11 +145,37 @@ const CollectionsScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  // Load products from Firebase API using networkService
+  useEffect(() => {
+    let isMounted = true;
+    fetchProductsApi()
+      .then((data) => {
+        if (isMounted && data && data.length > 0) {
+          const formatted = data.map((item) => ({
+            id: item.id,
+            name: item.name,
+            category: item.category || "Handcrafted",
+            price: Number(item.priceUSD ?? item.price ?? 50),
+            rating: Number(item.rating || 5.0),
+            badge: item.badge || "Organic",
+            yarn: item.yarnType || item.yarn || "Organic Wool",
+            image: item.imageUrl || item.image || hoodedCardiganImg,
+          }));
+          setProductsList(formatted);
+        }
+      })
+      .catch((err) => console.warn("Using default products fallback:", err));
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   useEffect(() => {
     setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 600);
+    const timer = setTimeout(() => setIsLoading(false), 300);
     return () => clearTimeout(timer);
   }, [selectedCategory, selectedYarn, sortBy, searchQuery]);
+
   useEffect(() => {
     const catQuery = searchParams.get("category");
     const searchQueryParam = searchParams.get("search");
@@ -187,7 +216,7 @@ const CollectionsScreen: React.FC = () => {
     }
   };
 
-  const filteredProducts = allProducts
+  const filteredProducts = productsList
     .filter((prod) => {
       if (selectedCategory === "All") return true;
       if (selectedCategory === "Women's Fashion") {
@@ -213,6 +242,7 @@ const CollectionsScreen: React.FC = () => {
       if (sortBy === "price-high") return b.price - a.price;
       return 0;
     });
+
 
   return (
     <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-12 font-body text-[#1b1c1a]">
@@ -345,6 +375,22 @@ const CollectionsScreen: React.FC = () => {
               {[1, 2, 3, 4, 5, 6].map((i) => (
                 <ProductCardSkeleton key={i} />
               ))}
+            </div>
+          ) : filteredProducts.length === 0 ? (
+            <div className="bg-white p-12 text-center rounded-2xl border border-[#e4e2de] space-y-3">
+              <span className="material-symbols-outlined text-4xl text-amber-600">inventory_2</span>
+              <h3 className="font-display text-xl font-semibold text-[#1b1c1a]">No Handcrafted Items Found</h3>
+              <p className="text-sm text-[#76786f] max-w-md mx-auto">There are no products listed matching your selected filters yet. Check back soon or reset your filters.</p>
+              <button
+                onClick={() => {
+                  setSelectedCategory("All");
+                  setSelectedYarn("All");
+                  setSearchParams({});
+                }}
+                className="px-5 py-2.5 bg-[#8e4d31] text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-md inline-block"
+              >
+                Reset Filters
+              </button>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

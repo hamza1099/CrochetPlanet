@@ -2,12 +2,14 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { RouteName } from "../routes/RouteName";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 import logoImg from "../assets/Logo.jpg";
 
 const Navbar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { setIsCartOpen, totalCount, currency, setCurrency } = useCart();
+  const { user, isLoggedIn, openAuthModal, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Search Bar state & suggestions
@@ -35,7 +37,6 @@ const Navbar: React.FC = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
 
   const handleSuggestionClick = (query: string, category?: string) => {
     setSearchQuery(query);
@@ -79,7 +80,6 @@ const Navbar: React.FC = () => {
             <div className="bg-white p-1.5 rounded-xl border border-[#e4e2de] shadow-sm group-hover:border-[#8e4d31] transition-all">
               <img src={logoImg} alt="Crochet by Plaksha" className="h-12 sm:h-16 w-auto object-contain rounded-lg" />
             </div>
-
           </Link>
 
           {/* Center Search Bar with Popular Suggestions (Desktop only) */}
@@ -171,53 +171,64 @@ const Navbar: React.FC = () => {
               </button>
             </div>
 
-            {/* Desktop User Avatar */}
-            <div className="hidden lg:block relative group">
-              <Link
-                to={RouteName.PROFILE}
-                className="flex items-center gap-2 text-[#464840] hover:text-[#8e4d31] transition-colors py-1 px-1 rounded-full group"
-              >
-                <div className="w-8 h-8 rounded-full bg-[#585e4c] text-white flex items-center justify-center font-bold text-xs shadow-sm group-hover:bg-[#8e4d31] transition-colors">
-                  T
-                </div>
-                <span className="hidden sm:inline font-semibold text-xs text-[#1b1c1a] group-hover:text-[#8e4d31]">
-                  Tayyaba Hamza
-                </span>
-                <span className="material-symbols-outlined text-sm text-[#76786f]">
-                  expand_more
-                </span>
-              </Link>
-
-              {/* Account Dropdown Menu */}
-              <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-[#e4e2de] rounded-2xl shadow-xl p-2 z-50 hidden group-hover:block animate-in fade-in slide-in-from-top-2 duration-150">
-                <div className="px-3 py-2 border-b border-[#f5f3ef] mb-1">
-                  <p className="font-semibold text-xs text-[#1b1c1a]">Tayyaba Hamza</p>
-                  <p className="text-[10px] text-[#76786f] truncate">tayyaba.hamza@example.com</p>
-                </div>
+            {/* Desktop Dynamic User Profile / Login Button */}
+            {isLoggedIn && user ? (
+              <div className="hidden lg:block relative group">
                 <Link
                   to={RouteName.PROFILE}
-                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#464840] hover:bg-[#f5f3ef] hover:text-[#8e4d31] transition-colors"
+                  className="flex items-center gap-2 text-[#464840] hover:text-[#8e4d31] transition-colors py-1 px-1 rounded-full group"
                 >
-                  <span className="material-symbols-outlined text-base">person</span>
-                  My Profile
+                  <div className="w-8 h-8 rounded-full bg-[#585e4c] text-white flex items-center justify-center font-bold text-xs shadow-sm group-hover:bg-[#8e4d31] transition-colors">
+                    {user.name.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="hidden sm:inline font-semibold text-xs text-[#1b1c1a] group-hover:text-[#8e4d31]">
+                    {user.name}
+                  </span>
+                  <span className="material-symbols-outlined text-sm text-[#76786f]">
+                    expand_more
+                  </span>
                 </Link>
-                <Link
-                  to={RouteName.MY_ORDERS}
-                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#464840] hover:bg-[#f5f3ef] hover:text-[#8e4d31] transition-colors"
-                >
-                  <span className="material-symbols-outlined text-base">local_shipping</span>
-                  My Orders
-                </Link>
-                <div className="border-t border-[#f5f3ef] my-1" />
-                <Link
-                  to={RouteName.AUTH}
-                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors"
-                >
-                  <span className="material-symbols-outlined text-base">logout</span>
-                  Logout
-                </Link>
+
+                {/* Account Dropdown Menu */}
+                <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-[#e4e2de] rounded-2xl shadow-xl p-2 z-50 hidden group-hover:block animate-in fade-in slide-in-from-top-2 duration-150">
+                  <div className="px-3 py-2 border-b border-[#f5f3ef] mb-1">
+                    <p className="font-semibold text-xs text-[#1b1c1a] truncate">{user.name}</p>
+                    <p className="text-[10px] text-[#76786f] truncate">{user.phone}</p>
+                  </div>
+                  <Link
+                    to={RouteName.PROFILE}
+                    className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#464840] hover:bg-[#f5f3ef] hover:text-[#8e4d31] transition-colors"
+                  >
+                    <span className="material-symbols-outlined text-base">person</span>
+                    My Profile
+                  </Link>
+                  <Link
+                    to={RouteName.MY_ORDERS}
+                    className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#464840] hover:bg-[#f5f3ef] hover:text-[#8e4d31] transition-colors"
+                  >
+                    <span className="material-symbols-outlined text-base">local_shipping</span>
+                    My Orders
+                  </Link>
+                  <div className="border-t border-[#f5f3ef] my-1" />
+                  <button
+                    onClick={logout}
+                    className="w-full text-left flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors"
+                  >
+                    <span className="material-symbols-outlined text-base">logout</span>
+                    Logout
+                  </button>
+                </div>
               </div>
-            </div>
+            ) : (
+              <button
+                onClick={openAuthModal}
+                className="hidden lg:flex items-center gap-2 bg-[#8e4d31] hover:bg-[#71361d] text-white px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-sm active:scale-95"
+              >
+                <span className="material-symbols-outlined text-base">person</span>
+                <span>Login / Sign Up</span>
+              </button>
+            )}
+
 
             {/* Desktop Cart Button */}
             <button
@@ -391,24 +402,38 @@ const Navbar: React.FC = () => {
             </div>
 
             {/* 3. User Account Tile */}
-            <div className="bg-white p-3.5 rounded-2xl border border-[#e4e2de] shadow-sm flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#585e4c] text-white flex items-center justify-center font-bold text-sm">
-                  T
+            {isLoggedIn && user ? (
+              <div className="bg-white p-3.5 rounded-2xl border border-[#e4e2de] shadow-sm flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[#585e4c] text-white flex items-center justify-center font-bold text-sm">
+                    {user.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-xs text-[#1b1c1a] truncate">{user.name}</p>
+                    <p className="text-[10px] text-[#76786f] truncate">{user.phone}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-semibold text-xs text-[#1b1c1a]">Tayyaba Hamza</p>
-                  <p className="text-[10px] text-[#76786f]">tayyaba.hamza@example.com</p>
-                </div>
+                <Link
+                  to={RouteName.PROFILE}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-xs font-bold text-[#8e4d31] hover:underline"
+                >
+                  Profile →
+                </Link>
               </div>
-              <Link
-                to={RouteName.PROFILE}
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-xs font-bold text-[#8e4d31] hover:underline"
+            ) : (
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  openAuthModal();
+                }}
+                className="w-full bg-[#8e4d31] text-white py-3 rounded-2xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-md"
               >
-                Profile →
-              </Link>
-            </div>
+                <span className="material-symbols-outlined text-base">person</span>
+                <span>Login / Sign Up with Phone OTP</span>
+              </button>
+            )}
+
 
             {/* 4. Mobile Navigation Links */}
             <div className="space-y-1 pt-2">

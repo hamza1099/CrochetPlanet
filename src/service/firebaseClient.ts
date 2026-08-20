@@ -1,0 +1,165 @@
+import { initializeApp, getApps } from "firebase/app";
+import { 
+  getFirestore, 
+  collection, 
+  getDocs, 
+  getDoc,
+  setDoc, 
+  doc, 
+  updateDoc
+} from "firebase/firestore";
+
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyBIpRs20fov6-BF3urlkVVxsPNDomfF2qQ",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "crochetcomso.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "crochetcomso",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "crochetcomso.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "370920891701",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:370920891701:web:ba88f1bfa58ada325f587c"
+};
+
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
+export const db = getFirestore(app);
+
+// Direct Firestore Helpers for Storefront App
+
+export const fetchProductsDirect = async (): Promise<any[]> => {
+  try {
+    const snap = await getDocs(collection(db, "products"));
+    return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error("fetchProductsDirect error:", error);
+    return [];
+  }
+};
+
+export const fetchProductByIdDirect = async (id: string): Promise<any> => {
+  try {
+    const docRef = doc(db, "products", id);
+    const snap = await getDoc(docRef);
+    if (snap.exists()) {
+      return { id: snap.id, ...snap.data() };
+    }
+    return null;
+  } catch (error) {
+    console.error(`fetchProductByIdDirect error for ${id}:`, error);
+    return null;
+  }
+};
+
+export const saveOrderDirect = async (orderData: any): Promise<any> => {
+  try {
+    const orderId = orderData.id || `ORD-${Date.now().toString().slice(-6)}`;
+    const fullOrder = {
+      ...orderData,
+      id: orderId,
+      status: orderData.status || "Pending",
+      createdAt: new Date().toISOString()
+    };
+    await setDoc(doc(db, "orders", orderId), fullOrder);
+
+    // Decrement product inventory directly in Firestore
+    if (Array.isArray(orderData.items)) {
+      for (const item of orderData.items) {
+        if (item.id) {
+          try {
+            const pRef = doc(db, "products", item.id);
+            const pSnap = await getDoc(pRef);
+            if (pSnap.exists()) {
+              const currentStock = pSnap.data().stockQuantity || 10;
+              const newQty = Math.max(0, currentStock - (item.quantity || 1));
+              await updateDoc(pRef, {
+                stockQuantity: newQty,
+                inStock: newQty > 0
+              });
+            }
+          } catch (stkErr) {
+            console.warn("Stock update notice:", stkErr);
+          }
+        }
+      }
+    }
+
+    return fullOrder;
+  } catch (error) {
+    console.error("saveOrderDirect error:", error);
+    throw error;
+  }
+};
+
+export const fetchUserOrdersDirect = async (userFilter?: { email?: string; phone?: string }): Promise<any[]> => {
+  try {
+    const snap = await getDocs(collection(db, "orders"));
+    let orders: any[] = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    if (userFilter?.email || userFilter?.phone) {
+      const cleanDigits = (str?: string) => (str ? str.replace(/\D/g, "") : "");
+      const uPhoneDigits = cleanDigits(userFilter.phone);
+
+      orders = orders.filter((o: any) => {
+        const cEmail = o.customer?.email || o.email || "";
+        const cPhone = o.customer?.phone || o.phone || "";
+        const ordPhoneDigits = cleanDigits(cPhone);
+
+        const emailMatch = userFilter.email && cEmail.toLowerCase() === userFilter.email.toLowerCase();
+        const phoneMatch = uPhoneDigits.length > 5 && ordPhoneDigits.includes(uPhoneDigits.slice(-7));
+
+        return emailMatch || phoneMatch;
+      });
+    }
+
+    return orders;
+  } catch (error) {
+    console.error("fetchUserOrdersDirect error:", error);
+    return [];
+  }
+};
+
+export const saveInquiryDirect = async (inquiryData: any): Promise<any> => {
+  try {
+    const id = inquiryData.id || `INQ-${Date.now().toString().slice(-4)}`;
+    const fullInquiry = {
+      ...inquiryData,
+      id,
+      status: "New",
+      date: new Date().toISOString().split("T")[0],
+      createdAt: new Date().toISOString()
+    };
+    await setDoc(doc(db, "custom_inquiries", id), fullInquiry);
+    return fullInquiry;
+  } catch (error) {
+    console.error("saveInquiryDirect error:", error);
+    throw error;
+  }
+};
+
+export const fetchArtisansDirect = async (): Promise<any[]> => {
+  try {
+    const snap = await getDocs(collection(db, "artisans"));
+    return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error("fetchArtisansDirect error:", error);
+    return [];
+  }
+};
+
+export const fetchBannersDirect = async (): Promise<any[]> => {
+  try {
+    const snap = await getDocs(collection(db, "banners"));
+    return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error("fetchBannersDirect error:", error);
+    return [];
+  }
+};
+
+export const saveUserProfileDirect = async (userProfile: any): Promise<any> => {
+  try {
+    const userId = userProfile.id || `usr_${Date.now()}`;
+    await setDoc(doc(db, "users", userId), { ...userProfile, id: userId }, { merge: true });
+    return { ...userProfile, id: userId };
+  } catch (error) {
+    console.error("saveUserProfileDirect error:", error);
+    throw error;
+  }
+};

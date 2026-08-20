@@ -1,26 +1,63 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { RouteName } from "../routes/RouteName";
+import { useAuth } from "../context/AuthContext";
 import sageSweaterImg from "../assets/66e6aeeec3152c92d24b10fe5084a16d.jpg";
 import throwBlanketImg from "../assets/1e395a4512140c8e752d25cdaaff7bd6.jpg";
 
 export const ProfileDashboardScreen: React.FC = () => {
+  const { user, isLoggedIn, openAuthModal, updateProfile } = useAuth();
   const [emailNewsletter, setEmailNewsletter] = useState(true);
   const [smsNotifications, setSmsNotifications] = useState(false);
 
-  // Personal Info state
+  // Personal Info state synced with AuthContext
   const [userInfo, setUserInfo] = useState({
-    fullName: "Tayyaba Hamza",
-    email: "tayyaba.hamza@example.com",
-    phone: "+92 317 3004661",
-    street: "123 Artisan Way, Apt 4B",
-    cityStateZip: "Karachi, PK 75500",
+    fullName: user?.name || "Customer",
+    email: user?.email || "",
+    phone: user?.phone || "",
+    street: user?.address || "Street Address Not Specified",
+    cityStateZip: user?.city || "City Not Specified",
     country: "Pakistan",
   });
+
+  useEffect(() => {
+    if (user) {
+      setUserInfo({
+        fullName: user.name,
+        email: user.email || "",
+        phone: user.phone || "",
+        street: user.address || "Street Address Not Specified",
+        cityStateZip: user.city || "City Not Specified",
+        country: "Pakistan",
+      });
+    }
+  }, [user]);
 
   // Edit Modal State
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [formData, setFormData] = useState(userInfo);
+
+  if (!isLoggedIn || !user) {
+    return (
+      <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-20 font-body text-[#1b1c1a] text-center space-y-6">
+        <div className="w-20 h-20 bg-[#f5f3ef] rounded-full flex items-center justify-center mx-auto text-[#8e4d31]">
+          <span className="material-symbols-outlined text-4xl">lock</span>
+        </div>
+        <h1 className="font-display text-3xl md:text-4xl font-semibold">
+          Account Login Required
+        </h1>
+        <p className="text-sm text-[#76786f] max-w-md mx-auto">
+          Please log in with your phone number to access your CrochCosmo profile, track orders, and manage your delivery details.
+        </p>
+        <button
+          onClick={openAuthModal}
+          className="px-8 py-3.5 bg-[#8e4d31] hover:bg-[#71361d] text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-all shadow-md"
+        >
+          Login / Register with OTP →
+        </button>
+      </div>
+    );
+  }
 
   const handleEditClick = () => {
     setFormData(userInfo);
@@ -30,8 +67,16 @@ export const ProfileDashboardScreen: React.FC = () => {
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     setUserInfo(formData);
+    updateProfile({
+      name: formData.fullName,
+      email: formData.email,
+      phone: formData.phone,
+      address: formData.street,
+      city: formData.cityStateZip,
+    });
     setIsEditModalOpen(false);
   };
+
 
   return (
     <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-12 font-body text-[#1b1c1a] relative">

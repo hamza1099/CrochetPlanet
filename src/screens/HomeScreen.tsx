@@ -18,49 +18,69 @@ import dealAsset4 from "../assets/1e395a4512140c8e752d25cdaaff7bd6.jpg";
 import sideBannerImg from "../assets/side banner.jpg";
 
 import { ProductCardSkeleton, HeroSkeleton, CategoryGridSkeleton } from "../components/Skeletons";
+import { fetchProductsApi, fetchBannersApi } from "../service/networkService";
 
 const HomeScreen: React.FC = () => {
   const { addToCart } = useCart();
   const fashionSectionRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Hero Sliding Carousel State & Data
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [liveBanners, setLiveBanners] = useState<any[]>([]);
+
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 800);
+    fetchProductsApi()
+      .catch((err) => console.warn("HomeScreen products fallback:", err));
+
+    fetchBannersApi()
+      .then((banners) => {
+        if (banners && banners.length > 0) {
+          setLiveBanners(banners.filter((b) => b.active !== false));
+        }
+      })
+      .catch((err) => console.warn("HomeScreen banners fallback:", err));
+
+    const timer = setTimeout(() => setIsLoading(false), 500);
     return () => clearTimeout(timer);
   }, []);
 
-  // Hero Sliding Carousel State & Data
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  const heroSlides = [
+  const defaultHeroSlides = [
     {
       id: 1,
       image: mainBannerImg,
       badge: "Art in Every Stitch",
-      title: "Cute. Crafted. Just for You.",
-      subtitle: "Handmade with Love • Soft & Durable • Perfect Gift For Anyone",
-      cta: "Shop Now 🛒",
-      link: "/collections",
+      title: "Handcrafted Luxury",
+      subtitle: "Made with Pure Passion & Organic Yarn",
     },
     {
       id: 2,
-      image: womenBannerImg,
-      badge: "Women's Collection",
-      title: "Exclusive Women's Fashion & Knitwear",
-      subtitle: "Handcrafted Cardigans, Sweaters, & Artisanal Accessories",
-      cta: "Explore Women's Wear",
-      link: "/collections?category=Women's Fashion",
+      image: menBannerImg,
+      badge: "Men's Collection",
+      title: "Crochet Overshirts",
+      subtitle: "Breathable Vintage Style Crafts",
     },
     {
       id: 3,
-      image: menBannerImg,
-      badge: "Men's Collection",
-      title: "Vintage Knitted Menswear & Overshirts",
-      subtitle: "Breathable hand-knitted luxury for every season",
-      cta: "Explore Men's Wear",
-      link: "/collections?category=Men's Fashion",
+      image: womenBannerImg,
+      badge: "Women's Collection",
+      title: "Signature Cardigans",
+      subtitle: "Slow Fashion Heirloom Pieces",
     },
   ];
+
+  const heroSlides = liveBanners.length > 0
+    ? liveBanners.map((b, idx) => ({
+        id: b.id || idx,
+        image: b.imageUrl || mainBannerImg,
+        badge: b.badge || "Exclusive Collection",
+        title: b.title || "CrochCosmo Luxury",
+        subtitle: b.subtitle || "Handcrafted with Love",
+        cta: "Shop Now 🛒",
+        link: b.linkUrl || "/collections",
+      }))
+    : defaultHeroSlides;
+
 
   // Auto-play timer for Hero Carousel
   useEffect(() => {
@@ -281,29 +301,32 @@ const HomeScreen: React.FC = () => {
     <div className="space-y-20 font-body text-[#1b1c1a] bg-[#fbf9f5] min-h-screen pb-20">
 
       {/* =========================================================================
-          SECTION 1: SLIDING HERO CAROUSEL & POPULAR CATEGORIES GRID
+          SECTION 1: SLIDING HERO CAROUSEL
          ========================================================================= */}
-      <section className="relative max-w-[1440px] mx-auto px-4 md:px-8 pt-6 space-y-12">
+      <section className="relative w-full">
         {isLoading ? (
-          <HeroSkeleton />
+          <div className="w-full">
+            <HeroSkeleton />
+          </div>
         ) : (
           /* Sliding Hero Panel (Smooth horizontal track animation) */
-          <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-[#e4e2de] bg-[#1b1c1a] group cursor-pointer">
+          <div className="relative w-full overflow-hidden shadow-2xl bg-[#1b1c1a] group cursor-pointer aspect-[4/3] md:aspect-video lg:max-h-[85vh]">
+
             {/* Smooth Sliding Track Container */}
             <div
-              className="flex transition-transform duration-700 ease-in-out w-full"
+              className="flex transition-transform duration-700 ease-in-out w-full h-full"
               style={{ transform: `translateX(-${currentSlide * 100}%)` }}
             >
               {heroSlides.map((slide) => (
                 <Link
                   key={slide.id}
                   to={RouteName.COLLECTIONS}
-                  className="w-full flex-shrink-0 relative block"
+                  className="w-full h-full flex-shrink-0 relative block"
                 >
                   <img
                     src={slide.image}
                     alt="Hero Banner"
-                    className="w-full h-auto object-cover object-center block"
+                    className="w-full h-full object-cover object-center block"
                   />
                 </Link>
               ))}
@@ -356,9 +379,14 @@ const HomeScreen: React.FC = () => {
             </div>
           </div>
         )}
+      </section>
 
+      {/* =========================================================================
+          SECTION 1.5: POPULAR CATEGORIES GRID
+         ========================================================================= */}
+      <section className="max-w-[1440px] mx-auto px-4 md:px-8 pt-10 space-y-12">
         {/* Popular Categories Grid (Matching User Screenshot design) */}
-        <div className="space-y-6 pt-4">
+        <div className="space-y-6">
           <div className="text-center max-w-2xl mx-auto space-y-2">
             <h3 className="font-display text-2xl sm:text-3xl font-bold text-[#1b1c1a]">
               Popular Categories

@@ -37,7 +37,7 @@ export const ProductCardSkeleton: React.FC = () => {
 
 export const HeroSkeleton: React.FC = () => {
   return (
-    <div className="w-full aspect-[21/9] sm:aspect-[16/7] md:aspect-[21/8] bg-gradient-to-r from-[#eae8e4] via-[#f5f3ef] to-[#eae8e4] rounded-3xl border border-[#e4e2de] animate-shimmer shadow-lg flex items-end p-8">
+    <div className="w-full aspect-[4/3] md:aspect-video lg:max-h-[85vh] bg-gradient-to-r from-[#eae8e4] via-[#f5f3ef] to-[#eae8e4] animate-shimmer shadow-lg flex items-end p-8">
       <div className="space-y-3 w-full max-w-md">
         <div className="w-32 h-6 bg-white/60 rounded-full" />
         <div className="w-3/4 h-8 bg-white/60 rounded-xl" />

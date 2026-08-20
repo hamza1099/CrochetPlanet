@@ -1,18 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { RouteName } from "../routes/RouteName";
+import { fetchProductByIdApi, fetchProductsApi } from "../service/networkService";
 
 const ProductDetailScreen: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { addToCart } = useCart();
 
   const [selectedColor, setSelectedColor] = useState("Beige");
+  const [customColorText, setCustomColorText] = useState("");
   const [selectedSize, setSelectedSize] = useState("0-3M");
   const [personalization, setPersonalization] = useState("");
 
-  const product = {
-    id: id || "sweater-1",
+  const defaultProduct = {
+    id: id || "baby-sweater-1",
     name: "Artisanal Organic Baby Sweater",
     price: 55.0,
     category: "Baby Apparel",
@@ -20,13 +22,69 @@ const ProductDetailScreen: React.FC = () => {
     description:
       "Handcrafted with love by our collective of women artisans. Made from 100% locally sourced organic wool, this sweater is incredibly soft, breathable, and designed to gently embrace your little one.",
     images: [
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuAWPIWedTuhLodyUdzPRCyKOH7w56Y35m-epXJSMiLCqUuL1u2WEJaq9Bewr6m6whQEjedSbR6ICQ5uR5sxYa-PPvo0z60gqq2gTv-XXwffZLiPnxYVgIcuu-7ho0w5G1ev9fjK87NaSmKFb6J3no-Atrxfm46G5d01g2-vQKWsqkBZjk-G-Ckks_3dzwWxhxaGLICNFS-EwZtrdwXojxQaO6CYdUxLp0xUmFipOYKO2IAGuFswNfwMvw",
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuB1eyA6IVz75Y7_MNTCHOZDRUAXJc4DloL1SALxK_8hGS9FHXrDIcopy633spGmF1FKDmvp5f5Et8BaTCHN12n3izfNBe-ULoiCgkKbGtNT7lox5N5zlRsCReKGJs228gJ6jojxnp7ivOTUnCetX2pbFTFCTwt9YXsGbZ3ROwDzU5-9PrZYWmTPrhoNkbsc1rutKSOsG2ocBLwZ_j0V_c2QZCQMPXJFCdpyQiltjeXdUCJEKDmc3TFvqA",
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCOFJ91drIHta_n64UtbCFpUZGUwpt8DXX0XW5bj-x8cX73L7K9bKLtO9Ct9Kvk6CPKNfT7yMyuMTHHtr-2WH4SPUmyMiiu2k67mXJ2c8MIeUxtz5MenMBNmEZ3JH5XyxtBy6hzHlMY5PO5B_u1bhTjL0X6dDkFNl-lI_PbtPIOf7f0Ec_0pfAjr9_cw3fHqyQrPvuR1uegLrVr34ROZHqK7Q81RhNMh-piTGJNBGChbpVGOtdcbGNwmQ",
+      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=600&q=80"
     ],
+    colors: ["Beige", "Oatmeal", "Sage"],
+    sizes: ["0-3M", "3-6M", "6-12M"]
   };
 
-  const [activeImg, setActiveImg] = useState(product.images[0]);
+  const [productData, setProductData] = useState<any>(defaultProduct);
+  const [activeImg, setActiveImg] = useState<string>(defaultProduct.images[0]);
+
+  useEffect(() => {
+    if (!id) return;
+    fetchProductByIdApi(id)
+      .then((data) => {
+        if (data && data.name) {
+          const imgs = data.images && data.images.length > 0 ? data.images : [data.imageUrl || defaultProduct.images[0]];
+          const availableColors = data.colors && data.colors.length > 0 ? data.colors : ["Beige", "Oatmeal", "Sage"];
+          const availableSizes = data.sizes && data.sizes.length > 0 ? data.sizes : ["0-3M", "3-6M", "6-12M"];
+
+          setProductData({
+            id: data.id,
+            name: data.name,
+            price: Number(data.priceUSD ?? data.price ?? 55.0),
+            category: data.category || "Baby Apparel",
+            badge: data.badge || "Handcrafted",
+            description: data.description || defaultProduct.description,
+            images: imgs,
+            colors: availableColors,
+            sizes: availableSizes
+          });
+          setActiveImg(imgs[0]);
+          if (availableColors[0]) setSelectedColor(availableColors[0]);
+          if (availableSizes[0]) setSelectedSize(availableSizes[0]);
+        }
+      })
+      .catch(() => {
+        fetchProductsApi().then((list) => {
+          const found = list.find((p) => p.id === id);
+          if (found) {
+            const imgs = found.images && found.images.length > 0 ? found.images : [found.imageUrl || defaultProduct.images[0]];
+            const availableColors = found.colors && found.colors.length > 0 ? found.colors : ["Beige", "Oatmeal", "Sage"];
+            const availableSizes = found.sizes && found.sizes.length > 0 ? found.sizes : ["0-3M", "3-6M", "6-12M"];
+            setProductData({
+              id: found.id,
+              name: found.name,
+              price: Number(found.priceUSD ?? found.price ?? 55.0),
+              category: found.category || "Baby Apparel",
+              badge: found.badge || "Handcrafted",
+              description: found.description || defaultProduct.description,
+              images: imgs,
+              colors: availableColors,
+              sizes: availableSizes
+            });
+            setActiveImg(imgs[0]);
+            if (availableColors[0]) setSelectedColor(availableColors[0]);
+            if (availableSizes[0]) setSelectedSize(availableSizes[0]);
+          }
+        }).catch(() => {});
+      });
+  }, [id]);
+
+  const product = productData;
 
   return (
     <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-12 font-body text-[#1b1c1a] space-y-16">
@@ -45,7 +103,7 @@ const ProductDetailScreen: React.FC = () => {
         <div className="lg:col-span-7 flex flex-col-reverse md:flex-row gap-6">
           {/* Thumbnails */}
           <div className="flex md:flex-col gap-4 overflow-x-auto md:w-24 shrink-0">
-            {product.images.map((img, idx) => (
+            {product.images.map((img: string, idx: number) => (
               <button
                 key={idx}
                 onClick={() => setActiveImg(img)}
@@ -92,10 +150,10 @@ const ProductDetailScreen: React.FC = () => {
           {/* Color Selection */}
           <div className="space-y-3 pt-4 border-t border-[#f5f3ef]">
             <label className="text-xs font-bold uppercase tracking-widest text-[#585e4c] block">
-              Color: <span className="text-[#8e4d31] ml-1">{selectedColor}</span>
+              Color: <span className="text-[#8e4d31] ml-1 font-bold">{selectedColor === "Custom Color" && customColorText ? `Custom (${customColorText})` : selectedColor || "Standard"}</span>
             </label>
-            <div className="flex gap-3">
-              {["Beige", "Oatmeal", "Sage"].map((c) => (
+            <div className="flex flex-wrap gap-2.5">
+              {(product.colors && product.colors.length > 0 ? product.colors : ["Beige", "Oatmeal", "Sage"]).map((c: string) => (
                 <button
                   key={c}
                   onClick={() => setSelectedColor(c)}
@@ -108,20 +166,50 @@ const ProductDetailScreen: React.FC = () => {
                   {c}
                 </button>
               ))}
+
+              {/* Custom Color Request Button */}
+              {!product.colors?.includes("Custom Color") && (
+                <button
+                  onClick={() => setSelectedColor("Custom Color")}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all flex items-center gap-1 ${
+                    selectedColor === "Custom Color"
+                      ? "bg-[#8e4d31] text-white border-[#8e4d31]"
+                      : "bg-amber-50 text-[#8e4d31] border-amber-300 hover:border-[#8e4d31]"
+                  }`}
+                >
+                  + Custom Shade
+                </button>
+              )}
             </div>
+
+            {/* Custom Color Text Input */}
+            {selectedColor === "Custom Color" && (
+              <div className="pt-2 space-y-1">
+                <label className="text-[11px] font-bold text-[#8e4d31] block">
+                  🎨 Specify your custom color shade:
+                </label>
+                <input
+                  type="text"
+                  value={customColorText}
+                  onChange={(e) => setCustomColorText(e.target.value)}
+                  placeholder="e.g. Pastel Pink, Olive Green, Sky Blue..."
+                  className="w-full bg-[#fcfbfa] border border-[#8e4d31] rounded-xl px-3.5 py-2.5 text-xs font-medium focus:outline-none"
+                />
+              </div>
+            )}
           </div>
 
           {/* Size Selection */}
           <div className="space-y-3">
             <label className="text-xs font-bold uppercase tracking-widest text-[#585e4c] block">
-              Size Selection
+              Size Selection: <span className="text-[#585e4c] ml-1 font-bold">{selectedSize}</span>
             </label>
-            <div className="grid grid-cols-3 gap-3">
-              {["0-3M", "3-6M", "6-12M"].map((s) => (
+            <div className="flex flex-wrap gap-2.5">
+              {(product.sizes && product.sizes.length > 0 ? product.sizes : ["0-3M", "3-6M", "6-12M"]).map((s: string) => (
                 <button
                   key={s}
                   onClick={() => setSelectedSize(s)}
-                  className={`py-3 rounded-xl text-xs font-bold border transition-all ${
+                  className={`px-4 py-2.5 rounded-xl text-xs font-bold border transition-all ${
                     selectedSize === s
                       ? "bg-[#585e4c] text-white border-[#585e4c]"
                       : "bg-white text-[#464840] border-[#c7c7bd] hover:border-[#585e4c]"
@@ -151,15 +239,16 @@ const ProductDetailScreen: React.FC = () => {
           {/* Action Buttons */}
           <div className="space-y-4 pt-4">
             <button
-              onClick={() =>
+              onClick={() => {
+                const finalColor = selectedColor === "Custom Color" ? (customColorText ? `Custom (${customColorText})` : "Custom Shade") : selectedColor;
                 addToCart({
-                  id: `${product.id}-${selectedColor}-${selectedSize}`,
-                  name: `${product.name} (${selectedColor}, ${selectedSize})`,
+                  id: `${product.id}-${finalColor}-${selectedSize}`,
+                  name: `${product.name} (${finalColor}${selectedSize ? `, ${selectedSize}` : ""}${personalization ? `, Embroidery: "${personalization}"` : ""})`,
                   price: product.price,
                   image: activeImg,
                   badge: product.badge,
-                })
-              }
+                });
+              }}
               className="w-full py-4 bg-[#585e4c] hover:bg-[#717763] text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-all shadow-md"
             >
               Add to Shopping Bag

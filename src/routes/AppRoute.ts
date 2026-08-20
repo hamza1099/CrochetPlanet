@@ -4,7 +4,6 @@ import HomeScreen from "../screens/HomeScreen";
 import CollectionsScreen from "../screens/CollectionsScreen";
 import ProductDetailScreen from "../screens/ProductDetailScreen";
 import OurStoryScreen from "../screens/OurStoryScreen";
-import ArtisansScreen from "../screens/ArtisansScreen";
 import OrganicLuxuryScreen from "../screens/OrganicLuxuryScreen";
 import CustomOrderScreen from "../screens/CustomOrderScreen";
 import LearningHubScreen from "../screens/LearningHubScreen";
@@ -36,10 +35,6 @@ export const AppRoute: RouteConfig[] = [
   {
     path: RouteName.OUR_STORY,
     element: OurStoryScreen,
-  },
-  {
-    path: RouteName.ARTISANS,
-    element: ArtisansScreen,
   },
   {
     path: RouteName.ORGANIC_LUXURY,

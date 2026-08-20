@@ -1,10 +1,32 @@
 import React, { useState } from "react";
+import { createInquiryApi } from "../service/networkService";
 
 const CustomOrderScreen: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [customerName, setCustomerName] = useState("");
+  const [email, setEmail] = useState("");
+  const [itemType, setItemType] = useState("Custom Heirloom Baby Blanket");
+  const [specs, setSpecs] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const newInquiry = {
+      id: `INQ-${Math.floor(100 + Math.random() * 900)}`,
+      customerName,
+      email,
+      itemType,
+      specs,
+      status: "New",
+      date: new Date().toISOString().split("T")[0],
+    };
+
+    try {
+      await createInquiryApi(newInquiry);
+    } catch (err) {
+      console.warn("Submitting inquiry via REST fallback:", err);
+    }
+
     setSubmitted(true);
   };
 
@@ -13,7 +35,7 @@ const CustomOrderScreen: React.FC = () => {
       <div className="max-w-2xl mx-auto bg-white p-8 md:p-12 rounded-3xl border border-[#e4e2de] shadow-xl space-y-8">
         <div className="text-center space-y-3">
           <span className="text-xs font-bold uppercase tracking-widest text-[#8e4d31]">
-            Bespons & Custom Crafts
+            Bespoke & Custom Crafts
           </span>
           <h1 className="font-display text-3xl md:text-4xl font-semibold text-[#1b1c1a]">
             Custom Order Inquiry
@@ -35,7 +57,10 @@ const CustomOrderScreen: React.FC = () => {
               Thank you for reaching out. Our design team and master artisan will review your custom specifications and respond within 24 hours.
             </p>
             <button
-              onClick={() => setSubmitted(false)}
+              onClick={() => {
+                setSubmitted(false);
+                setSpecs("");
+              }}
               className="mt-4 px-6 py-2.5 bg-[#8e4d31] text-white rounded-lg text-xs font-bold uppercase tracking-widest"
             >
               Send Another Inquiry
@@ -52,6 +77,8 @@ const CustomOrderScreen: React.FC = () => {
                   required
                   type="text"
                   placeholder="e.g. Eleanor Vance"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
                   className="w-full bg-[#fbf9f5] border border-[#c7c7bd] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#8e4d31]"
                 />
               </div>
@@ -63,6 +90,8 @@ const CustomOrderScreen: React.FC = () => {
                   required
                   type="email"
                   placeholder="eleanor@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-[#fbf9f5] border border-[#c7c7bd] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#8e4d31]"
                 />
               </div>
@@ -72,11 +101,15 @@ const CustomOrderScreen: React.FC = () => {
               <label className="block text-xs font-bold uppercase tracking-wider text-[#585e4c] mb-2">
                 Item Type & Category
               </label>
-              <select className="w-full bg-[#fbf9f5] border border-[#c7c7bd] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#8e4d31]">
-                <option>Custom Heirloom Baby Blanket</option>
-                <option>Custom Adult Cardigan / Sweater</option>
-                <option>Custom Amigurumi / Plush Toy Set</option>
-                <option>Bespoke Home Decor / Throw</option>
+              <select
+                value={itemType}
+                onChange={(e) => setItemType(e.target.value)}
+                className="w-full bg-[#fbf9f5] border border-[#c7c7bd] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#8e4d31]"
+              >
+                <option value="Custom Heirloom Baby Blanket">Custom Heirloom Baby Blanket</option>
+                <option value="Custom Adult Cardigan / Sweater">Custom Adult Cardigan / Sweater</option>
+                <option value="Custom Amigurumi / Plush Toy Set">Custom Amigurumi / Plush Toy Set</option>
+                <option value="Bespoke Home Decor / Throw">Bespoke Home Decor / Throw</option>
               </select>
             </div>
 
@@ -87,6 +120,8 @@ const CustomOrderScreen: React.FC = () => {
               <textarea
                 required
                 rows={4}
+                value={specs}
+                onChange={(e) => setSpecs(e.target.value)}
                 placeholder="Describe your desired measurements, yarn colors, embroidery initials, or upload notes..."
                 className="w-full bg-[#fbf9f5] border border-[#c7c7bd] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#8e4d31]"
               />
@@ -106,3 +141,4 @@ const CustomOrderScreen: React.FC = () => {
 };
 
 export default CustomOrderScreen;
+

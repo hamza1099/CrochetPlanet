@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { RouteName } from "../routes/RouteName";
 import { useAuth } from "../context/AuthContext";
+import { RouteName } from "../routes/RouteName";
 import logoImg from "../assets/Logo.jpg";
 
-export const AuthModalScreen: React.FC = () => {
-  const { sendOtp, verifyOtp } = useAuth();
+export const AuthModal: React.FC = () => {
+  const { isAuthModalOpen, closeAuthModal, sendOtp, verifyOtp } = useAuth();
   const navigate = useNavigate();
 
   const [step, setStep] = useState<"phone" | "otp" | "name">("phone");
@@ -15,6 +15,8 @@ export const AuthModalScreen: React.FC = () => {
   const [fullName, setFullName] = useState("");
   const [activeOtpCode, setActiveOtpCode] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
+
+  if (!isAuthModalOpen) return null;
 
   const handleSendOtp = async () => {
     if (!phoneNumber || phoneNumber.trim().length < 6) {
@@ -36,16 +38,15 @@ export const AuthModalScreen: React.FC = () => {
     newOtp[index] = value;
     setOtp(newOtp);
 
-    // Auto-focus next input
     if (value && index < 5) {
-      const nextInput = document.getElementById(`otp-input-${index + 1}`);
+      const nextInput = document.getElementById(`modal-otp-input-${index + 1}`);
       nextInput?.focus();
     }
   };
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
-      const prevInput = document.getElementById(`otp-input-${index - 1}`);
+      const prevInput = document.getElementById(`modal-otp-input-${index - 1}`);
       prevInput?.focus();
     }
   };
@@ -67,6 +68,7 @@ export const AuthModalScreen: React.FC = () => {
     const success = await verifyOtp(fullPhone, enteredOtp, fullName);
 
     if (success) {
+      closeAuthModal();
       navigate(RouteName.PROFILE);
     } else {
       setErrorMsg("Verification failed. Please try again.");
@@ -74,11 +76,15 @@ export const AuthModalScreen: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center p-4 bg-[#fbf9f5]">
-      {/* Modal Container */}
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="bg-white w-full max-w-md rounded-2xl shadow-[0px_12px_32px_rgba(140,146,125,0.08)] p-8 relative overflow-hidden border border-[#e4e2de]">
-        {/* Subtle decorative background element */}
-        <div className="absolute -top-24 -right-24 w-48 h-48 bg-[#dfe5cd] opacity-30 rounded-full blur-3xl pointer-events-none" />
+        {/* Close Button */}
+        <button
+          onClick={closeAuthModal}
+          className="absolute top-4 right-4 w-9 h-9 rounded-full bg-[#f5f3ef] hover:bg-[#eae8e4] text-[#1b1c1a] flex items-center justify-center transition-colors z-10"
+        >
+          <span className="material-symbols-outlined text-lg">close</span>
+        </button>
 
         {/* Header / Logo Area */}
         <div className="flex flex-col items-center mb-8">
@@ -94,8 +100,8 @@ export const AuthModalScreen: React.FC = () => {
           </h1>
           <p className="text-xs sm:text-sm text-[#76786f] text-center max-w-xs leading-relaxed">
             {step === "phone" && "Enter your mobile number to receive a secure login code."}
-            {step === "otp" && `Enter the 6-digit code sent to ${countryCode} ${phoneNumber}`}
-            {step === "name" && "Almost done! Enter your name to complete your profile."}
+            {step === "otp" && `Enter 6-digit code sent to ${countryCode} ${phoneNumber}`}
+            {step === "name" && "Enter your name to complete your profile."}
           </p>
         </div>
 
@@ -111,7 +117,7 @@ export const AuthModalScreen: React.FC = () => {
           <div className="space-y-6">
             <div>
               <label
-                htmlFor="mobile-number"
+                htmlFor="modal-mobile-number"
                 className="block text-[11px] font-bold tracking-widest text-[#76786f] mb-2 uppercase"
               >
                 Mobile Number
@@ -128,7 +134,7 @@ export const AuthModalScreen: React.FC = () => {
                   <option value="+971">+971 (UAE)</option>
                 </select>
                 <input
-                  id="mobile-number"
+                  id="modal-mobile-number"
                   type="tel"
                   placeholder="(300) 000-0000"
                   value={phoneNumber}
@@ -171,7 +177,7 @@ export const AuthModalScreen: React.FC = () => {
               {otp.map((digit, idx) => (
                 <input
                   key={idx}
-                  id={`otp-input-${idx}`}
+                  id={`modal-otp-input-${idx}`}
                   type="text"
                   inputMode="numeric"
                   maxLength={1}
@@ -190,17 +196,6 @@ export const AuthModalScreen: React.FC = () => {
             >
               Verify OTP
             </button>
-
-            <p className="text-center text-xs text-[#76786f] mt-4">
-              Didn't receive a code?{" "}
-              <button
-                type="button"
-                onClick={handleSendOtp}
-                className="text-[#8e4d31] font-bold hover:underline ml-1"
-              >
-                Resend
-              </button>
-            </p>
           </div>
         )}
 
@@ -233,5 +228,3 @@ export const AuthModalScreen: React.FC = () => {
     </div>
   );
 };
-
-export default AuthModalScreen;

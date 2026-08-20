@@ -49,10 +49,10 @@ const OurStoryScreen: React.FC = () => {
             </p>
             <div className="pt-4">
               <Link
-                to={RouteName.ARTISANS}
+                to={RouteName.COLLECTIONS}
                 className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#8e4d31] hover:underline"
               >
-                Meet the artisans who craft our pieces →
+                Explore our handcrafted collections →
               </Link>
             </div>
           </div>

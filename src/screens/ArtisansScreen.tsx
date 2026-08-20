@@ -1,25 +1,42 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { RouteName } from "../routes/RouteName";
+import { fetchArtisansApi } from "../service/networkService";
 
-const artisans = [
+const initialArtisans = [
   {
     name: "Zainab Bibi",
     role: "Master Crochet Artisan — 14 Years Experience",
     bio: "Zainab leads our village guild, specializing in delicate heirloom baby blankets and intricate lace cardigans. Through her work, she has funded her children's higher education.",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuDnxEX8l_kbLxIdbKqiUoNDL6Xx47pd10soJHrETiIfsuCA7oMwKSu9fHA_W4ZwrlpveZgraRcpVeLtql0N1UBOdVZQO8KJPxZLq8YYYoN0sMr0MABdSgKCRdRq7gtO_-5rKEA0iPpYgjm2B6R91Iq8FfgJ6qxnTHneo34fz0uSplCTUwsMhrHY8IlpeIysOC6PRCU16Sw2w_42sBpMS-8FmLTzGgEuDlxjRoxMN7wsOknpIBfgAPex1g",
+    image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80",
   },
   {
     name: "Fatima Noor",
     role: "Amigurumi & Toy Sculptor — 8 Years Experience",
     bio: "Fatima turns pure organic cotton yarn into whimsical amigurumi animals. Her meticulous stitch count ensures each plush toy lasts for generations.",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuB7SzjvgC_aP-WxzGAv6vAndhvJ9j4Kn37VZVELrWKWMSulYKbUau2HB0WKnW4PKh1XoRC83ShXi0-RWjArTIhktDmrHsItXfxdrGdMCbCoIHO1GBnKN6yd5xNirwSRxau7K3Apt-hgsC055oxw3CJbM3ciWEYfGtwJBlvksaNkyDATJnLYfnL_STHjoRoIhbreCnNKdRIrbshGCahZFFXrEWx096Jg9aYBo8uXdy-3ZXSB_rKz00reEQ",
+    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80",
   },
 ];
 
 const ArtisansScreen: React.FC = () => {
+  const [artisansList, setArtisansList] = useState<any[]>(initialArtisans);
+
+  useEffect(() => {
+    fetchArtisansApi()
+      .then((data) => {
+        if (data && data.length > 0) {
+          const formatted = data.map((a) => ({
+            name: a.name,
+            role: a.role || "Artisan",
+            bio: a.bio || "",
+            image: a.imageUrl || a.image || initialArtisans[0].image,
+          }));
+          setArtisansList(formatted);
+        }
+      })
+      .catch((err) => console.warn("Using initial artisans fallback:", err));
+  }, []);
+
   return (
     <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-16 font-body text-[#1b1c1a] space-y-16">
       <header className="text-center max-w-3xl mx-auto space-y-4">
@@ -35,7 +52,8 @@ const ArtisansScreen: React.FC = () => {
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        {artisans.map((artisan, idx) => (
+        {artisansList.map((artisan, idx) => (
+
           <div
             key={idx}
             className="bg-white rounded-3xl overflow-hidden shadow-lg border border-[#e4e2de] flex flex-col"
