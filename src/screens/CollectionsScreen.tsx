@@ -14,133 +14,34 @@ import dealAsset4 from "../assets/1e395a4512140c8e752d25cdaaff7bd6.jpg";
 
 import { ProductCardSkeleton } from "../components/Skeletons";
 
-import { fetchProductsApi } from "../service/networkService";
+import { fetchProductsApi, fetchPopularCategoriesApi } from "../service/networkService";
 
-const initialProducts = [
-  {
-    id: "fw-1",
-    name: "Hooded Dark Chocolate Patchwork Cardigan",
-    category: "Women's Fashion",
-    price: 185.0,
-    rating: 5.0,
-    badge: "Women's Collection",
-    yarn: "Organic Wool",
-    image: hoodedCardiganImg,
-  },
-  {
-    id: "fw-2",
-    name: "Puffy Daisy Hand-Knitted Sweater",
-    category: "Women's Fashion",
-    price: 130.0,
-    rating: 5.0,
-    badge: "Women's Collection",
-    yarn: "Merino Blend",
-    image: daisyCrochetImg,
-  },
-  {
-    id: "fw-3",
-    name: "Artisanal Floral Crochet Shawl",
-    category: "Women's Fashion",
-    price: 95.0,
-    rating: 4.8,
-    badge: "Handmade",
-    yarn: "Pima Cotton",
-    image: dealAsset3,
-  },
-  {
-    id: "fm-1",
-    name: "Vintage Crochet Brown Unisex Overshirt",
-    category: "Men's Fashion",
-    price: 145.0,
-    rating: 4.9,
-    badge: "Men's Collection",
-    yarn: "Pima Cotton",
-    image: crochetShirtImg,
-  },
-  {
-    id: "fm-2",
-    name: "Exclusive Men's Heavy Knit Cardigan",
-    category: "Men's Fashion",
-    price: 175.0,
-    rating: 4.9,
-    badge: "Men's Wear",
-    yarn: "Organic Wool",
-    image: dealAsset2,
-  },
-  {
-    id: "baby-1",
-    name: "Sunflower Embroidered Baby Blanket & Set",
-    category: "Baby Apparel",
-    price: 65.0,
-    rating: 5.0,
-    badge: "Organic Cotton",
-    yarn: "Pima Cotton",
-    image: sunflowerImg,
-  },
-  {
-    id: "baby-2",
-    name: "Oatmeal Baby Cardigan",
-    category: "Baby Apparel",
-    price: 55.0,
-    rating: 5.0,
-    badge: "Best Seller",
-    yarn: "Organic Wool",
-    image: dealAsset1,
-  },
-  {
-    id: "baby-3",
-    name: "Heirloom Baby Booties & Bonnet",
-    category: "Baby Apparel",
-    price: 45.0,
-    rating: 4.8,
-    badge: "Hand-Knitted",
-    yarn: "Merino Blend",
-    image: dealAsset4,
-  },
-  {
-    id: "fox-1",
-    name: "Woodland Fox Amigurumi Toy",
-    category: "Amigurumi",
-    price: 45.0,
-    rating: 4.8,
-    badge: "Handmade",
-    yarn: "Merino Blend",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuBCfltglqiOvS6H7gazjXaTVrBbCSZnCywjQlAAVV5E8HJ3dPvyseaSfcOA-c6J1k5l0AL9l_XWTFEo-cLNgxtAmEzElEoWVoNLDTuS9LE7mIAfDocUl_znl6-pLUm1iV9NMZxF38LgW2T2ugh8IKfmxwDZl0DtKlYBylQQNpyFxRSAlneEDo2oWjYQKMAI8iF31G8ENqv_voK3NiaFI74-QlMOAD4wByXLBL7CxpjgucU4ibL_9DFS9g",
-  },
-  {
-    id: "tote-1",
-    name: "Artisan Market Tote Bag",
-    category: "Gifts & Home",
-    price: 65.0,
-    rating: 4.5,
-    badge: "Sustainable",
-    yarn: "Pima Cotton",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCZjXoyFqITWtyeBf9_x06LRjGwIOKutGVmgUINwqIWgosdtZgNACUwfC6P6r9j9i870N3djxECshur5IYL0nGVLb7QgJ3KhPsqv8fdrvXJMUF5O25KeG_ynbplJhHeRYl8HilOs2uo7F7MiUEOsLOrs9r8b6B1YVS2_q5BmJ4gf0wg0prRhNm4dBJF6z7m4iXjusLPwu3FnVMmsjcJ8SGtOzxOMwhJ1OGhwMEJJeV3F3phWTNQeTEuGQ",
-  },
+const OFFICIAL_ADMIN_CATEGORIES = [
+  "All",
+  "Baby Collection",
+  "Women's Fashion",
+  "Men's Fashion",
+  "Amigurumi",
+  "Gifts & Home",
+  "Crochet Keychains",
+  "Book Lovers",
+  "Crochet Hair Acc",
+  "Garments",
+  "Plushies",
+  "Blankets",
 ];
 
 const CollectionsScreen: React.FC = () => {
   const { addToCart } = useCart();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [productsList, setProductsList] = useState<any[]>(initialProducts);
+  const [productsList, setProductsList] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [selectedYarn, setSelectedYarn] = useState<string>("All");
   const [sortBy, setSortBy] = useState<string>("newest");
 
-  const categories = [
-    "All",
-    "Women's Fashion",
-    "Men's Fashion",
-    "Baby Apparel",
-    "Adult Apparel",
-    "Amigurumi",
-    "Gifts & Home",
-  ];
-
-  const yarnTypes = ["All", "Organic Wool", "Pima Cotton", "Merino Blend"];
+  const [categories, setCategories] = useState<string[]>(OFFICIAL_ADMIN_CATEGORIES);
+  const [yarnTypes, setYarnTypes] = useState<string[]>(["All"]);
 
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -162,9 +63,40 @@ const CollectionsScreen: React.FC = () => {
             image: item.imageUrl || item.image || hoodedCardiganImg,
           }));
           setProductsList(formatted);
+
+          const uniqueYarns = Array.from(new Set(formatted.map(p => p.yarn))).filter(Boolean).sort() as string[];
+          setYarnTypes(["All", ...uniqueYarns]);
+
+          // Extract any extra product categories and merge with official admin categories
+          const productCats = formatted.map(p => p.category).filter(Boolean);
+          const combinedCats = Array.from(new Set([...OFFICIAL_ADMIN_CATEGORIES, ...productCats])) as string[];
+          setCategories(combinedCats);
+        } else if (isMounted) {
+          setProductsList([]);
         }
       })
-      .catch((err) => console.warn("Using default products fallback:", err));
+      .catch((err) => {
+        console.warn("Error fetching products from Firebase:", err);
+        if (isMounted) setProductsList([]);
+      });
+
+    fetchPopularCategoriesApi()
+      .then((cats) => {
+        if (isMounted && cats && cats.length > 0) {
+          const sortedCats = cats
+            .filter(c => c.active !== false)
+            .sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
+            .map((c: any) => c.categoryName || c.title)
+            .filter(Boolean);
+            
+          const uniqueAdminCats = Array.from(new Set(sortedCats)) as string[];
+          if (uniqueAdminCats.length > 0) {
+            setCategories(prev => Array.from(new Set([...prev, ...uniqueAdminCats])));
+          }
+        }
+      })
+      .catch((err) => console.warn("Error fetching popular categories for CollectionsScreen:", err));
+
     return () => {
       isMounted = false;
     };
@@ -192,7 +124,7 @@ const CollectionsScreen: React.FC = () => {
       } else if (catQuery.toLowerCase().includes("men")) {
         setSelectedCategory("Men's Fashion");
       } else if (catQuery.toLowerCase().includes("baby")) {
-        setSelectedCategory("Baby Apparel");
+        setSelectedCategory("Baby Collection");
       } else {
         const matchedCat = categories.find(
           (c) => c.toLowerCase() === catQuery.toLowerCase()
@@ -202,7 +134,7 @@ const CollectionsScreen: React.FC = () => {
         }
       }
     }
-  }, [searchParams]);
+  }, [searchParams, categories]);
 
   // Handler for category selection
   const handleCategorySelect = (cat: string) => {
@@ -224,6 +156,9 @@ const CollectionsScreen: React.FC = () => {
       }
       if (selectedCategory === "Men's Fashion") {
         return prod.category === "Men's Fashion" || prod.category === "Adult Apparel";
+      }
+      if (selectedCategory === "Baby Collection" || selectedCategory === "Baby Apparel") {
+        return prod.category === "Baby Collection" || prod.category === "Baby Apparel";
       }
       return prod.category === selectedCategory;
     })
@@ -252,7 +187,7 @@ const CollectionsScreen: React.FC = () => {
           Our Craftsmanship
         </span>
         <h1 className="font-display text-4xl md:text-6xl font-semibold text-[#1b1c1a]">
-          Curated Collections
+          CrochCosmo Collections
         </h1>
         <p className="text-base text-[#464840] leading-relaxed">
           Discover our thoughtfully handcrafted pieces, woven with intention and care. Each item represents hours of artisan dedication.
@@ -379,17 +314,21 @@ const CollectionsScreen: React.FC = () => {
           ) : filteredProducts.length === 0 ? (
             <div className="bg-white p-12 text-center rounded-2xl border border-[#e4e2de] space-y-3">
               <span className="material-symbols-outlined text-4xl text-amber-600">inventory_2</span>
-              <h3 className="font-display text-xl font-semibold text-[#1b1c1a]">No Handcrafted Items Found</h3>
-              <p className="text-sm text-[#76786f] max-w-md mx-auto">There are no products listed matching your selected filters yet. Check back soon or reset your filters.</p>
+              <h3 className="font-display text-xl font-semibold text-[#1b1c1a]">
+                Out of Stock / No Products Found
+              </h3>
+              <p className="text-sm text-[#76786f] max-w-md mx-auto">
+                Currently, there are no products listed under {selectedCategory !== "All" ? <strong className="text-[#8e4d31]">"{selectedCategory}"</strong> : "this selection"}. Our artisans are crafting new items for this collection!
+              </p>
               <button
                 onClick={() => {
                   setSelectedCategory("All");
                   setSelectedYarn("All");
                   setSearchParams({});
                 }}
-                className="px-5 py-2.5 bg-[#8e4d31] text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-md inline-block"
+                className="px-5 py-2.5 bg-[#8e4d31] text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-md inline-block mt-2 hover:bg-[#723c24]"
               >
-                Reset Filters
+                Browse All Products
               </button>
             </div>
           ) : (

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, type ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 
 export interface CartItem {
   id: string;
@@ -30,26 +30,22 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [cart, setCart] = useState<CartItem[]>([
-    {
-      id: "sweater-1",
-      name: "Oatmeal Baby Cardigan",
-      price: 55.0,
-      image:
-        "https://lh3.googleusercontent.com/aida-public/AB6AXuAWPIWedTuhLodyUdzPRCyKOH7w56Y35m-epXJSMiLCqUuL1u2WEJaq9Bewr6m6whQEjedSbR6ICQ5uR5sxYa-PPvo0z60gqq2gTv-XXwffZLiPnxYVgIcuu-7ho0w5G1ev9fjK87NaSmKFb6J3no-Atrxfm46G5d01g2-vQKWsqkBZjk-G-Ckks_3dzwWxhxaGLICNFS-EwZtrdwXojxQaO6CYdUxLp0xUmFipOYKO2IAGuFswNfwMvw",
-      quantity: 1,
-      badge: "Best Seller",
-    },
-    {
-      id: "blanket-1",
-      name: "Heirloom Baby Blanket",
-      price: 125.0,
-      image:
-        "https://lh3.googleusercontent.com/aida-public/AB6AXuCnXX5PO--YAQOTg52hHc6isfkQtlzl1wF96R_O6DBRKb_f2ab_YLZv0h6htZSd0qzWsK_1RdewQfxblGoT60NpvC3GRzji81ntDG29NKeSoUbbopDbIhaqWHh0HQ3t05MjTRashRx3wYula-12C3pHzC2cTbUJyFR_ZlgwTKGb2BN_df9mV0nrEn_GM5SVFYPm8b__XSV8eMJmrHkmFngx3eO2rmnl_RX-xLQPKN-eFy52LX1On6Xtxg",
-      quantity: 1,
-      badge: "Organic Cotton",
-    },
-  ]);
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    const saved = localStorage.getItem("croch_cart");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.warn("Failed to parse cart from local storage", e);
+      }
+    }
+    return [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("croch_cart", JSON.stringify(cart));
+  }, [cart]);
+
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
   const [currency, setCurrencyState] = useState<Currency>(() => {
     return (localStorage.getItem("croch_currency") as Currency) || "PKR";

@@ -54,18 +54,22 @@ const Navbar: React.FC = () => {
     { name: "CATEGORIES", path: RouteName.COLLECTIONS, hasDropdown: true },
     { name: "LEARNING HUB", path: RouteName.LEARNING_HUB },
     { name: "CUSTOM INQUIRY", path: RouteName.CUSTOM_ORDER },
-    { name: "MY ORDERS", path: RouteName.MY_ORDERS },
-    { name: "CONTACT", path: RouteName.CONTACT },
+    { name: "TRACK ORDER", path: RouteName.MY_ORDERS },
   ];
 
   const categoriesList = [
     "All",
+    "Baby Collection",
     "Women's Fashion",
     "Men's Fashion",
-    "Baby Apparel",
-    "Adult Apparel",
     "Amigurumi",
     "Gifts & Home",
+    "Crochet Keychains",
+    "Book Lovers",
+    "Crochet Hair Acc",
+    "Garments",
+    "Plushies",
+    "Blankets",
   ];
 
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
@@ -207,7 +211,7 @@ const Navbar: React.FC = () => {
                     className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#464840] hover:bg-[#f5f3ef] hover:text-[#8e4d31] transition-colors"
                   >
                     <span className="material-symbols-outlined text-base">local_shipping</span>
-                    My Orders
+                    Track Order
                   </Link>
                   <div className="border-t border-[#f5f3ef] my-1" />
                   <button
@@ -219,15 +223,7 @@ const Navbar: React.FC = () => {
                   </button>
                 </div>
               </div>
-            ) : (
-              <button
-                onClick={openAuthModal}
-                className="hidden lg:flex items-center gap-2 bg-[#8e4d31] hover:bg-[#71361d] text-white px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-sm active:scale-95"
-              >
-                <span className="material-symbols-outlined text-base">person</span>
-                <span>Login / Sign Up</span>
-              </button>
-            )}
+            ) : null}
 
 
             {/* Desktop Cart Button */}
@@ -421,18 +417,7 @@ const Navbar: React.FC = () => {
                   Profile →
                 </Link>
               </div>
-            ) : (
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  openAuthModal();
-                }}
-                className="w-full bg-[#8e4d31] text-white py-3 rounded-2xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-md"
-              >
-                <span className="material-symbols-outlined text-base">person</span>
-                <span>Login / Sign Up with Phone OTP</span>
-              </button>
-            )}
+            ) : null}
 
 
             {/* 4. Mobile Navigation Links */}

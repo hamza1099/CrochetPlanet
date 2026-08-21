@@ -1,11 +1,12 @@
 import { initializeApp, getApps } from "firebase/app";
-import { 
-  getFirestore, 
-  collection, 
-  getDocs, 
+import { getAuth } from "firebase/auth";
+import {
+  initializeFirestore,
+  collection,
+  getDocs,
   getDoc,
-  setDoc, 
-  doc, 
+  setDoc,
+  doc,
   updateDoc
 } from "firebase/firestore";
 
@@ -19,7 +20,10 @@ const firebaseConfig = {
 };
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
-export const db = getFirestore(app);
+export const auth = getAuth(app);
+export const db = initializeFirestore(app, {
+  experimentalAutoDetectLongPolling: true
+});
 
 // Direct Firestore Helpers for Storefront App
 
@@ -161,5 +165,74 @@ export const saveUserProfileDirect = async (userProfile: any): Promise<any> => {
   } catch (error) {
     console.error("saveUserProfileDirect error:", error);
     throw error;
+  }
+};
+
+export const fetchPopularCategoriesDirect = async (): Promise<any[]> => {
+  try {
+    const snap = await getDocs(collection(db, "popular_categories"));
+    return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error("fetchPopularCategoriesDirect error:", error);
+    return [];
+  }
+};
+
+export const saveContactMessageDirect = async (messageData: any): Promise<any> => {
+  try {
+    const id = messageData.id || `MSG-${Date.now().toString().slice(-4)}`;
+    const fullMessage = {
+      ...messageData,
+      id,
+      status: "New",
+      date: new Date().toISOString().split("T")[0],
+      createdAt: new Date().toISOString()
+    };
+    await setDoc(doc(db, "contact_messages", id), fullMessage);
+    return fullMessage;
+  } catch (error) {
+    console.error("saveContactMessageDirect error:", error);
+    throw error;
+  }
+};
+
+export const fetchCategoryBannersDirect = async (): Promise<any> => {
+  try {
+    const docSnap = await getDoc(doc(db, "settings", "category_banners"));
+    if (docSnap.exists()) {
+      return docSnap.data();
+    }
+    return null;
+  } catch (error) {
+    console.error("fetchCategoryBannersDirect error:", error);
+    return null;
+  }
+};
+
+export const saveMasterclassRequestDirect = async (requestData: any): Promise<any> => {
+  try {
+    const id = requestData.id || `MCR-${Date.now().toString().slice(-4)}`;
+    const fullRequest = {
+      ...requestData,
+      id,
+      status: "New",
+      date: new Date().toISOString().split("T")[0],
+      createdAt: new Date().toISOString()
+    };
+    await setDoc(doc(db, "masterclass_requests", id), fullRequest);
+    return fullRequest;
+  } catch (error) {
+    console.error("saveMasterclassRequestDirect error:", error);
+    throw error;
+  }
+};
+
+export const fetchTutorialsDirect = async (): Promise<any[]> => {
+  try {
+    const snap = await getDocs(collection(db, "tutorials"));
+    return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error("fetchTutorialsDirect error:", error);
+    return [];
   }
 };

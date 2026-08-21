@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { sendOtpApi, verifyOtpApi, updateUserProfileApi } from "../service/networkService";
+import { auth } from "../service/firebaseClient";
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+import type { ConfirmationResult } from "firebase/auth";
 
 export interface UserProfile {
   id?: string;
@@ -17,11 +20,12 @@ interface AuthContextType {
   isAuthModalOpen: boolean;
   openAuthModal: () => void;
   closeAuthModal: () => void;
-  sendOtp: (phoneOrEmail: string) => Promise<string>;
+  sendOtp: (phoneOrEmail: string, appVerifier?: RecaptchaVerifier) => Promise<string>;
   verifyOtp: (phoneOrEmail: string, otpInput: string, name?: string, email?: string) => Promise<boolean>;
   updateProfile: (updatedData: Partial<UserProfile>) => Promise<void>;
   logout: () => void;
   generatedOtp: string | null;
+  confirmationResult: ConfirmationResult | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -49,23 +53,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [user]);
 
+  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
+
   const openAuthModal = () => setIsAuthModalOpen(true);
   const closeAuthModal = () => {
     setIsAuthModalOpen(false);
     setGeneratedOtp(null);
+    setConfirmationResult(null);
   };
 
-  const sendOtp = async (phoneOrEmail: string): Promise<string> => {
+  const sendOtp = async (phoneOrEmail: string, appVerifier?: RecaptchaVerifier): Promise<string> => {
     try {
-      const data = await sendOtpApi(phoneOrEmail);
-      const code = data.otpCode || "123456";
-      setGeneratedOtp(code);
-      return code;
+      if (appVerifier) {
+        const result = await signInWithPhoneNumber(auth, phoneOrEmail, appVerifier);
+        setConfirmationResult(result);
+        return "sent";
+      } else {
+        // Fallback or old mock logic if no appVerifier provided
+        const data = await sendOtpApi(phoneOrEmail);
+        const code = data.otpCode || "123456";
+        setGeneratedOtp(code);
+        return code;
+      }
     } catch (err) {
-      console.warn("Backend sendOtp notice, using fallback code:", err);
-      const code = "123456";
-      setGeneratedOtp(code);
-      return code;
+      console.error("Firebase sendOtp error:", err);
+      throw err;
     }
   };
 
@@ -76,39 +88,53 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     email?: string
   ): Promise<boolean> => {
     try {
-      const data = await verifyOtpApi({ phoneOrEmail, otpCode: otpInput, name });
-      if (data.success && data.user) {
-        const u = data.user;
+      if (confirmationResult) {
+        const result = await confirmationResult.confirm(otpInput);
+        const fbUser = result.user;
+        
         const loggedUser: UserProfile = {
-          id: u.id,
-          name: u.name || name || `Customer ${phoneOrEmail.slice(-4)}`,
-          phone: u.phone || phoneOrEmail,
-          email: u.email || email || "",
-          address: u.address || "",
-          city: u.city || ""
+          id: fbUser.uid,
+          name: name || `Customer ${phoneOrEmail.slice(-4)}`,
+          phone: fbUser.phoneNumber || phoneOrEmail,
+          email: email || "",
+          address: "",
+          city: ""
         };
+        
         setUser(loggedUser);
-        if (data.token) {
-          (globalThis as any).authToken = data.token;
+        
+        // Save to backend optionally
+        try {
+          await updateUserProfileApi({ userId: fbUser.uid, ...loggedUser });
+        } catch (e) {
+          console.warn("Could not save to backend on first login", e);
         }
-        closeAuthModal();
+        
         return true;
+      } else {
+        // Fallback for mock verify
+        const data = await verifyOtpApi({ phoneOrEmail, otpCode: otpInput, name });
+        if (data.success && data.user) {
+          const u = data.user;
+          const loggedUser: UserProfile = {
+            id: u.id,
+            name: u.name || name || `Customer ${phoneOrEmail.slice(-4)}`,
+            phone: u.phone || phoneOrEmail,
+            email: u.email || email || "",
+            address: u.address || "",
+            city: u.city || ""
+          };
+          setUser(loggedUser);
+          if (data.token) {
+            (globalThis as any).authToken = data.token;
+          }
+          return true;
+        }
+        return false;
       }
-      return false;
     } catch (err) {
       console.error("verifyOtp error:", err);
-      // Fallback verification if backend token issue
-      const userName = name && name.trim().length > 0 ? name.trim() : `Customer ${phoneOrEmail.slice(-4)}`;
-      const newUser: UserProfile = {
-        name: userName,
-        phone: phoneOrEmail,
-        email: email || `${phoneOrEmail.replace(/\D/g, "")}@crochcosmo.com`,
-        address: "",
-        city: "",
-      };
-      setUser(newUser);
-      closeAuthModal();
-      return true;
+      return false;
     }
   };
 
@@ -141,6 +167,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updateProfile,
         logout,
         generatedOtp,
+        confirmationResult,
       }}
     >
       {children}

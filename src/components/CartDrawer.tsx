@@ -1,11 +1,14 @@
 import React from "react";
 import { useCart } from "../context/CartContext";
-import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
 import { RouteName } from "../routes/RouteName";
 
 const CartDrawer: React.FC = () => {
   const { cart, removeFromCart, updateQuantity, isCartOpen, setIsCartOpen, subtotal, totalCount, formatPrice } =
     useCart();
+  const { isLoggedIn, openAuthModal } = useAuth();
+  const navigate = useNavigate();
 
   if (!isCartOpen) return null;
 
@@ -51,12 +54,13 @@ const CartDrawer: React.FC = () => {
               <p className="text-sm text-[#76786f] mb-6">
                 Explore our luxury handmade crochet pieces
               </p>
-              <button
+              <Link
+                to={RouteName.COLLECTIONS}
                 onClick={() => setIsCartOpen(false)}
-                className="px-6 py-2.5 bg-[#585e4c] text-white rounded-lg text-xs uppercase tracking-widest hover:bg-[#717763] transition-colors"
+                className="inline-block px-6 py-2.5 bg-[#585e4c] text-white rounded-lg text-xs uppercase tracking-widest hover:bg-[#717763] transition-colors"
               >
                 Start Shopping
-              </button>
+              </Link>
             </div>
           ) : (
             cart.map((item) => (
@@ -119,13 +123,15 @@ const CartDrawer: React.FC = () => {
             <p className="text-xs text-[#76786f] text-center">
               Free luxury gift packaging & worldwide shipping options available.
             </p>
-            <Link
-              to={RouteName.CHECKOUT}
-              onClick={() => setIsCartOpen(false)}
+            <button
+              onClick={() => {
+                setIsCartOpen(false);
+                navigate(RouteName.CHECKOUT);
+              }}
               className="w-full block text-center bg-[#585e4c] hover:bg-[#717763] text-white rounded-xl py-4 text-xs font-bold uppercase tracking-widest transition-all duration-300 shadow-md hover:shadow-lg"
             >
               Proceed to Secure Checkout
-            </Link>
+            </button>
           </div>
         )}
       </aside>

@@ -18,7 +18,7 @@ import dealAsset4 from "../assets/1e395a4512140c8e752d25cdaaff7bd6.jpg";
 import sideBannerImg from "../assets/side banner.jpg";
 
 import { ProductCardSkeleton, HeroSkeleton, CategoryGridSkeleton } from "../components/Skeletons";
-import { fetchProductsApi, fetchBannersApi } from "../service/networkService";
+import { fetchProductsApi, fetchBannersApi, fetchPopularCategoriesApi, fetchCategoryBannersApi } from "../service/networkService";
 
 const HomeScreen: React.FC = () => {
   const { addToCart } = useCart();
@@ -28,9 +28,18 @@ const HomeScreen: React.FC = () => {
   // Hero Sliding Carousel State & Data
   const [currentSlide, setCurrentSlide] = useState(0);
   const [liveBanners, setLiveBanners] = useState<any[]>([]);
+  const [livePopularCategories, setLivePopularCategories] = useState<any[]>([]);
+  const [productsList, setProductsList] = useState<any[]>([]);
+  const [categoryBanners, setCategoryBanners] = useState<any>(null);
+
 
   useEffect(() => {
     fetchProductsApi()
+      .then((data) => {
+        if (data && data.length > 0) {
+          setProductsList(data);
+        }
+      })
       .catch((err) => console.warn("HomeScreen products fallback:", err));
 
     fetchBannersApi()
@@ -40,6 +49,24 @@ const HomeScreen: React.FC = () => {
         }
       })
       .catch((err) => console.warn("HomeScreen banners fallback:", err));
+
+    fetchPopularCategoriesApi()
+      .then((cats) => {
+        if (cats && cats.length > 0) {
+          const activeCats = cats.filter(c => c.active !== false).sort((a, b) => (a.order || 0) - (b.order || 0)).slice(0, 4);
+          setLivePopularCategories(activeCats);
+        }
+      })
+      .catch((err) => console.warn("HomeScreen popular categories fallback:", err));
+
+    fetchCategoryBannersApi()
+      .then((data) => {
+        if (data) {
+          setCategoryBanners(data);
+        }
+      })
+      .catch((err) => console.warn("HomeScreen category banners fallback:", err));
+
 
     const timer = setTimeout(() => setIsLoading(false), 500);
     return () => clearTimeout(timer);
@@ -90,13 +117,22 @@ const HomeScreen: React.FC = () => {
     return () => clearInterval(slideTimer);
   }, [heroSlides.length]);
 
-  // Popular Categories list matching user screenshot
-  const popularCategories = [
+  // Default Popular Categories list matching user screenshot
+  const defaultPopularCategories = [
     { title: "Bag Charms", category: "Gifts & Home", image: hoodedCardiganImg },
     { title: "Blanket Bouquets", category: "Baby Apparel", image: daisyCrochetImg },
     { title: "Book Lovers", category: "Gifts & Home", image: dealAsset1 },
     { title: "Bottle Holder", category: "Gifts & Home", image: sunflowerImg },
   ];
+
+  const popularCategories = livePopularCategories.length > 0
+    ? livePopularCategories.map((c) => ({
+        title: c.title || "Category",
+        category: c.categoryName || "Gifts & Home",
+        image: c.imageUrl || dealAsset1
+      }))
+    : defaultPopularCategories;
+
 
   // State for Gender Tab in Men & Women section (Women, Men, Baby tabs)
   const [genderTab, setGenderTab] = useState<"women" | "men" | "baby">("women");
@@ -107,17 +143,17 @@ const HomeScreen: React.FC = () => {
   // Dynamic Banner for Fashion Section based on active tab
   const activeFashionBanner =
     genderTab === "women"
-      ? womenBannerImg
+      ? categoryBanners?.womenBannerUrl || womenBannerImg
       : genderTab === "men"
-      ? menBannerImg
-      : daisyCrochetImg;
+      ? categoryBanners?.menBannerUrl || menBannerImg
+      : categoryBanners?.babyBannerUrl || daisyCrochetImg;
 
   const activeFashionBannerText =
     genderTab === "women"
-      ? "Exclusive Women's Line • Handcrafted Cardigans, Sweaters & Apparel"
+      ? categoryBanners?.womenBannerTagline || "Exclusive Women's Line • Handcrafted Cardigans, Sweaters & Apparel"
       : genderTab === "men"
-      ? "Exclusive Men's Line • Vintage Crochet Overshirts & Heavy Knits"
-      : "Exclusive Baby & Kids Line • Gentle Organic Cotton & Soft Wool Sets";
+      ? categoryBanners?.menBannerTagline || "Exclusive Men's Line • Vintage Crochet Overshirts & Heavy Knits"
+      : categoryBanners?.babyBannerTagline || "Exclusive Baby & Kids Line • Gentle Organic Cotton & Soft Wool Sets";
 
   // Target collection link based on active tab
   const activeFashionCategoryLink =
@@ -134,168 +170,58 @@ const HomeScreen: React.FC = () => {
     }
   };
 
-  // 1. New Arrivals Data
-  const newArrivalsList = [
-    {
-      id: "new-hooded",
-      name: "Dark Chocolate Patchwork Cardigan",
-      category: "Women",
-      price: 185.0,
-      badge: "40% OFF",
-      rating: 5.0,
-      image: hoodedCardiganImg,
-    },
-    {
-      id: "new-shirt",
-      name: "Vintage Knitted Unisex Overshirt",
-      category: "Men",
-      price: 145.0,
-      badge: "40% OFF",
-      rating: 4.9,
-      image: crochetShirtImg,
-    },
-    {
-      id: "new-daisy",
-      name: "Puffy Daisy Crochet Sweater",
-      category: "Women",
-      price: 120.0,
-      badge: "Handmade",
-      rating: 5.0,
-      image: daisyCrochetImg,
-    },
-    {
-      id: "new-sunflower",
-      name: "Sunflower Embroidery Baby Blanket",
-      category: "Baby",
-      price: 95.0,
-      badge: "Organic Cotton",
-      rating: 4.8,
-      image: sunflowerImg,
-    },
-  ];
+  // 1. New Arrivals Data (Dynamic)
+  const newArrivalsList = productsList
+    .slice()
+    .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
+    .slice(0, 4)
+    .map(p => ({
+      id: p.id,
+      name: p.name,
+      category: p.category || "Handcrafted",
+      price: Number(p.priceUSD ?? p.price ?? 50),
+      badge: p.badge || "New Arrival",
+      rating: Number(p.rating || 5.0),
+      image: p.imageUrl || p.image || hoodedCardiganImg,
+    }));
 
-  // 2. Baby Articles Data
-  const babyArticles = [
-    {
-      id: "baby-1",
-      name: "Sunflower Embroidered Baby Set",
-      price: 65.0,
-      oldPrice: 85.0,
-      badge: "Organic Cotton",
-      yarn: "100% Pima Cotton",
-      image: sunflowerImg,
-    },
-    {
-      id: "baby-2",
-      name: "Puffy Daisy Baby Cardigan",
-      price: 55.0,
-      oldPrice: 75.0,
-      badge: "Hypoallergenic",
-      yarn: "Soft Merino Blend",
-      image: daisyCrochetImg,
-    },
-    {
-      id: "baby-3",
-      name: "Oatmeal Baby Cardigan",
-      price: 50.0,
-      oldPrice: 70.0,
-      badge: "Best Seller",
-      yarn: "Natural Wool",
-      image: dealAsset1,
-    },
-    {
-      id: "baby-4",
-      name: "Heirloom Baby Blanket & Booties",
-      price: 110.0,
-      oldPrice: 145.0,
-      badge: "Hand-Knitted",
-      yarn: "Organic Cotton",
-      image: dealAsset4,
-    },
-  ];
+  // 2. Baby Articles Data (Dynamic)
+  const babyArticles = productsList
+    .filter(p => p.category?.toLowerCase().includes("baby"))
+    .slice(0, 4)
+    .map(p => ({
+      id: p.id,
+      name: p.name,
+      price: Number(p.priceUSD ?? p.price ?? 50),
+      oldPrice: Number(p.priceUSD ?? p.price ?? 50) * 1.2,
+      badge: p.badge || "Baby Collection",
+      yarn: p.yarnType || p.yarn || "Soft Merino Blend",
+      image: p.imageUrl || p.image || daisyCrochetImg,
+    }));
 
-  // 3. Men & Women Fashion Apparel Data
-  const fashionItems = [
-    {
-      id: "fw-1",
-      gender: "women",
-      name: "Hooded Patchwork Cardigan",
-      price: 185.0,
-      oldPrice: 240.0,
-      badge: "Women's Collection",
-      tagline: "Heavy knit dark chocolate brown tones",
-      image: hoodedCardiganImg,
-    },
-    {
-      id: "fw-2",
-      gender: "women",
-      name: "Puffy Daisy Hand-Knitted Sweater",
-      price: 130.0,
-      oldPrice: 165.0,
-      badge: "Women's Fashion",
-      tagline: "3D textured floral pattern weave",
-      image: daisyCrochetImg,
-    },
-    {
-      id: "fm-1",
-      gender: "men",
-      name: "Vintage Crochet Brown Overshirt",
-      price: 145.0,
-      oldPrice: 190.0,
-      badge: "Men's Collection",
-      tagline: "Hand-crocheted striped breathable knit",
-      image: crochetShirtImg,
-    },
-    {
-      id: "fm-2",
-      gender: "men",
-      name: "Exclusive Men's Knit Cardigan",
-      price: 175.0,
-      oldPrice: 220.0,
-      badge: "Men's Wear",
-      tagline: "Artisanal natural yarn blend",
-      image: dealAsset2,
-    },
-  ];
+  // 3. Men, Women, & Baby Fashion Apparel Data (Dynamic)
+  const fashionItems = productsList
+    .map(p => {
+      const cat = (p.category || "").toLowerCase();
+      let gender = "women";
+      if (cat.includes("men") && !cat.includes("women")) gender = "men";
+      if (cat.includes("baby")) gender = "baby";
+      
+      return {
+        id: p.id,
+        gender,
+        name: p.name,
+        price: Number(p.priceUSD ?? p.price ?? 50),
+        oldPrice: Number(p.priceUSD ?? p.price ?? 50) * 1.2,
+        badge: p.badge || (gender === "men" ? "Men's Collection" : gender === "baby" ? "Baby Collection" : "Women's Collection"),
+        tagline: p.yarnType || p.yarn || "Hand-crocheted organic blend",
+        image: p.imageUrl || p.image || hoodedCardiganImg,
+      };
+    });
 
-  const filteredFashion = fashionItems.filter((item) => item.gender === genderTab);
+  const filteredFashion = fashionItems.filter((item) => item.gender === genderTab).slice(0, 6);
 
-  // 4. Our Best Articles (Featured Editorial)
-  const bestArticles = [
-    {
-      id: "art-1",
-      title: "The Craft Behind the 40% OFF Men & Women Crochet Collection",
-      excerpt: "Take an inside look at how our master artisans designed the iconic hooded patchwork cardigan and vintage unisex shirt featured in our latest banner release.",
-      author: "Elena Rostova",
-      date: "August 16, 2026",
-      readTime: "4 min read",
-      category: "Feature Story",
-      link: RouteName.LEARNING_HUB,
-      image: mainBannerImg,
-    },
-    {
-      id: "art-2",
-      title: "3D Floral Embroidery: Puffy Daisy & Sunflower Techniques",
-      excerpt: "Learn how raised stitch motifs add rich tactile warmth and artisanal beauty to organic cotton baby apparel and adult sweaters.",
-      author: "Master Weaver Sophia",
-      date: "August 12, 2026",
-      readTime: "6 min read",
-      category: "Craft Guide",
-      link: RouteName.MASTERCLASS,
-      image: daisyCrochetImg,
-    },
-    {
-      id: "art-3",
-      title: "Why Men's Hand-Crocheted Overshirts Are Trending in 2026",
-      excerpt: "From retro vintage aesthetics to modern breathable resort wear, explore why hand-knitted menswear is taking center stage.",
-      author: "Marcus Vance",
-      date: "August 05, 2026",
-      readTime: "5 min read",
-      category: "Style & Fashion",
-      link: RouteName.ORGANIC_LUXURY,
-      image: crochetShirtImg,
-    },
-  ];
+
 
   return (
     <div className="space-y-20 font-body text-[#1b1c1a] bg-[#fbf9f5] min-h-screen pb-20">
@@ -458,12 +384,17 @@ const HomeScreen: React.FC = () => {
           </div>
         </div>
 
-        {/* Product Grid */}
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {[1, 2, 3, 4].map((n) => (
               <ProductCardSkeleton key={n} />
             ))}
+          </div>
+        ) : newArrivalsList.filter((item) => newArrivalFilter === "All" || item.category === newArrivalFilter).length === 0 ? (
+          <div className="bg-white p-10 text-center rounded-2xl border border-[#e4e2de] space-y-2">
+            <span className="material-symbols-outlined text-4xl text-amber-600">inventory_2</span>
+            <h3 className="font-display text-lg font-semibold text-[#1b1c1a]">No Stock Right Now</h3>
+            <p className="text-xs text-[#76786f]">There are currently no items available in this category. You can add new products from the admin panel!</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -846,83 +777,6 @@ const HomeScreen: React.FC = () => {
           </div>
         </div>
       </section>
-
-      {/* =========================================================================
-          SECTION 5: OUR BEST ARTICLES ("our best articals")
-         ========================================================================= */}
-      <section className="max-w-[1440px] mx-auto px-4 md:px-8">
-        <div className="bg-[#eae8e4] rounded-3xl p-8 md:p-14 border border-[#e4e2de] shadow-inner space-y-12">
-
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 pb-6 border-b border-[#c7c7bd]">
-            <div>
-              <span className="text-xs font-bold uppercase tracking-widest text-[#8e4d31] block mb-2">
-                Knowledge & Editorial Journal
-              </span>
-              <h2 className="font-display text-3xl md:text-5xl font-bold text-[#1b1c1a]">
-                Our Best Articles & Guides
-              </h2>
-            </div>
-            <Link
-              to={RouteName.LEARNING_HUB}
-              className="text-xs font-bold uppercase tracking-widest text-[#8e4d31] border-b-2 border-[#8e4d31] pb-1 hover:text-[#71361d] hover:border-[#71361d] transition-colors"
-            >
-              Explore All Journal Articles →
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {bestArticles.map((article) => (
-              <article
-                key={article.id}
-                className="bg-white rounded-2xl overflow-hidden border border-[#e4e2de] shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col justify-between"
-              >
-                <div>
-                  <div className="relative aspect-[16/10] overflow-hidden bg-[#efeeea]">
-                    <img
-                      src={article.image}
-                      alt={article.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                    <span className="absolute top-3 left-3 bg-[#8e4d31] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-sm">
-                      {article.category}
-                    </span>
-                  </div>
-
-                  <div className="p-6 space-y-3">
-                    <div className="flex items-center gap-3 text-xs text-[#76786f]">
-                      <span>{article.date}</span>
-                      <span>•</span>
-                      <span>{article.readTime}</span>
-                    </div>
-
-                    <h3 className="font-display text-xl font-bold text-[#1b1c1a] group-hover:text-[#8e4d31] transition-colors leading-snug">
-                      {article.title}
-                    </h3>
-
-                    <p className="text-sm text-[#464840] leading-relaxed line-clamp-3">
-                      {article.excerpt}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="p-6 pt-0 flex justify-between items-center border-t border-[#f5f3ef] mt-4">
-                  <span className="text-xs font-medium text-[#76786f]">
-                    By {article.author}
-                  </span>
-                  <Link
-                    to={article.link}
-                    className="text-xs font-bold uppercase tracking-wider text-[#8e4d31] hover:underline"
-                  >
-                    Read Full →
-                  </Link>
-                </div>
-              </article>
-            ))}
-          </div>
-
-        </div>
-      </section>
-
     </div>
   );
 };

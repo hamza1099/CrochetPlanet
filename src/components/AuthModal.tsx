@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { RouteName } from "../routes/RouteName";
 import logoImg from "../assets/Logo.jpg";
+import { RecaptchaVerifier } from "firebase/auth";
+import { auth } from "../service/firebaseClient";
 
 export const AuthModal: React.FC = () => {
-  const { isAuthModalOpen, closeAuthModal, sendOtp, verifyOtp } = useAuth();
+  const { isAuthModalOpen, closeAuthModal, sendOtp, verifyOtp, updateProfile } = useAuth();
   const navigate = useNavigate();
 
   const [step, setStep] = useState<"phone" | "otp" | "name">("phone");
@@ -18,17 +20,32 @@ export const AuthModal: React.FC = () => {
 
   if (!isAuthModalOpen) return null;
 
+  const setupRecaptcha = () => {
+    if (!(window as any).recaptchaVerifier) {
+      (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        'size': 'invisible'
+      });
+    }
+  };
+
   const handleSendOtp = async () => {
     if (!phoneNumber || phoneNumber.trim().length < 6) {
       setErrorMsg("Please enter a valid mobile number");
       return;
     }
     setErrorMsg("");
-    const fullPhone = `${countryCode} ${phoneNumber.trim()}`;
-    const code = await sendOtp(fullPhone);
-    setActiveOtpCode(code);
-    setStep("otp");
-    alert(`📱 Verification code sent to ${fullPhone}\nYour Verification Code is: ${code}`);
+    
+    let cleanPhone = phoneNumber.trim().replace(/^0+/, "");
+    const fullPhone = `${countryCode}${cleanPhone}`;
+    
+    try {
+      setupRecaptcha();
+      const appVerifier = (window as any).recaptchaVerifier;
+      await sendOtp(fullPhone, appVerifier);
+      setStep("otp");
+    } catch (err: any) {
+      setErrorMsg(err.message || "Failed to send OTP. Please try again.");
+    }
   };
 
 
@@ -51,27 +68,39 @@ export const AuthModal: React.FC = () => {
     }
   };
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     const enteredOtp = otp.join("");
-    if (activeOtpCode && enteredOtp !== activeOtpCode && enteredOtp !== "123456") {
-      setErrorMsg("Invalid OTP code. Please enter the code received.");
+    if (enteredOtp.length !== 6) {
+      setErrorMsg("Please enter the 6-digit code.");
       return;
     }
     setErrorMsg("");
-    setStep("name");
+    
+    let cleanPhone = phoneNumber.trim().replace(/^0+/, "");
+    const fullPhone = `${countryCode}${cleanPhone}`;
+    
+    const success = await verifyOtp(fullPhone, enteredOtp, "");
+    if (success) {
+      setStep("name");
+    } else {
+      setErrorMsg("Invalid OTP code. Please enter the code received.");
+    }
   };
 
   const handleCompleteLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const fullPhone = `${countryCode} ${phoneNumber.trim()}`;
-    const enteredOtp = otp.join("");
-    const success = await verifyOtp(fullPhone, enteredOtp, fullName);
-
-    if (success) {
-      closeAuthModal();
-      navigate(RouteName.PROFILE);
+    
+    if (fullName.trim().length > 0) {
+      await updateProfile({ name: fullName });
+    }
+    
+    closeAuthModal();
+    const redirect = localStorage.getItem("redirectAfterLogin");
+    if (redirect) {
+      localStorage.removeItem("redirectAfterLogin");
+      navigate(redirect);
     } else {
-      setErrorMsg("Verification failed. Please try again.");
+      navigate(RouteName.PROFILE);
     }
   };
 
@@ -111,6 +140,8 @@ export const AuthModal: React.FC = () => {
             <span>{errorMsg}</span>
           </div>
         )}
+
+        <div id="recaptcha-container"></div>
 
         {/* Step 1: Phone Number Input */}
         {step === "phone" && (
@@ -220,7 +251,7 @@ export const AuthModal: React.FC = () => {
               type="submit"
               className="w-full bg-[#8e4d31] hover:bg-[#71361d] text-white font-medium py-3.5 rounded-xl transition-all duration-300 text-sm shadow-md"
             >
-              Complete Login & View Profile →
+              Complete Login →
             </button>
           </form>
         )}

@@ -18,6 +18,11 @@ const CheckoutScreen: React.FC = () => {
   const [address, setAddress] = useState(user?.address || "");
   const [city, setCity] = useState(user?.city || "");
 
+  const [paymentMethod, setPaymentMethod] = useState<"easypaisa_jazzcash" | "cod" | "ubl_bank">("easypaisa_jazzcash");
+  const [senderAccount, setSenderAccount] = useState("");
+  const [transactionId, setTransactionId] = useState("");
+  const [screenshotBase64, setScreenshotBase64] = useState("");
+
   useEffect(() => {
     if (user) {
       if (!firstName) setFirstName(user.name.split(" ")[0] || "");
@@ -34,12 +39,20 @@ const CheckoutScreen: React.FC = () => {
   const subtotalPKR = currency === "PKR" ? subtotal * 280 : subtotal * 280;
   const isFreeDelivery = subtotalPKR >= 6000 || subtotal === 0;
   
-  // Shipping fee: Rs 250 in PKR, ~$0.90 in USD
   const shippingFeeInUSD = isFreeDelivery ? 0 : 0.90;
   const totalUSD = subtotal + shippingFeeInUSD;
   const amountToFreeShippingPKR = 6000 - subtotalPKR;
 
-  const [paymentMethod, setPaymentMethod] = useState<"easypaisa_jazzcash" | "cod" | "card">("easypaisa_jazzcash");
+  const handleScreenshotUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setScreenshotBase64(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,19 +74,43 @@ const CheckoutScreen: React.FC = () => {
         image: item.image
       })),
       currency: currency,
-      paymentMethod: paymentMethod === "cod" ? "Cash on Delivery" : paymentMethod === "card" ? "Card" : "Easypaisa / JazzCash",
+      paymentMethod: paymentMethod === "cod" ? "Cash on Delivery" : paymentMethod === "ubl_bank" ? "UBL Bank Transfer" : "Easypaisa / JazzCash",
+      paymentDetails: (paymentMethod === "easypaisa_jazzcash" || paymentMethod === "ubl_bank") ? {
+        senderAccount,
+        transactionId,
+        screenshotBase64
+      } : undefined,
     };
 
+    if ((paymentMethod === "easypaisa_jazzcash" || paymentMethod === "ubl_bank") && (!transactionId || !senderAccount || !screenshotBase64)) {
+      alert("Please provide Sender Account, Transaction ID, and upload the payment screenshot to proceed.");
+      return;
+    }
+
+    let finalId = fallbackId;
     try {
       const createdOrder = await createOrderApi(orderPayload);
       if (createdOrder && createdOrder.id) {
-        setOrderId(createdOrder.id);
-      } else {
-        setOrderId(fallbackId);
+        finalId = createdOrder.id;
       }
     } catch (err) {
       console.warn("Saving order via backend API fallback:", err);
-      setOrderId(fallbackId);
+    }
+
+    setOrderId(finalId);
+
+    // Save order ID and customer phone to local storage for quick tracking on this device
+    try {
+      const existing = JSON.parse(localStorage.getItem("recentOrderIds") || "[]");
+      if (!existing.includes(finalId)) {
+        existing.unshift(finalId);
+        localStorage.setItem("recentOrderIds", JSON.stringify(existing.slice(0, 10)));
+      }
+      if (phone) {
+        localStorage.setItem("customerPhone", phone);
+      }
+    } catch (e) {
+      console.warn("Failed saving recent order id to storage", e);
     }
 
     setOrderComplete(true);
@@ -91,12 +128,43 @@ const CheckoutScreen: React.FC = () => {
           Thank You For Your Order!
         </h1>
         <p className="text-base text-[#464840] max-w-lg mx-auto leading-relaxed">
-          Your order <strong>#{orderId || "YC-84920"}</strong> has been confirmed. Our artisans are meticulously preparing your handcrafted pieces. A confirmation message has been logged.
+          Your order has been placed successfully! Below is your unique Order Tracking ID:
         </p>
-        <div className="pt-6">
+
+        {/* Tracking ID Box */}
+        <div className="max-w-md mx-auto p-6 bg-[#f5f3ef] border border-[#e4e2de] rounded-2xl space-y-3">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[#76786f] block">
+            Your Tracking ID
+          </span>
+          <div className="flex items-center justify-center gap-3">
+            <span className="font-mono text-2xl font-bold text-[#8e4d31] tracking-wider">
+              {orderId}
+            </span>
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(orderId);
+                alert("Tracking ID copied to clipboard!");
+              }}
+              className="px-3 py-1 bg-[#585e4c] text-white rounded-lg text-xs font-bold hover:bg-[#717763] transition-colors"
+            >
+              Copy ID
+            </button>
+          </div>
+          <p className="text-xs text-[#76786f]">
+            Please save or screenshot this ID. Our team will also contact you on WhatsApp with delivery updates.
+          </p>
+        </div>
+
+        <div className="pt-6 flex flex-wrap items-center justify-center gap-4">
+          <Link
+            to={RouteName.ORDERS}
+            className="px-8 py-4 bg-[#8e4d31] text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#71361d] transition-all shadow-md"
+          >
+            Track Order Live →
+          </Link>
           <Link
             to={RouteName.HOME}
-            className="px-8 py-4 bg-[#585e4c] text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#717763] transition-all shadow-md"
+            className="px-8 py-4 bg-[#f5f3ef] text-[#1b1c1a] border border-[#c7c7bd] rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#e4e2de] transition-all"
           >
             Return to Store Home
           </Link>
@@ -239,26 +307,146 @@ const CheckoutScreen: React.FC = () => {
                   </div>
 
                   {paymentMethod === "easypaisa_jazzcash" && (
-                    <div className="mt-2 p-4 bg-white rounded-xl border border-[#e4e2de] space-y-3 text-xs text-[#464840] animate-in fade-in duration-200">
+                    <div className="mt-2 p-4 bg-white rounded-xl border border-[#e4e2de] space-y-4 text-xs text-[#464840] animate-in fade-in duration-200">
                       <div className="flex items-center gap-2 text-[#585e4c] font-bold text-sm border-b border-[#f5f3ef] pb-2">
                         <span className="material-symbols-outlined text-lg">account_balance_wallet</span>
                         <span>Account Number: <strong className="text-[#8e4d31] text-base">03173004661</strong></span>
                       </div>
-                      <p>
-                        • <strong>Easypaisa / JazzCash Title</strong>: Tayyaba Hamza / CrochCosmo
-                      </p>
-                      <p>
-                        • Please send exact payment to <strong>03173004661</strong> and attach Transaction ID / Screenshot below for instant verification.
-                      </p>
+                      <div className="space-y-1">
+                        <p>• <strong>Easypaisa / JazzCash Title</strong>: Tayyaba Hamza / CrochCosmo</p>
+                        <p>• Please send exact payment to <strong>03173004661</strong> and attach your Transaction ID & Screenshot below for instant verification.</p>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                        <div>
+                          <label className="block text-[11px] font-bold text-[#76786f] uppercase mb-1">
+                            Sender Account / Phone No.
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={senderAccount}
+                            onChange={(e) => setSenderAccount(e.target.value)}
+                            placeholder="e.g. 03001234567"
+                            className="w-full bg-[#fbf9f5] border border-[#c7c7bd] rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-[#585e4c]"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[11px] font-bold text-[#76786f] uppercase mb-1">
+                            Transaction ID (TID) / Ref Number
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={transactionId}
+                            onChange={(e) => setTransactionId(e.target.value)}
+                            placeholder="e.g. 12984920491"
+                            className="w-full bg-[#fbf9f5] border border-[#c7c7bd] rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-[#585e4c]"
+                          />
+                        </div>
+                      </div>
                       <div>
                         <label className="block text-[11px] font-bold text-[#76786f] uppercase mb-1">
-                          Transaction ID (TID) / Ref Number
+                          Upload Payment Screenshot
                         </label>
                         <input
-                          type="text"
+                          type="file"
+                          accept="image/*"
                           required
-                          placeholder="e.g. 12984920491"
-                          className="w-full bg-[#fbf9f5] border border-[#c7c7bd] rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-[#585e4c]"
+                          onChange={handleScreenshotUpload}
+                          className="w-full bg-[#fbf9f5] border border-[#c7c7bd] rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-[#585e4c] file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-[#585e4c] file:text-white hover:file:bg-[#717763]"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </label>
+
+                {/* UBL Bank Transfer Option */}
+                <label
+                  onClick={() => setPaymentMethod("ubl_bank")}
+                  className={`flex flex-col gap-2 p-4 rounded-xl border cursor-pointer transition-all ${
+                    paymentMethod === "ubl_bank"
+                      ? "bg-[#f5f3ef] border-[#585e4c] ring-1 ring-[#585e4c]"
+                      : "bg-[#fbf9f5] border-[#c7c7bd] hover:border-[#76786f]"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="radio"
+                        name="payment"
+                        checked={paymentMethod === "ubl_bank"}
+                        onChange={() => setPaymentMethod("ubl_bank")}
+                        className="text-[#8e4d31] focus:ring-0"
+                      />
+                      <span className="font-semibold text-sm text-[#1b1c1a]">
+                        UBL Bank Transfer
+                      </span>
+                    </div>
+                  </div>
+
+                  {paymentMethod === "ubl_bank" && (
+                    <div className="mt-2 p-4 bg-white rounded-xl border border-[#e4e2de] space-y-4 text-xs text-[#464840] animate-in fade-in duration-200">
+                      <div className="flex flex-col md:flex-row items-start md:items-center gap-4 text-[#585e4c] font-bold text-sm border-b border-[#f5f3ef] pb-3">
+                        <span className="material-symbols-outlined text-3xl">account_balance</span>
+                        <div>
+                          <div className="text-xs text-[#76786f] uppercase tracking-wider">Account Number</div>
+                          <strong className="text-[#8e4d31] text-base tracking-widest font-mono">0234286075013</strong>
+                        </div>
+                      </div>
+                      <div className="space-y-1.5 pt-1">
+                        <p className="flex justify-between border-b border-dashed border-[#e4e2de] pb-1">
+                          <span className="text-[#76786f]">Account Title:</span>
+                          <strong className="text-[#1b1c1a]">Hamza Arif</strong>
+                        </p>
+                        <p className="flex justify-between border-b border-dashed border-[#e4e2de] pb-1">
+                          <span className="text-[#76786f]">Bank Name:</span>
+                          <strong className="text-[#1b1c1a]">UBL (United Bank Limited)</strong>
+                        </p>
+                        <p className="flex flex-col md:flex-row justify-between pt-1">
+                          <span className="text-[#76786f]">IBAN:</span>
+                          <strong className="text-[#1b1c1a] font-mono text-[11px] md:text-xs">PK28UNIL0109000286075013</strong>
+                        </p>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-[#e4e2de]">
+                        <div>
+                          <label className="block text-[11px] font-bold text-[#76786f] uppercase mb-1">
+                            Sender Account No / Name
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={senderAccount}
+                            onChange={(e) => setSenderAccount(e.target.value)}
+                            placeholder="e.g. Ali Khan / 12345678"
+                            className="w-full bg-[#fbf9f5] border border-[#c7c7bd] rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-[#585e4c]"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[11px] font-bold text-[#76786f] uppercase mb-1">
+                            Transaction ID (TID) / Ref Number
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={transactionId}
+                            onChange={(e) => setTransactionId(e.target.value)}
+                            placeholder="e.g. 12984920491"
+                            className="w-full bg-[#fbf9f5] border border-[#c7c7bd] rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-[#585e4c]"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-bold text-[#76786f] uppercase mb-1">
+                          Upload Payment Screenshot
+                        </label>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          required
+                          onChange={handleScreenshotUpload}
+                          className="w-full bg-[#fbf9f5] border border-[#c7c7bd] rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-[#585e4c] file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-[#585e4c] file:text-white hover:file:bg-[#717763]"
                         />
                       </div>
                     </div>
@@ -287,54 +475,6 @@ const CheckoutScreen: React.FC = () => {
                     </span>
                   </div>
                   <span className="text-xs text-[#76786f]">Pay upon receipt</span>
-                </label>
-
-                {/* Credit / Debit Card Option */}
-                <label
-                  onClick={() => setPaymentMethod("card")}
-                  className={`flex flex-col gap-2 p-4 rounded-xl border cursor-pointer transition-all ${
-                    paymentMethod === "card"
-                      ? "bg-[#f5f3ef] border-[#585e4c] ring-1 ring-[#585e4c]"
-                      : "bg-[#fbf9f5] border-[#c7c7bd] hover:border-[#76786f]"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="radio"
-                      name="payment"
-                      checked={paymentMethod === "card"}
-                      onChange={() => setPaymentMethod("card")}
-                      className="text-[#8e4d31] focus:ring-0"
-                    />
-                    <span className="font-semibold text-sm text-[#1b1c1a]">
-                      Credit / Debit Card (Stripe Secure)
-                    </span>
-                  </div>
-
-                  {paymentMethod === "card" && (
-                    <div className="space-y-3 pt-2">
-                      <input
-                        type="text"
-                        placeholder="Card Number"
-                        defaultValue="4242 •••• •••• 4242"
-                        className="w-full bg-white border border-[#c7c7bd] rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-[#8e4d31]"
-                      />
-                      <div className="grid grid-cols-2 gap-4">
-                        <input
-                          type="text"
-                          placeholder="MM / YY"
-                          defaultValue="12/28"
-                          className="bg-white border border-[#c7c7bd] rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-[#8e4d31]"
-                        />
-                        <input
-                          type="text"
-                          placeholder="CVC"
-                          defaultValue="123"
-                          className="bg-white border border-[#c7c7bd] rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-[#8e4d31]"
-                        />
-                      </div>
-                    </div>
-                  )}
                 </label>
               </div>
             </div>

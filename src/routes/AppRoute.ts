@@ -8,7 +8,6 @@ import OrganicLuxuryScreen from "../screens/OrganicLuxuryScreen";
 import CustomOrderScreen from "../screens/CustomOrderScreen";
 import LearningHubScreen from "../screens/LearningHubScreen";
 import MasterclassScreen from "../screens/MasterclassScreen";
-import ContactScreen from "../screens/ContactScreen";
 import CheckoutScreen from "../screens/CheckoutScreen";
 import AuthModalScreen from "../screens/AuthModalScreen";
 import ProfileDashboardScreen from "../screens/ProfileDashboardScreen";
@@ -51,10 +50,6 @@ export const AppRoute: RouteConfig[] = [
   {
     path: RouteName.MASTERCLASS,
     element: MasterclassScreen,
-  },
-  {
-    path: RouteName.CONTACT,
-    element: ContactScreen,
   },
   {
     path: RouteName.CHECKOUT,

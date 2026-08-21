@@ -136,7 +136,12 @@ import {
   saveInquiryDirect,
   fetchArtisansDirect,
   fetchBannersDirect,
-  saveUserProfileDirect
+  saveUserProfileDirect,
+  fetchPopularCategoriesDirect,
+  saveContactMessageDirect,
+  fetchCategoryBannersDirect,
+  saveMasterclassRequestDirect,
+  fetchTutorialsDirect
 } from "./firebaseClient";
 
 // High-level Integration Methods using direct Firebase Firestore SDK
@@ -168,6 +173,25 @@ export const fetchArtisansApi = async (): Promise<any[]> => {
 export const fetchBannersApi = async (): Promise<any[]> => {
   return await fetchBannersDirect();
 };
+
+export const fetchPopularCategoriesApi = async (): Promise<any[]> => {
+  return await fetchPopularCategoriesDirect();
+};
+
+export const createContactMessageApi = async (messageData: any): Promise<any> => {
+  return await saveContactMessageDirect(messageData);
+};
+
+export const fetchCategoryBannersApi = async (): Promise<any> => {
+  return await fetchCategoryBannersDirect();
+};
+
+export const fetchTutorialsApi = async (): Promise<any[]> => {
+  return await fetchTutorialsDirect();
+};
+
+
+
 
 export const sendOtpApi = async (phoneOrEmail: string): Promise<any> => {
   // Direct OTP generation for Firebase client
@@ -205,8 +229,8 @@ export const updateUserProfileApi = async (payload: any): Promise<any> => {
   return await saveUserProfileDirect(payload);
 };
 
-export const bookMasterclassApi = async (_payload: any): Promise<any> => {
-  return { success: true, bookingId: `BK-${Date.now()}` };
+export const saveMasterclassRequestApi = async (payload: any): Promise<any> => {
+  return await saveMasterclassRequestDirect(payload);
 };
 
 
