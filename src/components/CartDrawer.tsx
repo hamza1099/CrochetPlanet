@@ -1,13 +1,11 @@
 import React from "react";
 import { useCart } from "../context/CartContext";
-import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { RouteName } from "../routes/RouteName";
 
 const CartDrawer: React.FC = () => {
   const { cart, removeFromCart, updateQuantity, isCartOpen, setIsCartOpen, subtotal, totalCount, formatPrice } =
     useCart();
-  const { isLoggedIn, openAuthModal } = useAuth();
   const navigate = useNavigate();
 
   if (!isCartOpen) return null;

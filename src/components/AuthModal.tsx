@@ -15,7 +15,6 @@ export const AuthModal: React.FC = () => {
   const [countryCode, setCountryCode] = useState("+92");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [fullName, setFullName] = useState("");
-  const [activeOtpCode, setActiveOtpCode] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
 
   if (!isAuthModalOpen) return null;

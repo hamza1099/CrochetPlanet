@@ -8,13 +8,10 @@ import mainBannerImg from "../assets/Banner.png";
 import menBannerImg from "../assets/Menbanner.jpg";
 import womenBannerImg from "../assets/women.jpg";
 import hoodedCardiganImg from "../assets/Hooded Dark Chocolate Patchwork Cardigan.jpeg";
-import crochetShirtImg from "../assets/Crochet Shirt, Unisex Shirt, Crochet Overshirt, Crochet Brown Shirt, Knitted Shirt, Handmade Shirt, Knitted Mens Shirt, Vintage Style Shirt.jpeg";
 import daisyCrochetImg from "../assets/Puffy daisy crochet.jpeg";
 import sunflowerImg from "../assets/Sunflower embroidery 🌻.jpeg";
 
 import dealAsset1 from "../assets/66e6aeeec3152c92d24b10fe5084a16d.jpg";
-import dealAsset2 from "../assets/b4d37b644ab42da78f9a3d42a5a8fdbd.jpg";
-import dealAsset4 from "../assets/1e395a4512140c8e752d25cdaaff7bd6.jpg";
 import sideBannerImg from "../assets/side banner.jpg";
 
 import { ProductCardSkeleton, HeroSkeleton, CategoryGridSkeleton } from "../components/Skeletons";

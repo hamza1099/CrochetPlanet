@@ -13,5 +13,6 @@ export const RouteName = {
   AUTH: "/auth",
   PROFILE: "/profile",
   MY_ORDERS: "/my-orders",
+  ORDERS: "/my-orders",
   NOT_FOUND: "*",
 };

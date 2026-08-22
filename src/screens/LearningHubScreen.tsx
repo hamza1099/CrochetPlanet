@@ -45,7 +45,6 @@ const DEFAULT_TUTORIALS: VideoTutorial[] = [
 
 const LearningHubScreen: React.FC = () => {
   const [tutorials, setTutorials] = useState<VideoTutorial[]>(DEFAULT_TUTORIALS);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadTutorials = async () => {
@@ -60,8 +59,6 @@ const LearningHubScreen: React.FC = () => {
         }
       } catch (err) {
         console.error("Failed loading tutorials from Firestore:", err);
-      } finally {
-        setIsLoading(false);
       }
     };
     loadTutorials();

@@ -9,7 +9,7 @@ const Navbar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { setIsCartOpen, totalCount, currency, setCurrency } = useCart();
-  const { user, isLoggedIn, openAuthModal, logout } = useAuth();
+  const { user, isLoggedIn, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Search Bar state & suggestions
