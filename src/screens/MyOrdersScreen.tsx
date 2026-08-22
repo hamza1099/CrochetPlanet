@@ -10,30 +10,13 @@ export const MyOrdersScreen: React.FC = () => {
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
   const [ordersList, setOrdersList] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [recentOrderIds, setRecentOrderIds] = useState<string[]>([]);
-  const [savedPhone, setSavedPhone] = useState<string>("");
 
   useEffect(() => {
-    // Load local storage recent tracking IDs and phone if available
-    try {
-      const storedIds = JSON.parse(localStorage.getItem("recentOrderIds") || "[]");
-      if (Array.isArray(storedIds)) {
-        setRecentOrderIds(storedIds);
-      }
-      const storedPhone = localStorage.getItem("customerPhone") || "";
-      setSavedPhone(storedPhone);
-    } catch (e) {
-      console.warn("Error reading local order history", e);
-    }
-
     // Fetch live orders from backend/firestore
     fetchOrdersApi()
       .then((data) => {
         if (data && Array.isArray(data)) {
           setOrdersList(data);
-          if (data.length > 0) {
-            setExpandedOrder(data[0].id);
-          }
         }
       })
       .catch((err) => console.warn("Failed fetching live orders:", err))
@@ -48,33 +31,28 @@ export const MyOrdersScreen: React.FC = () => {
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setActiveQuery(searchQuery.trim());
+    const q = searchQuery.trim();
+    setActiveQuery(q);
+    if (q) {
+      // Auto expand matching order when searched
+      const match = ordersList.find((ord) => 
+        (ord.id && ord.id.toLowerCase().includes(q.toLowerCase())) ||
+        (ord.phone && cleanDigits(ord.phone).includes(cleanDigits(q)))
+      );
+      if (match) {
+        setExpandedOrder(match.id);
+      }
+    }
   };
 
-  // Filter orders matching either search query, phone number, or recent local IDs
-  const matchedOrders = ordersList.filter((ord) => {
+  // Only filter orders if user has actively searched
+  const matchedOrders = activeQuery.trim().length === 0 ? [] : ordersList.filter((ord) => {
     const q = activeQuery.toLowerCase().trim();
-
-    // If user entered a specific search query
-    if (q.length > 0) {
-      const idMatch = ord.id && ord.id.toLowerCase().includes(q);
-      const phoneMatch = ord.phone && cleanDigits(ord.phone).includes(cleanDigits(q));
-      const emailMatch = ord.email && ord.email.toLowerCase().includes(q);
-      const nameMatch = ord.customerName && ord.customerName.toLowerCase().includes(q);
-      return idMatch || phoneMatch || emailMatch || nameMatch;
-    }
-
-    // Default view: Show recent order IDs placed on this device
-    if (recentOrderIds.length > 0 && ord.id && recentOrderIds.includes(ord.id)) {
-      return true;
-    }
-
-    // Default view: Match phone saved on device if available
-    if (savedPhone && ord.phone && cleanDigits(savedPhone).length > 5) {
-      return cleanDigits(ord.phone).includes(cleanDigits(savedPhone).slice(-7));
-    }
-
-    return false;
+    const idMatch = ord.id && ord.id.toLowerCase().includes(q);
+    const phoneMatch = ord.phone && cleanDigits(ord.phone).includes(cleanDigits(q));
+    const emailMatch = ord.email && ord.email.toLowerCase().includes(q);
+    const nameMatch = ord.customerName && ord.customerName.toLowerCase().includes(q);
+    return idMatch || phoneMatch || emailMatch || nameMatch;
   });
 
   return (
@@ -88,7 +66,7 @@ export const MyOrdersScreen: React.FC = () => {
           Track Your Order
         </h1>
         <p className="text-sm text-[#76786f] leading-relaxed">
-          Enter your <strong>Tracking ID</strong> (e.g. <code>ORD-8492</code>) or phone number below to check your live order progress, payment verification, and artisan updates.
+          Enter your <strong>Tracking ID</strong> (e.g. <code>ORD-XXXX</code>) or phone number below to check your live order progress, payment verification, and artisan updates.
         </p>
 
         {/* Tracking ID Search Form */}
@@ -99,7 +77,7 @@ export const MyOrdersScreen: React.FC = () => {
             </span>
             <input
               type="text"
-              placeholder="Enter Order ID or Phone (e.g. ORD-1234)"
+              placeholder="Enter Order ID or Phone (e.g. ORD-XXXX)"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-white border border-[#c7c7bd] rounded-xl pl-11 pr-4 py-3.5 text-sm focus:outline-none focus:border-[#8e4d31] shadow-xs"
@@ -112,29 +90,6 @@ export const MyOrdersScreen: React.FC = () => {
             Track Order
           </button>
         </form>
-
-        {/* Recent Order IDs Tags */}
-        {recentOrderIds.length > 0 && (
-          <div className="pt-3 flex flex-wrap items-center justify-center gap-2 text-xs">
-            <span className="text-[#76786f] text-[11px] font-medium">Recent on this device:</span>
-            {recentOrderIds.map((id) => (
-              <button
-                key={id}
-                onClick={() => {
-                  setSearchQuery(id);
-                  setActiveQuery(id);
-                }}
-                className={`px-3 py-1 rounded-full text-xs font-mono font-bold transition-all border ${
-                  activeQuery === id
-                    ? "bg-[#8e4d31] text-white border-[#8e4d31]"
-                    : "bg-[#f5f3ef] text-[#585e4c] border-[#c7c7bd] hover:bg-[#e4e2de]"
-                }`}
-              >
-                #{id}
-              </button>
-            ))}
-          </div>
-        )}
       </div>
 
       {/* Orders Output */}
@@ -142,19 +97,29 @@ export const MyOrdersScreen: React.FC = () => {
         {isLoading ? (
           <div className="text-center py-16 bg-white rounded-2xl border border-[#e4e2de]">
             <span className="material-symbols-outlined text-4xl text-[#8e4d31] animate-spin mb-2">sync</span>
-            <p className="text-sm font-bold text-[#464840]">Searching live orders...</p>
+            <p className="text-sm font-bold text-[#464840]">Connecting to live orders...</p>
+          </div>
+        ) : activeQuery.trim().length === 0 ? (
+          <div className="text-center py-16 bg-white rounded-2xl border border-[#e4e2de] p-8 space-y-4 shadow-sm">
+            <span className="material-symbols-outlined text-5xl text-[#c7c7bd]">search</span>
+            <div>
+              <h3 className="font-display text-xl font-semibold text-[#1b1c1a]">
+                Enter your Tracking ID to view live order progress
+              </h3>
+              <p className="text-xs text-[#76786f] mt-1 max-w-md mx-auto leading-relaxed">
+                Please enter your Order ID (e.g. <strong>ORD-XXXX</strong>) or phone number above and click <strong>Track Order</strong>.
+              </p>
+            </div>
           </div>
         ) : matchedOrders.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-2xl border border-[#e4e2de] p-8 space-y-4 shadow-sm">
             <span className="material-symbols-outlined text-5xl text-[#c7c7bd]">find_in_page</span>
             <div>
               <h3 className="font-display text-xl font-semibold text-[#1b1c1a]">
-                {activeQuery ? `No order found for "${activeQuery}"` : "Enter your Tracking ID to view status"}
+                No order found for "{activeQuery}"
               </h3>
               <p className="text-xs text-[#76786f] mt-1 max-w-md mx-auto">
-                {activeQuery
-                  ? "Please double-check your Order ID or phone number. You can also contact us on WhatsApp for live assistance."
-                  : "When you place an order, you will receive a unique Tracking ID to track your handcrafted item here."}
+                Please double-check your Order ID or phone number. You can also contact us on WhatsApp for live assistance.
               </p>
             </div>
             <div className="pt-2 flex justify-center gap-3">
@@ -183,7 +148,7 @@ export const MyOrdersScreen: React.FC = () => {
                       #{ord.id}
                     </span>
                     <span className="px-3 py-1 bg-[#585e4c]/10 text-[#585e4c] text-[10px] font-bold tracking-widest rounded-xl uppercase">
-                      {ord.status || "Processing"}
+                      {ord.status || "Pending"}
                     </span>
                   </div>
                   <span className="text-xs text-[#76786f]">
@@ -299,33 +264,59 @@ export const MyOrdersScreen: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Artisan & Order Details Card */}
-                  <div className="bg-[#f5f3ef] rounded-2xl p-6 md:p-8 flex flex-col md:flex-row gap-8 items-start border border-[#e4e2de]">
-                    <div className="w-full md:w-1/3 rounded-xl overflow-hidden shadow-sm flex-shrink-0">
-                      <img
-                        src={artisanHandsImg}
-                        alt="Artisan hands crocheting"
-                        className="w-full h-44 object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-display text-xl font-semibold text-[#1b1c1a]">
-                          Artisan Update: Crafting Status
-                        </h3>
-                        <span className="px-2.5 py-0.5 bg-amber-100 text-amber-800 text-[10px] font-bold rounded-full uppercase">
-                          Payment: {ord.paymentMethod || "Verified"}
-                        </span>
-                      </div>
-                      <p className="text-xs sm:text-sm text-[#76786f] leading-relaxed">
-                        Our master artisans are carefully handcrafting your items using 100% natural organic yarn.
-                        Each piece undergoes strict quality assurance before dispatch.
-                      </p>
+                  {/* Ordered Products Grid & Images */}
+                  <div className="space-y-4">
+                    <h4 className="font-display text-sm font-bold uppercase tracking-wider text-[#1b1c1a] border-b border-[#e4e2de] pb-2 flex items-center justify-between">
+                      <span>Ordered Items ({ord.itemsCount || (Array.isArray(ord.items) ? ord.items.reduce((acc: number, i: any) => acc + (i.quantity || 1), 0) : 1)})</span>
+                      <span className="text-xs text-[#8e4d31] font-sans font-semibold">Payment: {ord.paymentMethod || "Verified"}</span>
+                    </h4>
 
-                      <div className="pt-2 border-t border-[#e4e2de] text-xs text-[#585e4c] font-medium space-y-1">
-                        <p>📍 Shipping Address: {ord.customer?.address || "Address Provided"}</p>
-                        <p>📞 Phone Number: {ord.phone}</p>
-                      </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {Array.isArray(ord.items) && ord.items.length > 0 ? (
+                        ord.items.map((item: any, idx: number) => (
+                          <div key={item.id || idx} className="flex gap-4 items-center bg-[#f5f3ef] p-4 rounded-2xl border border-[#e4e2de] shadow-xs">
+                            <img
+                              src={item.image || artisanHandsImg}
+                              alt={item.name}
+                              className="w-20 h-24 object-cover rounded-xl bg-white flex-shrink-0 border border-[#e4e2de]"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = artisanHandsImg;
+                              }}
+                            />
+                            <div className="flex-grow space-y-1">
+                              <h5 className="font-display text-sm font-semibold text-[#1b1c1a] line-clamp-2">
+                                {item.name}
+                              </h5>
+                              <p className="text-xs text-[#76786f]">Quantity: <strong className="text-[#1b1c1a]">{item.quantity || 1}</strong></p>
+                              <p className="text-xs font-bold text-[#8e4d31]">
+                                Rs. {Number((item.priceUSD ? item.priceUSD * 280 : (item.price ? item.price * 280 : 0)) || 0).toLocaleString()} PKR
+                              </p>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="flex gap-4 items-center bg-[#f5f3ef] p-4 rounded-2xl border border-[#e4e2de]">
+                          <img src={artisanHandsImg} alt="Crochet Item" className="w-20 h-24 object-cover rounded-xl bg-white flex-shrink-0" />
+                          <div>
+                            <h5 className="font-display text-sm font-semibold text-[#1b1c1a]">Handcrafted Artisan Item</h5>
+                            <p className="text-xs text-[#76786f]">100% natural organic yarn</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Customer & Shipping Summary */}
+                  <div className="bg-[#f5f3ef] rounded-2xl p-5 border border-[#e4e2de] text-xs text-[#464840] space-y-2">
+                    <div className="font-bold text-[#1b1c1a] text-sm border-b border-[#e4e2de] pb-1 flex items-center justify-between">
+                      <span>Delivery & Customer Details</span>
+                      <span className="text-xs text-[#585e4c] font-normal">Date: {ord.date}</span>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pt-1">
+                      <p>📍 <strong>Shipping Address:</strong> {ord.customer?.address || ord.address || "Address Provided"}{ord.customer?.city ? `, ${ord.customer.city}` : ""}</p>
+                      <p>📞 <strong>Phone Number:</strong> {ord.phone || ord.customer?.phone}</p>
+                      <p>👤 <strong>Customer Name:</strong> {ord.customerName || ord.customer?.name}</p>
+                      {ord.email && <p>✉️ <strong>Email Address:</strong> {ord.email}</p>}
                     </div>
                   </div>
                 </div>

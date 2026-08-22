@@ -17,11 +17,16 @@ const CheckoutScreen: React.FC = () => {
   const [phone, setPhone] = useState(user?.phone || "");
   const [address, setAddress] = useState(user?.address || "");
   const [city, setCity] = useState(user?.city || "");
+  const [stateProv, setStateProv] = useState("");
+  const [zipCode, setZipCode] = useState("");
 
   const [paymentMethod, setPaymentMethod] = useState<"easypaisa_jazzcash" | "cod" | "ubl_bank">("easypaisa_jazzcash");
   const [senderAccount, setSenderAccount] = useState("");
   const [transactionId, setTransactionId] = useState("");
   const [screenshotBase64, setScreenshotBase64] = useState("");
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -33,7 +38,6 @@ const CheckoutScreen: React.FC = () => {
       if (!city && user.city) setCity(user.city);
     }
   }, [user]);
-
 
   // Subtotal in PKR for shipping thresholds
   const subtotalPKR = currency === "PKR" ? subtotal * 280 : subtotal * 280;
@@ -56,14 +60,29 @@ const CheckoutScreen: React.FC = () => {
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
+    setToast(null);
+
+    if ((paymentMethod === "easypaisa_jazzcash" || paymentMethod === "ubl_bank") && (!transactionId || !senderAccount || !screenshotBase64)) {
+      setToast({
+        message: "Please provide Sender Account, Transaction ID, and upload your payment screenshot.",
+        type: "error"
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
     const fallbackId = `ORD-${Math.floor(1000 + Math.random() * 9000)}`;
+
     const orderPayload = {
+      id: fallbackId,
       customer: {
         name: `${firstName} ${lastName}`.trim() || "Valued Customer",
         email: email || "customer@example.com",
         phone: phone || "+92 300 0000000",
         address: address || "",
         city: city || "",
+        state: stateProv || "N/A",
+        zipCode: zipCode || "N/A",
         country: "Pakistan"
       },
       items: cart.map(item => ({
@@ -74,18 +93,24 @@ const CheckoutScreen: React.FC = () => {
         image: item.image
       })),
       currency: currency,
-      paymentMethod: paymentMethod === "cod" ? "Cash on Delivery" : paymentMethod === "ubl_bank" ? "UBL Bank Transfer" : "Easypaisa / JazzCash",
+      paymentMethod: paymentMethod === "cod" 
+        ? "Cash on Delivery" 
+        : paymentMethod === "ubl_bank" 
+        ? "UBL Bank Transfer" 
+        : "Easypaisa & JazzCash",
       paymentDetails: (paymentMethod === "easypaisa_jazzcash" || paymentMethod === "ubl_bank") ? {
+        methodName: paymentMethod === "ubl_bank" ? "UBL Bank Transfer" : "Easypaisa & JazzCash Mobile Transfer",
+        accountTitle: paymentMethod === "ubl_bank" ? "Hamza Arif" : "Tayyaba Hamza / CrochCosmo",
+        accountNumber: paymentMethod === "ubl_bank" ? "0234286075013" : "03173004661",
+        iban: paymentMethod === "ubl_bank" ? "PK28UNIL0109000286075013" : undefined,
         senderAccount,
         transactionId,
         screenshotBase64
-      } : undefined,
+      } : {
+        methodName: "Cash on Delivery",
+        note: "Payment to be collected upon delivery receipt"
+      },
     };
-
-    if ((paymentMethod === "easypaisa_jazzcash" || paymentMethod === "ubl_bank") && (!transactionId || !senderAccount || !screenshotBase64)) {
-      alert("Please provide Sender Account, Transaction ID, and upload the payment screenshot to proceed.");
-      return;
-    }
 
     let finalId = fallbackId;
     try {
@@ -93,28 +118,35 @@ const CheckoutScreen: React.FC = () => {
       if (createdOrder && createdOrder.id) {
         finalId = createdOrder.id;
       }
-    } catch (err) {
-      console.warn("Saving order via backend API fallback:", err);
-    }
+      
+      setOrderId(finalId);
 
-    setOrderId(finalId);
-
-    // Save order ID and customer phone to local storage for quick tracking on this device
-    try {
-      const existing = JSON.parse(localStorage.getItem("recentOrderIds") || "[]");
-      if (!existing.includes(finalId)) {
-        existing.unshift(finalId);
-        localStorage.setItem("recentOrderIds", JSON.stringify(existing.slice(0, 10)));
+      // Save order ID and customer phone to local storage for quick tracking on this device
+      try {
+        const existing = JSON.parse(localStorage.getItem("recentOrderIds") || "[]");
+        if (!existing.includes(finalId)) {
+          existing.unshift(finalId);
+          localStorage.setItem("recentOrderIds", JSON.stringify(existing.slice(0, 10)));
+        }
+        if (phone) {
+          localStorage.setItem("customerPhone", phone);
+        }
+      } catch (e) {
+        console.warn("Failed saving recent order id to storage", e);
       }
-      if (phone) {
-        localStorage.setItem("customerPhone", phone);
-      }
-    } catch (e) {
-      console.warn("Failed saving recent order id to storage", e);
-    }
 
-    setOrderComplete(true);
-    clearCart();
+      setToast({ message: `Order #${finalId} placed successfully!`, type: "success" });
+      setOrderComplete(true);
+      clearCart();
+    } catch (err: any) {
+      console.error("Saving order via Firebase error:", err);
+      setToast({
+        message: err?.message || "Failed to place order. Please check internet connection and try again.",
+        type: "error"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
 
@@ -198,6 +230,30 @@ const CheckoutScreen: React.FC = () => {
         <form onSubmit={handlePlaceOrder} className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           {/* Shipping & Payment Details */}
           <div className="lg:col-span-7 space-y-8 bg-white p-8 md:p-10 rounded-3xl border border-[#e4e2de] shadow-sm">
+            {toast && (
+              <div
+                className={`p-4 rounded-2xl text-xs font-bold flex items-center justify-between shadow-xs transition-all ${
+                  toast.type === "error"
+                    ? "bg-rose-100 text-rose-800 border border-rose-300"
+                    : "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-base">
+                    {toast.type === "error" ? "error" : "check_circle"}
+                  </span>
+                  <span>{toast.message}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setToast(null)}
+                  className="text-gray-500 hover:text-black font-mono text-sm"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+
             {/* Contact & Shipping */}
             <div className="space-y-4">
               <h3 className="font-display text-xl font-semibold text-[#1b1c1a]">
@@ -258,15 +314,17 @@ const CheckoutScreen: React.FC = () => {
                 />
 
                 <input
-                  required
                   type="text"
                   placeholder="State / Province"
+                  value={stateProv}
+                  onChange={(e) => setStateProv(e.target.value)}
                   className="bg-[#fbf9f5] border border-[#c7c7bd] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#8e4d31]"
                 />
                 <input
-                  required
                   type="text"
                   placeholder="ZIP / Postal Code"
+                  value={zipCode}
+                  onChange={(e) => setZipCode(e.target.value)}
                   className="bg-[#fbf9f5] border border-[#c7c7bd] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#8e4d31]"
                 />
               </div>
@@ -481,9 +539,21 @@ const CheckoutScreen: React.FC = () => {
 
             <button
               type="submit"
-              className="w-full py-4 bg-[#585e4c] hover:bg-[#717763] text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-all shadow-md"
+              disabled={isSubmitting}
+              className={`w-full py-4 rounded-xl text-xs font-bold uppercase tracking-widest transition-all shadow-md flex items-center justify-center gap-2 ${
+                isSubmitting
+                  ? "bg-[#76786f] cursor-not-allowed text-white opacity-80"
+                  : "bg-[#585e4c] hover:bg-[#717763] text-white"
+              }`}
             >
-              Complete Order — {formatPrice(totalUSD)}
+              {isSubmitting ? (
+                <>
+                  <span className="material-symbols-outlined animate-spin text-base">sync</span>
+                  <span>Processing Order...</span>
+                </>
+              ) : (
+                <span>Complete Order — {formatPrice(totalUSD)}</span>
+              )}
             </button>
           </div>
 

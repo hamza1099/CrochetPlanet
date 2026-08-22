@@ -87,23 +87,27 @@ const Footer: React.FC = () => {
           </ul>
         </div>
 
-        {/* Newsletter */}
+        {/* Custom Orders & Support */}
         <div className="space-y-4 pt-3">
           <h4 className="font-display text-xl font-semibold text-[#F5F1E5] tracking-wide">
-            Join Our Circle
+            Custom Orders & Support
           </h4>
           <p className="text-xs md:text-sm text-[#e2d5c3] leading-relaxed">
-            Subscribe to receive story updates from artisans, new collection launches, and masterclass invitations.
+            Need custom yarn sizing, bespoke color combinations, or have a unique crochet pattern in mind?
           </p>
-          <div className="flex gap-2 pt-1">
-            <input
-              type="email"
-              placeholder="Your email address"
-              className="px-4 py-3 bg-[#F5F1E5] border border-[#e2d5c3] text-[#1b1c1a] rounded-xl text-xs flex-grow focus:outline-none focus:border-[#8e4d31] placeholder-[#76786f]"
-            />
-            <button className="px-6 py-3 bg-[#8E4D31] text-white text-xs font-bold uppercase rounded-xl hover:bg-[#71361d] transition-colors shadow-md shrink-0">
-              Join
-            </button>
+          <div className="flex flex-col gap-2.5 pt-1">
+            <Link
+              to={RouteName.CUSTOM_ORDER}
+              className="px-5 py-3 bg-[#8E4D31] text-white text-xs font-bold uppercase rounded-xl hover:bg-[#71361d] transition-colors shadow-md text-center block tracking-wider"
+            >
+              Request Custom Piece ↗
+            </Link>
+            <Link
+              to={RouteName.MY_ORDERS}
+              className="px-5 py-2.5 bg-[#F5F1E5]/10 hover:bg-[#F5F1E5]/20 text-[#F5F1E5] border border-[#e2d5c3]/40 text-xs font-bold uppercase rounded-xl transition-colors text-center block tracking-wider"
+            >
+              Track Order Status ↗
+            </Link>
           </div>
         </div>
       </div>
