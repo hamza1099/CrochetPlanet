@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 
@@ -25,8 +25,9 @@ const OFFICIAL_ADMIN_CATEGORIES = [
 ];
 
 const CollectionsScreen: React.FC = () => {
-  const { addToCart } = useCart();
+  const { addToCart, formatPrice } = useCart();
   const [searchParams, setSearchParams] = useSearchParams();
+  const productSectionRef = useRef<HTMLDivElement>(null);
 
   const [productsList, setProductsList] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
@@ -39,11 +40,19 @@ const CollectionsScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  const scrollToProducts = () => {
+    if (window.innerWidth < 1024 && productSectionRef.current) {
+      productSectionRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   // Load products from Firebase API using networkService
   useEffect(() => {
     let isMounted = true;
-    fetchProductsApi()
-      .then((data) => {
+    setIsLoading(true);
+
+    Promise.allSettled([
+      fetchProductsApi().then((data) => {
         if (isMounted && data && data.length > 0) {
           const formatted = data.map((item) => ({
             id: item.id,
@@ -67,14 +76,12 @@ const CollectionsScreen: React.FC = () => {
         } else if (isMounted) {
           setProductsList([]);
         }
-      })
-      .catch((err) => {
+      }).catch((err) => {
         console.warn("Error fetching products from Firebase:", err);
         if (isMounted) setProductsList([]);
-      });
+      }),
 
-    fetchPopularCategoriesApi()
-      .then((cats) => {
+      fetchPopularCategoriesApi().then((cats) => {
         if (isMounted && cats && cats.length > 0) {
           const sortedCats = cats
             .filter(c => c.active !== false)
@@ -87,19 +94,15 @@ const CollectionsScreen: React.FC = () => {
             setCategories(prev => Array.from(new Set([...prev, ...uniqueAdminCats])));
           }
         }
-      })
-      .catch((err) => console.warn("Error fetching popular categories for CollectionsScreen:", err));
+      }).catch((err) => console.warn("Error fetching popular categories for CollectionsScreen:", err))
+    ]).finally(() => {
+      if (isMounted) setIsLoading(false);
+    });
 
     return () => {
       isMounted = false;
     };
   }, []);
-
-  useEffect(() => {
-    setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 300);
-    return () => clearTimeout(timer);
-  }, [selectedCategory, selectedYarn, sortBy, searchQuery]);
 
   useEffect(() => {
     const catQuery = searchParams.get("category");
@@ -139,6 +142,7 @@ const CollectionsScreen: React.FC = () => {
       searchParams.set("category", cat);
       setSearchParams(searchParams);
     }
+    scrollToProducts();
   };
 
   const filteredProducts = productsList
@@ -200,6 +204,7 @@ const CollectionsScreen: React.FC = () => {
                 setSelectedCategory("All");
                 setSelectedYarn("All");
                 setSearchParams({});
+                scrollToProducts();
               }}
               className="text-xs text-[#8e4d31] font-bold uppercase tracking-wider hover:underline"
             >
@@ -238,7 +243,10 @@ const CollectionsScreen: React.FC = () => {
               {yarnTypes.map((yarn) => (
                 <button
                   key={yarn}
-                  onClick={() => setSelectedYarn(yarn)}
+                  onClick={() => {
+                    setSelectedYarn(yarn);
+                    scrollToProducts();
+                  }}
                   className={`w-full text-left px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${
                     selectedYarn === yarn
                       ? "bg-[#585e4c] text-white font-semibold shadow-sm"
@@ -253,7 +261,7 @@ const CollectionsScreen: React.FC = () => {
         </aside>
 
         {/* Product Grid */}
-        <main className="lg:col-span-9 space-y-6">
+        <main ref={productSectionRef} className="lg:col-span-9 space-y-6 scroll-mt-24">
           {/* Top Control Bar */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#e4e2de] text-sm">
             <div className="flex flex-wrap items-center gap-2 text-[#76786f]">
@@ -363,7 +371,7 @@ const CollectionsScreen: React.FC = () => {
                   </div>
                   <div className="flex justify-between items-center mt-4 pt-3 border-t border-[#f5f3ef]">
                     <span className="font-display text-lg font-semibold text-[#8e4d31]">
-                      ${prod.price.toFixed(2)}
+                      {formatPrice(prod.price)}
                     </span>
                     <Link
                       to={`/product/${prod.id}`}

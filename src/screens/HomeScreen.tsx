@@ -18,7 +18,7 @@ import { ProductCardSkeleton, HeroSkeleton, CategoryGridSkeleton } from "../comp
 import { fetchProductsApi, fetchBannersApi, fetchPopularCategoriesApi, fetchCategoryBannersApi } from "../service/networkService";
 
 const HomeScreen: React.FC = () => {
-  const { addToCart } = useCart();
+  const { addToCart, formatPrice } = useCart();
   const fashionSectionRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -31,42 +31,41 @@ const HomeScreen: React.FC = () => {
 
 
   useEffect(() => {
-    fetchProductsApi()
-      .then((data) => {
-        if (data && data.length > 0) {
+    let isMounted = true;
+    setIsLoading(true);
+
+    Promise.allSettled([
+      fetchProductsApi().then((data) => {
+        if (isMounted && data && data.length > 0) {
           setProductsList(data);
         }
-      })
-      .catch((err) => console.warn("HomeScreen products fallback:", err));
+      }).catch((err) => console.warn("HomeScreen products fallback:", err)),
 
-    fetchBannersApi()
-      .then((banners) => {
-        if (banners && banners.length > 0) {
+      fetchBannersApi().then((banners) => {
+        if (isMounted && banners && banners.length > 0) {
           setLiveBanners(banners.filter((b) => b.active !== false));
         }
-      })
-      .catch((err) => console.warn("HomeScreen banners fallback:", err));
+      }).catch((err) => console.warn("HomeScreen banners fallback:", err)),
 
-    fetchPopularCategoriesApi()
-      .then((cats) => {
-        if (cats && cats.length > 0) {
+      fetchPopularCategoriesApi().then((cats) => {
+        if (isMounted && cats && cats.length > 0) {
           const activeCats = cats.filter(c => c.active !== false).sort((a, b) => (a.order || 0) - (b.order || 0)).slice(0, 4);
           setLivePopularCategories(activeCats);
         }
-      })
-      .catch((err) => console.warn("HomeScreen popular categories fallback:", err));
+      }).catch((err) => console.warn("HomeScreen popular categories fallback:", err)),
 
-    fetchCategoryBannersApi()
-      .then((data) => {
-        if (data) {
+      fetchCategoryBannersApi().then((data) => {
+        if (isMounted && data) {
           setCategoryBanners(data);
         }
-      })
-      .catch((err) => console.warn("HomeScreen category banners fallback:", err));
+      }).catch((err) => console.warn("HomeScreen category banners fallback:", err))
+    ]).finally(() => {
+      if (isMounted) setIsLoading(false);
+    });
 
-
-    const timer = setTimeout(() => setIsLoading(false), 500);
-    return () => clearTimeout(timer);
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const defaultHeroSlides = [
@@ -167,8 +166,16 @@ const HomeScreen: React.FC = () => {
     }
   };
 
-  // 1. New Arrivals Data (Dynamic)
+  // 1. New Arrivals Data (Dynamic filtering & latest sorting)
   const newArrivalsList = productsList
+    .filter((p) => {
+      if (newArrivalFilter === "All") return true;
+      const cat = (p.category || "").toLowerCase();
+      if (newArrivalFilter === "Women") return cat.includes("women");
+      if (newArrivalFilter === "Men") return cat.includes("men") && !cat.includes("women");
+      if (newArrivalFilter === "Baby") return cat.includes("baby");
+      return true;
+    })
     .slice()
     .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
     .slice(0, 4)
@@ -226,14 +233,14 @@ const HomeScreen: React.FC = () => {
       {/* =========================================================================
           SECTION 1: SLIDING HERO CAROUSEL
          ========================================================================= */}
-      <section className="relative w-full">
+      <section className="max-w-[1440px] mx-auto px-4 md:px-8 pt-4 sm:pt-6">
         {isLoading ? (
           <div className="w-full">
             <HeroSkeleton />
           </div>
         ) : (
           /* Sliding Hero Panel (Smooth horizontal track animation) */
-          <div className="relative w-full overflow-hidden shadow-2xl bg-[#1b1c1a] group cursor-pointer aspect-[4/3] md:aspect-video lg:max-h-[85vh]">
+          <div className="relative w-full overflow-hidden shadow-2xl rounded-3xl bg-[#1b1c1a] group cursor-pointer aspect-[4/3] sm:aspect-[16/10]">
 
             {/* Smooth Sliding Track Container */}
             <div
@@ -387,7 +394,7 @@ const HomeScreen: React.FC = () => {
               <ProductCardSkeleton key={n} />
             ))}
           </div>
-        ) : newArrivalsList.filter((item) => newArrivalFilter === "All" || item.category === newArrivalFilter).length === 0 ? (
+        ) : newArrivalsList.length === 0 ? (
           <div className="bg-white p-10 text-center rounded-2xl border border-[#e4e2de] space-y-2">
             <span className="material-symbols-outlined text-4xl text-amber-600">inventory_2</span>
             <h3 className="font-display text-lg font-semibold text-[#1b1c1a]">No Stock Right Now</h3>
@@ -395,9 +402,7 @@ const HomeScreen: React.FC = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {newArrivalsList
-              .filter((item) => newArrivalFilter === "All" || item.category === newArrivalFilter)
-              .map((prod) => (
+            {newArrivalsList.map((prod) => (
               <div
                 key={prod.id}
                 className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1.5 border border-[#e4e2de] flex flex-col justify-between"
@@ -438,7 +443,7 @@ const HomeScreen: React.FC = () => {
 
                   <div className="flex justify-between items-center pt-2 border-t border-[#f5f3ef]">
                     <span className="font-display text-xl font-bold text-[#8e4d31]">
-                      ${prod.price.toFixed(2)}
+                      {formatPrice(prod.price)}
                     </span>
                     <Link
                       to={`/collections?category=${prod.category}`}
@@ -518,10 +523,10 @@ const HomeScreen: React.FC = () => {
                   <div className="flex items-center justify-between pt-3 border-t border-[#f5f3ef]">
                     <div>
                       <span className="font-display text-xl font-bold text-[#8e4d31]">
-                        ${item.price.toFixed(2)}
+                        {formatPrice(item.price)}
                       </span>
                       <span className="text-xs text-gray-400 line-through ml-2">
-                        ${item.oldPrice.toFixed(2)}
+                        {formatPrice(item.oldPrice)}
                       </span>
                     </div>
 
@@ -590,13 +595,15 @@ const HomeScreen: React.FC = () => {
           </div>
         </div>
 
-        {/* Dynamic Banner (Standardized fixed height for Women, Men & Baby banners) */}
+        {/* Dynamic Banner (Proportional 16:10 aspect ratio for Women, Men & Baby banners) */}
         <div className="relative rounded-3xl overflow-hidden shadow-xl border border-[#e4e2de] bg-[#1b1c1a] transition-all duration-500">
-          <img
-            src={activeFashionBanner}
-            alt={`${genderTab} Fashion Banner`}
-            className="w-full h-[280px] sm:h-[380px] md:h-[480px] object-cover object-center transition-all duration-700 block"
-          />
+          <Link to={activeFashionCategoryLink} className="block relative group cursor-pointer aspect-[4/3] sm:aspect-[16/10] w-full">
+            <img
+              src={activeFashionBanner}
+              alt={`${genderTab} Fashion Banner`}
+              className="w-full h-full object-cover object-center transition-all duration-700 block group-hover:scale-[1.01]"
+            />
+          </Link>
           <div className="bg-[#1b1c1a] px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-[#8e4d31]/40 text-white">
             <span className="text-sm font-semibold text-gray-200">
               {activeFashionBannerText}
@@ -605,7 +612,7 @@ const HomeScreen: React.FC = () => {
               to={activeFashionCategoryLink}
               className="px-6 py-2 bg-[#8e4d31] hover:bg-[#a65b3b] text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-all shadow-md flex-shrink-0"
             >
-              Shop {genderTab === "women" ? "Women's" : "Men's"} Collection →
+              Shop {genderTab === "women" ? "Women's" : genderTab === "men" ? "Men's" : "Baby's"} Collection →
             </Link>
           </div>
         </div>
@@ -642,10 +649,10 @@ const HomeScreen: React.FC = () => {
               <div className="p-5 flex justify-between items-center bg-white border-t border-[#f5f3ef]">
                 <div>
                   <span className="font-display text-xl font-bold text-[#8e4d31]">
-                    ${item.price.toFixed(2)}
+                    {formatPrice(item.price)}
                   </span>
                   <span className="text-xs text-gray-400 line-through ml-2">
-                    ${item.oldPrice.toFixed(2)}
+                    {formatPrice(item.oldPrice)}
                   </span>
                 </div>
 

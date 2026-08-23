@@ -6,7 +6,7 @@ import { fetchProductByIdApi, fetchProductsApi } from "../service/networkService
 
 const ProductDetailScreen: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { addToCart } = useCart();
+  const { addToCart, formatPrice } = useCart();
 
   const [selectedColor, setSelectedColor] = useState("Beige");
   const [customColorText, setCustomColorText] = useState("");
@@ -139,7 +139,7 @@ const ProductDetailScreen: React.FC = () => {
               <span className="text-xs text-[#76786f] ml-1">(4.9 / 32 reviews)</span>
             </div>
             <p className="font-display text-3xl font-semibold text-[#8e4d31]">
-              ${product.price.toFixed(2)}
+              {formatPrice(product.price)}
             </p>
           </div>
 
