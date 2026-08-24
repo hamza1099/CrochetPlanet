@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { RouteName } from "../routes/RouteName";
 import { useCart } from "../context/CartContext";
@@ -130,8 +130,8 @@ const HomeScreen: React.FC = () => {
     : defaultPopularCategories;
 
 
-  // State for Gender Tab in Men & Women section (Women, Men, Baby tabs)
-  const [genderTab, setGenderTab] = useState<"women" | "men" | "baby">("women");
+  // State for Gender & Category Tab in Fashion & Accessories section
+  const [genderTab, setGenderTab] = useState<"women" | "men" | "baby" | "accessories" | "keychains">("women");
 
   // State for New Arrivals Filter
   const [newArrivalFilter, setNewArrivalFilter] = useState("All");
@@ -142,14 +142,22 @@ const HomeScreen: React.FC = () => {
       ? categoryBanners?.womenBannerUrl || womenBannerImg
       : genderTab === "men"
       ? categoryBanners?.menBannerUrl || menBannerImg
-      : categoryBanners?.babyBannerUrl || daisyCrochetImg;
+      : genderTab === "baby"
+      ? categoryBanners?.babyBannerUrl || daisyCrochetImg
+      : genderTab === "accessories"
+      ? sideBannerImg
+      : dealAsset1;
 
   const activeFashionBannerText =
     genderTab === "women"
       ? categoryBanners?.womenBannerTagline || "Exclusive Women's Line • Handcrafted Cardigans, Sweaters & Apparel"
       : genderTab === "men"
       ? categoryBanners?.menBannerTagline || "Exclusive Men's Line • Vintage Crochet Overshirts & Heavy Knits"
-      : categoryBanners?.babyBannerTagline || "Exclusive Baby & Kids Line • Gentle Organic Cotton & Soft Wool Sets";
+      : genderTab === "baby"
+      ? categoryBanners?.babyBannerTagline || "Exclusive Baby & Kids Line • Gentle Organic Cotton & Soft Wool Sets"
+      : genderTab === "accessories"
+      ? "Exclusive Accessories • Charms, Bags, Holders & Handcrafted Accents"
+      : "Crochet Keychains & Book Lovers • Handmade Charms & Artisanal Gifts";
 
   // Target collection link based on active tab
   const activeFashionCategoryLink =
@@ -157,9 +165,13 @@ const HomeScreen: React.FC = () => {
       ? "/collections?category=Women"
       : genderTab === "men"
       ? "/collections?category=Men"
-      : "/collections?category=Baby";
+      : genderTab === "baby"
+      ? "/collections?category=Baby"
+      : genderTab === "accessories"
+      ? "/collections?category=Accessories"
+      : "/collections?category=Crochet%20Keychains";
 
-  const handleGenderTabChange = (tab: "women" | "men" | "baby") => {
+  const handleGenderTabChange = (tab: "women" | "men" | "baby" | "accessories" | "keychains") => {
     setGenderTab(tab);
     if (fashionSectionRef.current) {
       fashionSectionRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -203,27 +215,36 @@ const HomeScreen: React.FC = () => {
       image: p.imageUrl || p.image || daisyCrochetImg,
     }));
 
-  // 3. Men, Women, & Baby Fashion Apparel Data (Dynamic)
+  // 3. Men, Women, Accessories, & Keychains Data (Dynamic)
   const fashionItems = productsList
     .map(p => {
       const cat = (p.category || "").toLowerCase();
-      let gender = "women";
-      if (cat.includes("men") && !cat.includes("women")) gender = "men";
-      if (cat.includes("baby")) gender = "baby";
-      
+      const name = (p.name || "").toLowerCase();
+      let tabGroup: "women" | "men" | "baby" | "accessories" | "keychains" = "women";
+
+      if (cat.includes("access") || name.includes("access") || cat.includes("bag") || cat.includes("holder")) {
+        tabGroup = "accessories";
+      } else if (cat.includes("keychain") || name.includes("keychain") || cat.includes("book") || name.includes("book") || cat.includes("gift")) {
+        tabGroup = "keychains";
+      } else if (cat.includes("men") && !cat.includes("women")) {
+        tabGroup = "men";
+      } else if (cat.includes("baby")) {
+        tabGroup = "baby";
+      }
+
       return {
         id: p.id,
-        gender,
+        gender: tabGroup,
         name: p.name,
         price: Number(p.priceUSD ?? p.price ?? 50),
         oldPrice: Number(p.priceUSD ?? p.price ?? 50) * 1.2,
-        badge: p.badge || (gender === "men" ? "Men's Collection" : gender === "baby" ? "Baby Collection" : "Women's Collection"),
+        badge: p.badge || (tabGroup === "accessories" ? "Accessories" : tabGroup === "keychains" ? "Keychain & Gifts" : tabGroup === "men" ? "Men's Collection" : tabGroup === "baby" ? "Baby Collection" : "Women's Collection"),
         tagline: p.yarnType || p.yarn || "Hand-crocheted organic blend",
         image: p.imageUrl || p.image || hoodedCardiganImg,
       };
     });
 
-  const filteredFashion = fashionItems.filter((item) => item.gender === genderTab).slice(0, 6);
+  const filteredFashion = fashionItems.filter((item) => item.gender === genderTab).slice(0, 8);
 
 
 
@@ -408,12 +429,14 @@ const HomeScreen: React.FC = () => {
                 className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1.5 border border-[#e4e2de] flex flex-col justify-between"
               >
                 <div className="relative aspect-[4/5] overflow-hidden bg-[#f5f3ef]">
-                  <img
-                    src={prod.image}
-                    alt={prod.name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <span className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm text-[#8e4d31] text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-sm">
+                  <Link to={`/product/${prod.id}`} className="block w-full h-full">
+                    <img
+                      src={prod.image}
+                      alt={prod.name}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  </Link>
+                  <span className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm text-[#8e4d31] text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-sm pointer-events-none">
                     {prod.badge}
                   </span>
 
@@ -435,7 +458,7 @@ const HomeScreen: React.FC = () => {
                   </div>
 
                   <Link
-                    to={`/collections?category=${prod.category}`}
+                    to={`/product/${prod.id}`}
                     className="font-display text-lg font-semibold text-[#1b1c1a] hover:text-[#8e4d31] transition-colors block line-clamp-1"
                   >
                     {prod.name}
@@ -446,7 +469,7 @@ const HomeScreen: React.FC = () => {
                       {formatPrice(prod.price)}
                     </span>
                     <Link
-                      to={`/collections?category=${prod.category}`}
+                      to={`/product/${prod.id}`}
                       className="text-xs font-bold uppercase tracking-wider text-[#585e4c] hover:underline"
                     >
                       Details →
@@ -498,17 +521,19 @@ const HomeScreen: React.FC = () => {
                 className="bg-white rounded-2xl overflow-hidden border border-[#e4e2de] shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col justify-between"
               >
                 <div className="relative aspect-square overflow-hidden bg-[#f5f3ef]">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <span className="absolute top-3 left-3 bg-[#585e4c] text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-sm">
+                  <Link to={`/product/${item.id}`} className="block w-full h-full">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  </Link>
+                  <span className="absolute top-3 left-3 bg-[#585e4c] text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-sm pointer-events-none">
                     {item.badge}
                   </span>
 
-                  <span className="absolute top-3 right-3 bg-red-600 text-white text-[10px] font-bold uppercase px-2.5 py-1 rounded-md shadow-sm">
-                    SAVE ${(item.oldPrice - item.price).toFixed(0)}
+                  <span className="absolute top-3 right-3 bg-red-600 text-white text-[10px] font-bold uppercase px-2.5 py-1 rounded-md shadow-sm pointer-events-none">
+                    SAVE {formatPrice(item.oldPrice - item.price)}
                   </span>
                 </div>
 
@@ -516,9 +541,12 @@ const HomeScreen: React.FC = () => {
                   <span className="text-xs font-medium text-[#8e4d31] block">
                     Yarn: {item.yarn}
                   </span>
-                  <h3 className="font-display text-lg font-semibold text-[#1b1c1a]">
+                  <Link
+                    to={`/product/${item.id}`}
+                    className="font-display text-lg font-semibold text-[#1b1c1a] hover:text-[#8e4d31] transition-colors block line-clamp-1"
+                  >
                     {item.name}
-                  </h3>
+                  </Link>
 
                   <div className="flex items-center justify-between pt-3 border-t border-[#f5f3ef]">
                     <div>
@@ -530,12 +558,20 @@ const HomeScreen: React.FC = () => {
                       </span>
                     </div>
 
-                    <button
-                      onClick={() => addToCart(item)}
-                      className="px-4 py-2 bg-[#585e4c] hover:bg-[#717763] text-white text-xs font-bold uppercase rounded-lg transition-all shadow-sm"
-                    >
-                      Add To Cart
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <Link
+                        to={`/product/${item.id}`}
+                        className="text-xs font-bold uppercase tracking-wider text-[#585e4c] hover:underline"
+                      >
+                        Details →
+                      </Link>
+                      <button
+                        onClick={() => addToCart(item)}
+                        className="px-3.5 py-2 bg-[#585e4c] hover:bg-[#717763] text-white text-xs font-bold uppercase rounded-lg transition-all shadow-sm"
+                      >
+                        Add
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -563,11 +599,11 @@ const HomeScreen: React.FC = () => {
             Discover tailored hand-knitted cardigans, structured sweaters, and vintage unisex overshirts.
           </p>
 
-          {/* Gender Toggle Tabs (Women's Wear, Men's Wear & Baby Wear) */}
+          {/* Category Toggle Tabs */}
           <div className="inline-flex p-1.5 bg-[#eae8e4] rounded-2xl border border-[#e4e2de] mt-4 flex-wrap justify-center gap-1">
             <button
               onClick={() => handleGenderTabChange("women")}
-              className={`px-6 sm:px-8 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${genderTab === "women"
+              className={`px-5 sm:px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${genderTab === "women"
                   ? "bg-[#8e4d31] text-white shadow-md"
                   : "text-[#464840] hover:text-[#1b1c1a]"
                 }`}
@@ -576,7 +612,7 @@ const HomeScreen: React.FC = () => {
             </button>
             <button
               onClick={() => handleGenderTabChange("men")}
-              className={`px-6 sm:px-8 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${genderTab === "men"
+              className={`px-5 sm:px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${genderTab === "men"
                   ? "bg-[#8e4d31] text-white shadow-md"
                   : "text-[#464840] hover:text-[#1b1c1a]"
                 }`}
@@ -585,12 +621,30 @@ const HomeScreen: React.FC = () => {
             </button>
             <button
               onClick={() => handleGenderTabChange("baby")}
-              className={`px-6 sm:px-8 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${genderTab === "baby"
+              className={`px-5 sm:px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${genderTab === "baby"
                   ? "bg-[#8e4d31] text-white shadow-md"
                   : "text-[#464840] hover:text-[#1b1c1a]"
                 }`}
             >
               Baby Wear
+            </button>
+            <button
+              onClick={() => handleGenderTabChange("accessories")}
+              className={`px-5 sm:px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${genderTab === "accessories"
+                  ? "bg-[#8e4d31] text-white shadow-md"
+                  : "text-[#464840] hover:text-[#1b1c1a]"
+                }`}
+            >
+              Accessories
+            </button>
+            <button
+              onClick={() => handleGenderTabChange("keychains")}
+              className={`px-5 sm:px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${genderTab === "keychains"
+                  ? "bg-[#8e4d31] text-white shadow-md"
+                  : "text-[#464840] hover:text-[#1b1c1a]"
+                }`}
+            >
+              Keychains & Gifts
             </button>
           </div>
         </div>
@@ -625,24 +679,28 @@ const HomeScreen: React.FC = () => {
               className="group bg-white rounded-3xl overflow-hidden border border-[#e4e2de] shadow-md hover:shadow-2xl transition-all duration-300 flex flex-col justify-between"
             >
               <div className="relative aspect-[3/4] overflow-hidden bg-[#efeeea]">
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
+                <Link to={`/product/${item.id}`} className="block w-full h-full">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                </Link>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity pointer-events-none" />
 
-                <span className="absolute top-4 left-4 bg-white/90 backdrop-blur-md text-[#1b1c1a] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-sm">
+                <span className="absolute top-4 left-4 bg-white/90 backdrop-blur-md text-[#1b1c1a] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-sm pointer-events-none">
                   {item.badge}
                 </span>
 
-                <div className="absolute bottom-4 left-4 right-4 text-white">
+                <div className="absolute bottom-4 left-4 right-4 text-white pointer-events-none">
                   <span className="text-[11px] text-gray-200 block mb-1 font-mono">
                     {item.tagline}
                   </span>
-                  <h3 className="font-display text-xl font-bold leading-tight">
-                    {item.name}
-                  </h3>
+                  <Link to={`/product/${item.id}`} className="pointer-events-auto hover:text-amber-200">
+                    <h3 className="font-display text-xl font-bold leading-tight">
+                      {item.name}
+                    </h3>
+                  </Link>
                 </div>
               </div>
 
@@ -656,12 +714,20 @@ const HomeScreen: React.FC = () => {
                   </span>
                 </div>
 
-                <button
-                  onClick={() => addToCart(item)}
-                  className="px-4 py-2.5 bg-[#585e4c] hover:bg-[#717763] text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-md"
-                >
-                  Buy Now
-                </button>
+                <div className="flex items-center gap-2">
+                  <Link
+                    to={`/product/${item.id}`}
+                    className="text-xs font-bold uppercase tracking-wider text-[#585e4c] hover:underline"
+                  >
+                    Details →
+                  </Link>
+                  <button
+                    onClick={() => addToCart(item)}
+                    className="px-3 py-2 bg-[#585e4c] hover:bg-[#717763] text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-md"
+                  >
+                    Buy
+                  </button>
+                </div>
               </div>
             </div>
           ))}

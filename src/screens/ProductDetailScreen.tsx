@@ -13,32 +13,17 @@ const ProductDetailScreen: React.FC = () => {
   const [selectedSize, setSelectedSize] = useState("0-3M");
   const [personalization, setPersonalization] = useState("");
 
-  const defaultProduct = {
-    id: id || "baby-sweater-1",
-    name: "Artisanal Organic Baby Sweater",
-    price: 55.0,
-    category: "Baby Apparel",
-    badge: "Organic Wool",
-    description:
-      "Handcrafted with love by our collective of women artisans. Made from 100% locally sourced organic wool, this sweater is incredibly soft, breathable, and designed to gently embrace your little one.",
-    images: [
-      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80",
-      "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=600&q=80",
-      "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=600&q=80"
-    ],
-    colors: ["Beige", "Oatmeal", "Sage"],
-    sizes: ["0-3M", "3-6M", "6-12M"]
-  };
-
-  const [productData, setProductData] = useState<any>(defaultProduct);
-  const [activeImg, setActiveImg] = useState<string>(defaultProduct.images[0]);
+  const [productData, setProductData] = useState<any>(null);
+  const [activeImg, setActiveImg] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (!id) return;
+    setIsLoading(true);
     fetchProductByIdApi(id)
       .then((data) => {
         if (data && data.name) {
-          const imgs = data.images && data.images.length > 0 ? data.images : [data.imageUrl || defaultProduct.images[0]];
+          const imgs = data.images && data.images.length > 0 ? data.images : [data.imageUrl].filter(Boolean);
           const availableColors = data.colors && data.colors.length > 0 ? data.colors : ["Beige", "Oatmeal", "Sage"];
           const availableSizes = data.sizes && data.sizes.length > 0 ? data.sizes : ["0-3M", "3-6M", "6-12M"];
 
@@ -46,14 +31,14 @@ const ProductDetailScreen: React.FC = () => {
             id: data.id,
             name: data.name,
             price: Number(data.priceUSD ?? data.price ?? 55.0),
-            category: data.category || "Baby Apparel",
+            category: data.category || "Handcrafted",
             badge: data.badge || "Handcrafted",
-            description: data.description || defaultProduct.description,
-            images: imgs,
+            description: data.description || "Handcrafted with love by our collective of master artisans.",
+            images: imgs.length > 0 ? imgs : ["https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80"],
             colors: availableColors,
             sizes: availableSizes
           });
-          setActiveImg(imgs[0]);
+          setActiveImg(imgs[0] || "");
           if (availableColors[0]) setSelectedColor(availableColors[0]);
           if (availableSizes[0]) setSelectedSize(availableSizes[0]);
         }
@@ -62,27 +47,56 @@ const ProductDetailScreen: React.FC = () => {
         fetchProductsApi().then((list) => {
           const found = list.find((p) => p.id === id);
           if (found) {
-            const imgs = found.images && found.images.length > 0 ? found.images : [found.imageUrl || defaultProduct.images[0]];
+            const imgs = found.images && found.images.length > 0 ? found.images : [found.imageUrl].filter(Boolean);
             const availableColors = found.colors && found.colors.length > 0 ? found.colors : ["Beige", "Oatmeal", "Sage"];
             const availableSizes = found.sizes && found.sizes.length > 0 ? found.sizes : ["0-3M", "3-6M", "6-12M"];
             setProductData({
               id: found.id,
               name: found.name,
               price: Number(found.priceUSD ?? found.price ?? 55.0),
-              category: found.category || "Baby Apparel",
+              category: found.category || "Handcrafted",
               badge: found.badge || "Handcrafted",
-              description: found.description || defaultProduct.description,
-              images: imgs,
+              description: found.description || "Handcrafted with love by our collective of master artisans.",
+              images: imgs.length > 0 ? imgs : ["https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80"],
               colors: availableColors,
               sizes: availableSizes
             });
-            setActiveImg(imgs[0]);
+            setActiveImg(imgs[0] || "");
             if (availableColors[0]) setSelectedColor(availableColors[0]);
             if (availableSizes[0]) setSelectedSize(availableSizes[0]);
           }
         }).catch(() => {});
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, [id]);
+
+  if (isLoading || !productData) {
+    return (
+      <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-12 space-y-8 animate-pulse font-body">
+        <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+          <div className="lg:col-span-7 flex flex-col-reverse md:flex-row gap-6">
+            <div className="flex md:flex-col gap-4 overflow-x-auto md:w-24 shrink-0">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="w-20 h-24 md:w-full md:h-28 bg-gray-200 rounded-xl"></div>
+              ))}
+            </div>
+            <div className="w-full aspect-[4/5] bg-gray-200 rounded-3xl"></div>
+          </div>
+          <div className="lg:col-span-5 space-y-6">
+            <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+            <div className="h-8 bg-gray-200 rounded w-3/4"></div>
+            <div className="h-6 bg-gray-200 rounded w-1/4"></div>
+            <div className="h-20 bg-gray-200 rounded w-full"></div>
+            <div className="h-12 bg-gray-200 rounded w-full"></div>
+            <div className="h-14 bg-gray-200 rounded w-full"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const product = productData;
 
