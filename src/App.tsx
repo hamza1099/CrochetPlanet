@@ -3,6 +3,7 @@ import { BrowserRouter } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
 import { AuthProvider } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
+import AnnouncementBar from "./components/AnnouncementBar";
 import Footer from "./components/Footer";
 import CartDrawer from "./components/CartDrawer";
 import { CurrencyModal } from "./components/CurrencyModal";
@@ -19,6 +20,7 @@ const App: React.FC = () => {
           <CurrencyModal />
           <AuthModal />
           <div className="min-h-screen flex flex-col bg-[#fbf9f5] text-[#1b1c1a]">
+            <AnnouncementBar />
             <Navbar />
             <main className="flex-grow">
               <InitRoute />

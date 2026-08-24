@@ -13,6 +13,7 @@ const OFFICIAL_ADMIN_CATEGORIES = [
   "All",
   "Baby Collection",
   "Women's Fashion",
+  "Accessories",
   "Men's Fashion",
   "Amigurumi",
   "Gifts & Home",
@@ -115,7 +116,9 @@ const CollectionsScreen: React.FC = () => {
     }
 
     if (catQuery) {
-      if (catQuery.toLowerCase().includes("women")) {
+      if (catQuery.toLowerCase().includes("access")) {
+        setSelectedCategory("Accessories");
+      } else if (catQuery.toLowerCase().includes("women")) {
         setSelectedCategory("Women's Fashion");
       } else if (catQuery.toLowerCase().includes("men")) {
         setSelectedCategory("Men's Fashion");

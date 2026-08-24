@@ -61,6 +61,7 @@ const Navbar: React.FC = () => {
     "All",
     "Baby Collection",
     "Women's Fashion",
+    "Accessories",
     "Men's Fashion",
     "Amigurumi",
     "Gifts & Home",

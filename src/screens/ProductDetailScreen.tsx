@@ -261,8 +261,25 @@ const ProductDetailScreen: React.FC = () => {
             </Link>
           </div>
 
-          {/* Trust Highlights */}
+          {/* Trust Highlights & Customization Notice */}
           <div className="space-y-4 pt-6 border-t border-[#e4e2de] text-xs text-[#464840]">
+            {/* Customization & Crafting Notice Box */}
+            <div className="bg-[#f8f6f0] border border-amber-300/70 rounded-2xl p-4 space-y-2 text-xs text-[#464840]">
+              <div className="flex items-center gap-2 text-[#8e4d31] font-bold uppercase tracking-wider text-[11px]">
+                <span className="material-symbols-outlined text-base">info</span>
+                Bespoke Order & Crafting Guidelines
+              </div>
+              <p className="leading-relaxed text-[11.5px]">
+                🎨 <strong>Custom Colors:</strong> Colors can be fully customized to your preference!
+              </p>
+              <p className="leading-relaxed text-[11.5px]">
+                ⏱️ <strong>Crafting Time:</strong> Every order takes <strong>3–5 working days</strong> to carefully handcraft.
+              </p>
+              <p className="leading-relaxed text-[11.5px]">
+                🏷️ <strong>Custom Design Pricing:</strong> Prices may vary depending on size and custom design details.
+              </p>
+            </div>
+
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined text-xl text-[#8e4d31]">
                 volunteer_activism
