@@ -18,13 +18,12 @@ const Navbar: React.FC = () => {
   const searchRef = useRef<HTMLDivElement>(null);
 
   const popularSuggestions = [
-    { label: "Bag Charms", cat: "Gifts & Home" },
+    { label: "Bag Charms", cat: "Accessories" },
     { label: "Blanket Bouquets", cat: "Baby Apparel" },
-    { label: "Book Lovers", cat: "Gifts & Home" },
-    { label: "Bottle Holder", cat: "Gifts & Home" },
+    { label: "Book Lovers", cat: "Book Lovers" },
+    { label: "Bottle Holder", cat: "Accessories" },
     { label: "Cardigan", cat: "Women's Fashion" },
     { label: "Overshirt", cat: "Men's Fashion" },
-    { label: "Amigurumi", cat: "Amigurumi" },
   ];
 
   // Close search suggestion popup on outside click
@@ -63,12 +62,9 @@ const Navbar: React.FC = () => {
     "Women's Fashion",
     "Accessories",
     "Men's Fashion",
-    "Amigurumi",
-    "Gifts & Home",
     "Crochet Keychains",
     "Book Lovers",
     "Crochet Hair Acc",
-    "Garments",
     "Plushies",
     "Blankets",
   ];

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { RouteName } from "../routes/RouteName";
 import { useCart } from "../context/CartContext";
@@ -94,14 +94,14 @@ const HomeScreen: React.FC = () => {
 
   const heroSlides = liveBanners.length > 0
     ? liveBanners.map((b, idx) => ({
-        id: b.id || idx,
-        image: b.imageUrl || mainBannerImg,
-        badge: b.badge || "Exclusive Collection",
-        title: b.title || "CrochCosmo Luxury",
-        subtitle: b.subtitle || "Handcrafted with Love",
-        cta: "Shop Now 🛒",
-        link: b.linkUrl || "/collections",
-      }))
+      id: b.id || idx,
+      image: b.imageUrl || mainBannerImg,
+      badge: b.badge || "Exclusive Collection",
+      title: b.title || "CrochCosmo Luxury",
+      subtitle: b.subtitle || "Handcrafted with Love",
+      cta: "Shop Now 🛒",
+      link: b.linkUrl || "/collections",
+    }))
     : defaultHeroSlides;
 
 
@@ -115,64 +115,52 @@ const HomeScreen: React.FC = () => {
 
   // Default Popular Categories list matching user screenshot
   const defaultPopularCategories = [
-    { title: "Bag Charms", category: "Gifts & Home", image: hoodedCardiganImg },
+    { title: "Bag Charms", category: "Accessories", image: hoodedCardiganImg },
     { title: "Blanket Bouquets", category: "Baby Apparel", image: daisyCrochetImg },
-    { title: "Book Lovers", category: "Gifts & Home", image: dealAsset1 },
-    { title: "Bottle Holder", category: "Gifts & Home", image: sunflowerImg },
+    { title: "Book Lovers", category: "Book Lovers", image: dealAsset1 },
+    { title: "Bottle Holder", category: "Accessories", image: sunflowerImg },
   ];
 
   const popularCategories = livePopularCategories.length > 0
     ? livePopularCategories.map((c) => ({
-        title: c.title || "Category",
-        category: c.categoryName || "Gifts & Home",
-        image: c.imageUrl || dealAsset1
-      }))
+      title: c.title || "Category",
+      category: c.categoryName || "Accessories",
+      image: c.imageUrl || dealAsset1
+    }))
     : defaultPopularCategories;
 
 
-  // State for Gender & Category Tab in Fashion & Accessories section
-  const [genderTab, setGenderTab] = useState<"women" | "men" | "baby" | "accessories" | "keychains">("women");
+  // State for Artisanal Fashion section tabs (Accessories, Keychains, Plushies)
+  const [fashionTab, setFashionTab] = useState<"accessories" | "keychains" | "plushies">("accessories");
 
   // State for New Arrivals Filter
-  const [newArrivalFilter, setNewArrivalFilter] = useState("All");
+  const [newArrivalFilter, setNewArrivalFilter] = useState("Women");
 
-  // Dynamic Banner for Fashion Section based on active tab
+  // Dynamic Banner for Artisanal Fashion Section based on active tab
   const activeFashionBanner =
-    genderTab === "women"
-      ? categoryBanners?.womenBannerUrl || womenBannerImg
-      : genderTab === "men"
-      ? categoryBanners?.menBannerUrl || menBannerImg
-      : genderTab === "baby"
-      ? categoryBanners?.babyBannerUrl || daisyCrochetImg
-      : genderTab === "accessories"
-      ? sideBannerImg
-      : dealAsset1;
+    fashionTab === "accessories"
+      ? categoryBanners?.womenBannerUrl || sideBannerImg
+      : fashionTab === "keychains"
+        ? categoryBanners?.menBannerUrl || daisyCrochetImg
+        : categoryBanners?.babyBannerUrl || womenBannerImg;
 
   const activeFashionBannerText =
-    genderTab === "women"
-      ? categoryBanners?.womenBannerTagline || "Exclusive Women's Line • Handcrafted Cardigans, Sweaters & Apparel"
-      : genderTab === "men"
-      ? categoryBanners?.menBannerTagline || "Exclusive Men's Line • Vintage Crochet Overshirts & Heavy Knits"
-      : genderTab === "baby"
-      ? categoryBanners?.babyBannerTagline || "Exclusive Baby & Kids Line • Gentle Organic Cotton & Soft Wool Sets"
-      : genderTab === "accessories"
-      ? "Exclusive Accessories • Charms, Bags, Holders & Handcrafted Accents"
-      : "Crochet Keychains & Book Lovers • Handmade Charms & Artisanal Gifts";
+    fashionTab === "accessories"
+      ? categoryBanners?.womenBannerTagline || "Artisanal Accessories • Handcrafted Hair Clips, Scrunchies & Bags"
+      : fashionTab === "keychains"
+        ? categoryBanners?.menBannerTagline || "Crochet Keychains & Gifts • Hand-stitched Charms & Miniatures"
+        : categoryBanners?.babyBannerTagline || "Handcrafted Plushies • Soft Huggable Plush Toys & Stuffed Creatures";
 
   // Target collection link based on active tab
   const activeFashionCategoryLink =
-    genderTab === "women"
-      ? "/collections?category=Women"
-      : genderTab === "men"
-      ? "/collections?category=Men"
-      : genderTab === "baby"
-      ? "/collections?category=Baby"
-      : genderTab === "accessories"
+    fashionTab === "accessories"
       ? "/collections?category=Accessories"
-      : "/collections?category=Crochet%20Keychains";
+      : fashionTab === "keychains"
+        ? "/collections?category=Crochet%20Keychains"
+        : "/collections?category=Plushies";
 
-  const handleGenderTabChange = (tab: "women" | "men" | "baby" | "accessories" | "keychains") => {
-    setGenderTab(tab);
+  const handleFashionTabChange = (tab: "accessories" | "keychains" | "plushies") => {
+    setFashionTab(tab);
     if (fashionSectionRef.current) {
       fashionSectionRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -181,11 +169,12 @@ const HomeScreen: React.FC = () => {
   // 1. New Arrivals Data (Dynamic filtering & latest sorting)
   const newArrivalsList = productsList
     .filter((p) => {
-      if (newArrivalFilter === "All") return true;
       const cat = (p.category || "").toLowerCase();
+      const name = (p.name || "").toLowerCase();
       if (newArrivalFilter === "Women") return cat.includes("women");
       if (newArrivalFilter === "Men") return cat.includes("men") && !cat.includes("women");
-      if (newArrivalFilter === "Baby") return cat.includes("baby");
+      if (newArrivalFilter === "Accessories") return cat.includes("access") || name.includes("access") || cat.includes("bag") || cat.includes("hair");
+      if (newArrivalFilter === "Keychains") return cat.includes("keychain") || name.includes("keychain") || cat.includes("book") || name.includes("book") || cat.includes("gift");
       return true;
     })
     .slice()
@@ -215,36 +204,34 @@ const HomeScreen: React.FC = () => {
       image: p.imageUrl || p.image || daisyCrochetImg,
     }));
 
-  // 3. Men, Women, Accessories, & Keychains Data (Dynamic)
+  // 3. Accessories, Keychains & Plushies Data (Dynamic)
   const fashionItems = productsList
     .map(p => {
       const cat = (p.category || "").toLowerCase();
       const name = (p.name || "").toLowerCase();
-      let tabGroup: "women" | "men" | "baby" | "accessories" | "keychains" = "women";
+      let tabGroup: "accessories" | "keychains" | "plushies" | "none" = "none";
 
-      if (cat.includes("access") || name.includes("access") || cat.includes("bag") || cat.includes("holder")) {
+      if (cat.includes("access") || name.includes("access") || cat.includes("bag") || cat.includes("hair") || cat.includes("hat") || cat.includes("cap")) {
         tabGroup = "accessories";
-      } else if (cat.includes("keychain") || name.includes("keychain") || cat.includes("book") || name.includes("book") || cat.includes("gift")) {
+      } else if (cat.includes("keychain") || name.includes("keychain") || cat.includes("book") || cat.includes("gift")) {
         tabGroup = "keychains";
-      } else if (cat.includes("men") && !cat.includes("women")) {
-        tabGroup = "men";
-      } else if (cat.includes("baby")) {
-        tabGroup = "baby";
+      } else if (cat.includes("plush") || name.includes("plush") || cat.includes("toy") || name.includes("toy") || cat.includes("amigurumi")) {
+        tabGroup = "plushies";
       }
 
       return {
         id: p.id,
-        gender: tabGroup,
+        tabGroup,
         name: p.name,
         price: Number(p.priceUSD ?? p.price ?? 50),
         oldPrice: Number(p.priceUSD ?? p.price ?? 50) * 1.2,
-        badge: p.badge || (tabGroup === "accessories" ? "Accessories" : tabGroup === "keychains" ? "Keychain & Gifts" : tabGroup === "men" ? "Men's Collection" : tabGroup === "baby" ? "Baby Collection" : "Women's Collection"),
+        badge: p.badge || p.category || (tabGroup === "accessories" ? "Accessories" : tabGroup === "keychains" ? "Keychains" : "Plushies"),
         tagline: p.yarnType || p.yarn || "Hand-crocheted organic blend",
         image: p.imageUrl || p.image || hoodedCardiganImg,
       };
     });
 
-  const filteredFashion = fashionItems.filter((item) => item.gender === genderTab).slice(0, 8);
+  const filteredFashion = fashionItems.filter((item) => item.tabGroup === fashionTab).slice(0, 8);
 
 
 
@@ -321,9 +308,8 @@ const HomeScreen: React.FC = () => {
                     e.stopPropagation();
                     setCurrentSlide(idx);
                   }}
-                  className={`h-2.5 rounded-full transition-all ${
-                    currentSlide === idx ? "w-8 bg-[#8e4d31]" : "w-2.5 bg-white/70 hover:bg-white"
-                  }`}
+                  className={`h-2.5 rounded-full transition-all ${currentSlide === idx ? "w-8 bg-[#8e4d31]" : "w-2.5 bg-white/70 hover:bg-white"
+                    }`}
                   aria-label={`Go to slide ${idx + 1}`}
                 />
               ))}
@@ -394,13 +380,13 @@ const HomeScreen: React.FC = () => {
 
           {/* Filter Pills */}
           <div className="flex flex-wrap gap-2">
-            {["All", "Women", "Men", "Baby"].map((cat) => (
+            {["Women", "Men", "Accessories", "Keychains"].map((cat) => (
               <button
                 key={cat}
                 onClick={() => setNewArrivalFilter(cat)}
                 className={`px-4 py-2 rounded-full text-xs font-bold tracking-wider uppercase transition-all ${newArrivalFilter === cat
-                    ? "bg-[#8e4d31] text-white shadow-md"
-                    : "bg-white text-[#464840] border border-[#e4e2de] hover:bg-[#f5f3ef]"
+                  ? "bg-[#8e4d31] text-white shadow-md"
+                  : "bg-white text-[#464840] border border-[#e4e2de] hover:bg-[#f5f3ef]"
                   }`}
               >
                 {cat}
@@ -583,7 +569,7 @@ const HomeScreen: React.FC = () => {
 
 
       {/* =========================================================================
-          SECTION 4: MEN AND WOMEN ARTICLES WITH DYNAMIC WOMEN/MEN TABS & BANNERS
+          SECTION 4: ARTISANAL FASHION WITH DYNAMIC ACCESSORIES, KEYCHAINS & PLUSHIES TABS & BANNERS
          ========================================================================= */}
       <section ref={fashionSectionRef} className="max-w-[1440px] mx-auto px-4 md:px-8 space-y-12 scroll-mt-24">
 
@@ -593,69 +579,54 @@ const HomeScreen: React.FC = () => {
             Slow Fashion Heritage
           </span>
           <h2 className="font-display text-3xl md:text-5xl font-bold text-[#1b1c1a]">
-            Men & Women Artisanal Fashion
+            Artisanal Fashion
           </h2>
           <p className="text-base text-[#464840] leading-relaxed">
-            Discover tailored hand-knitted cardigans, structured sweaters, and vintage unisex overshirts.
+            Discover handcrafted hair accessories, crochet keychains & charms, and luxury plushies.
           </p>
 
           {/* Category Toggle Tabs */}
           <div className="inline-flex p-1.5 bg-[#eae8e4] rounded-2xl border border-[#e4e2de] mt-4 flex-wrap justify-center gap-1">
             <button
-              onClick={() => handleGenderTabChange("women")}
-              className={`px-5 sm:px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${genderTab === "women"
-                  ? "bg-[#8e4d31] text-white shadow-md"
-                  : "text-[#464840] hover:text-[#1b1c1a]"
-                }`}
-            >
-              Women's Wear
-            </button>
-            <button
-              onClick={() => handleGenderTabChange("men")}
-              className={`px-5 sm:px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${genderTab === "men"
-                  ? "bg-[#8e4d31] text-white shadow-md"
-                  : "text-[#464840] hover:text-[#1b1c1a]"
-                }`}
-            >
-              Men's Wear
-            </button>
-            <button
-              onClick={() => handleGenderTabChange("baby")}
-              className={`px-5 sm:px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${genderTab === "baby"
-                  ? "bg-[#8e4d31] text-white shadow-md"
-                  : "text-[#464840] hover:text-[#1b1c1a]"
-                }`}
-            >
-              Baby Wear
-            </button>
-            <button
-              onClick={() => handleGenderTabChange("accessories")}
-              className={`px-5 sm:px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${genderTab === "accessories"
-                  ? "bg-[#8e4d31] text-white shadow-md"
-                  : "text-[#464840] hover:text-[#1b1c1a]"
+              onClick={() => handleFashionTabChange("accessories")}
+              className={`px-5 sm:px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${fashionTab === "accessories"
+                ? "bg-[#8e4d31] text-white shadow-md"
+                : "text-[#464840] hover:text-[#1b1c1a]"
                 }`}
             >
               Accessories
             </button>
             <button
-              onClick={() => handleGenderTabChange("keychains")}
-              className={`px-5 sm:px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${genderTab === "keychains"
-                  ? "bg-[#8e4d31] text-white shadow-md"
-                  : "text-[#464840] hover:text-[#1b1c1a]"
+              onClick={() => handleFashionTabChange("keychains")}
+              className={`px-5 sm:px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${fashionTab === "keychains"
+                ? "bg-[#8e4d31] text-white shadow-md"
+                : "text-[#464840] hover:text-[#1b1c1a]"
                 }`}
             >
-              Keychains & Gifts
+              Keychains
+            </button>
+            <button
+              onClick={() => handleFashionTabChange("plushies")}
+              className={`px-5 sm:px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${fashionTab === "plushies"
+                ? "bg-[#8e4d31] text-white shadow-md"
+                : "text-[#464840] hover:text-[#1b1c1a]"
+                }`}
+            >
+              Plushies
             </button>
           </div>
         </div>
 
-        {/* Dynamic Banner (Proportional 16:10 aspect ratio for Women, Men & Baby banners) */}
+        {/* Dynamic Banner */}
         <div className="relative rounded-3xl overflow-hidden shadow-xl border border-[#e4e2de] bg-[#1b1c1a] transition-all duration-500">
-          <Link to={activeFashionCategoryLink} className="block relative group cursor-pointer aspect-[4/3] sm:aspect-[16/10] w-full">
+          <Link
+            to={activeFashionCategoryLink}
+            className="block relative group cursor-pointer w-full"
+          >
             <img
               src={activeFashionBanner}
-              alt={`${genderTab} Fashion Banner`}
-              className="w-full h-full object-cover object-center transition-all duration-700 block group-hover:scale-[1.01]"
+              alt={`${fashionTab} Banner`}
+              className="w-full h-auto block transition-all duration-700 group-hover:scale-[1.01]"
             />
           </Link>
           <div className="bg-[#1b1c1a] px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-[#8e4d31]/40 text-white">
@@ -666,72 +637,80 @@ const HomeScreen: React.FC = () => {
               to={activeFashionCategoryLink}
               className="px-6 py-2 bg-[#8e4d31] hover:bg-[#a65b3b] text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-all shadow-md flex-shrink-0"
             >
-              Shop {genderTab === "women" ? "Women's" : genderTab === "men" ? "Men's" : "Baby's"} Collection →
+              Shop {fashionTab === "accessories" ? "Accessories" : fashionTab === "keychains" ? "Keychains" : "Plushies"} Collection →
             </Link>
           </div>
         </div>
 
-        {/* Fashion Items Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {filteredFashion.map((item) => (
-            <div
-              key={item.id}
-              className="group bg-white rounded-3xl overflow-hidden border border-[#e4e2de] shadow-md hover:shadow-2xl transition-all duration-300 flex flex-col justify-between"
-            >
-              <div className="relative aspect-[3/4] overflow-hidden bg-[#efeeea]">
-                <Link to={`/product/${item.id}`} className="block w-full h-full">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                </Link>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity pointer-events-none" />
-
-                <span className="absolute top-4 left-4 bg-white/90 backdrop-blur-md text-[#1b1c1a] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-sm pointer-events-none">
-                  {item.badge}
-                </span>
-
-                <div className="absolute bottom-4 left-4 right-4 text-white pointer-events-none">
-                  <span className="text-[11px] text-gray-200 block mb-1 font-mono">
-                    {item.tagline}
-                  </span>
-                  <Link to={`/product/${item.id}`} className="pointer-events-auto hover:text-amber-200">
-                    <h3 className="font-display text-xl font-bold leading-tight">
-                      {item.name}
-                    </h3>
+        {/* Category Items Grid / Empty State */}
+        {filteredFashion.length === 0 ? (
+          <div className="bg-white p-10 text-center rounded-2xl border border-[#e4e2de] space-y-2">
+            <span className="material-symbols-outlined text-4xl text-amber-600">inventory_2</span>
+            <h3 className="font-display text-lg font-semibold text-[#1b1c1a]">No Stock Available Right Now</h3>
+            <p className="text-xs text-[#76786f]">There are currently no items added in the {fashionTab === "accessories" ? "Accessories" : fashionTab === "keychains" ? "Keychains" : "Plushies"} category. Products can be added from the admin panel!</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {filteredFashion.map((item) => (
+              <div
+                key={item.id}
+                className="group bg-white rounded-3xl overflow-hidden border border-[#e4e2de] shadow-md hover:shadow-2xl transition-all duration-300 flex flex-col justify-between"
+              >
+                <div className="relative aspect-[3/4] overflow-hidden bg-[#efeeea]">
+                  <Link to={`/product/${item.id}`} className="block w-full h-full">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
                   </Link>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity pointer-events-none" />
+
+                  <span className="absolute top-4 left-4 bg-white/90 backdrop-blur-md text-[#1b1c1a] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-sm pointer-events-none">
+                    {item.badge}
+                  </span>
+
+                  <div className="absolute bottom-4 left-4 right-4 text-white pointer-events-none">
+                    <span className="text-[11px] text-gray-200 block mb-1 font-mono">
+                      {item.tagline}
+                    </span>
+                    <Link to={`/product/${item.id}`} className="pointer-events-auto hover:text-amber-200">
+                      <h3 className="font-display text-xl font-bold leading-tight">
+                        {item.name}
+                      </h3>
+                    </Link>
+                  </div>
+                </div>
+
+                <div className="p-5 flex justify-between items-center bg-white border-t border-[#f5f3ef]">
+                  <div>
+                    <span className="font-display text-xl font-bold text-[#8e4d31]">
+                      {formatPrice(item.price)}
+                    </span>
+                    <span className="text-xs text-gray-400 line-through ml-2">
+                      {formatPrice(item.oldPrice)}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Link
+                      to={`/product/${item.id}`}
+                      className="text-xs font-bold uppercase tracking-wider text-[#585e4c] hover:underline"
+                    >
+                      Details →
+                    </Link>
+                    <button
+                      onClick={() => addToCart(item)}
+                      className="px-3 py-2 bg-[#585e4c] hover:bg-[#717763] text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-md"
+                    >
+                      Buy
+                    </button>
+                  </div>
                 </div>
               </div>
-
-              <div className="p-5 flex justify-between items-center bg-white border-t border-[#f5f3ef]">
-                <div>
-                  <span className="font-display text-xl font-bold text-[#8e4d31]">
-                    {formatPrice(item.price)}
-                  </span>
-                  <span className="text-xs text-gray-400 line-through ml-2">
-                    {formatPrice(item.oldPrice)}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Link
-                    to={`/product/${item.id}`}
-                    className="text-xs font-bold uppercase tracking-wider text-[#585e4c] hover:underline"
-                  >
-                    Details →
-                  </Link>
-                  <button
-                    onClick={() => addToCart(item)}
-                    className="px-3 py-2 bg-[#585e4c] hover:bg-[#717763] text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-md"
-                  >
-                    Buy
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
 
 

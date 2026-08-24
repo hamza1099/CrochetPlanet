@@ -15,12 +15,9 @@ const OFFICIAL_ADMIN_CATEGORIES = [
   "Women's Fashion",
   "Accessories",
   "Men's Fashion",
-  "Amigurumi",
-  "Gifts & Home",
   "Crochet Keychains",
   "Book Lovers",
   "Crochet Hair Acc",
-  "Garments",
   "Plushies",
   "Blankets",
 ];
@@ -70,10 +67,18 @@ const CollectionsScreen: React.FC = () => {
           const uniqueYarns = Array.from(new Set(formatted.map(p => p.yarn))).filter(Boolean).sort() as string[];
           setYarnTypes(["All", ...uniqueYarns]);
 
-          // Extract any extra product categories and merge with official admin categories
+          // Extract extra product categories, filtering out redundant aliases like "women", "men", "baby"
           const productCats = formatted.map(p => p.category).filter(Boolean);
-          const combinedCats = Array.from(new Set([...OFFICIAL_ADMIN_CATEGORIES, ...productCats])) as string[];
-          setCategories(combinedCats);
+          const filterAliases = (cats: string[]) => {
+            return cats.filter(c => {
+              const l = c.trim().toLowerCase();
+              if (l === "women" || l === "men" || l === "baby" || l === "baby apparel") return false;
+              return !OFFICIAL_ADMIN_CATEGORIES.some(off => off.toLowerCase() === l);
+            });
+          };
+
+          const newExtraCats = Array.from(new Set(filterAliases(productCats))) as string[];
+          setCategories([...OFFICIAL_ADMIN_CATEGORIES, ...newExtraCats]);
         } else if (isMounted) {
           setProductsList([]);
         }
@@ -90,7 +95,15 @@ const CollectionsScreen: React.FC = () => {
             .map((c: any) => c.categoryName || c.title)
             .filter(Boolean);
             
-          const uniqueAdminCats = Array.from(new Set(sortedCats)) as string[];
+          const filterAliases = (cats: string[]) => {
+            return cats.filter(c => {
+              const l = c.trim().toLowerCase();
+              if (l === "women" || l === "men" || l === "baby" || l === "baby apparel") return false;
+              return !OFFICIAL_ADMIN_CATEGORIES.some(off => off.toLowerCase() === l);
+            });
+          };
+
+          const uniqueAdminCats = Array.from(new Set(filterAliases(sortedCats))) as string[];
           if (uniqueAdminCats.length > 0) {
             setCategories(prev => Array.from(new Set([...prev, ...uniqueAdminCats])));
           }
@@ -151,16 +164,17 @@ const CollectionsScreen: React.FC = () => {
   const filteredProducts = productsList
     .filter((prod) => {
       if (selectedCategory === "All") return true;
+      const prodCat = (prod.category || "").toLowerCase();
       if (selectedCategory === "Women's Fashion") {
-        return prod.category === "Women's Fashion" || prod.category === "Adult Apparel";
+        return prodCat.includes("women") || prodCat === "adult apparel";
       }
       if (selectedCategory === "Men's Fashion") {
-        return prod.category === "Men's Fashion" || prod.category === "Adult Apparel";
+        return (prodCat.includes("men") && !prodCat.includes("women")) || prodCat === "adult apparel";
       }
       if (selectedCategory === "Baby Collection" || selectedCategory === "Baby Apparel") {
-        return prod.category === "Baby Collection" || prod.category === "Baby Apparel";
+        return prodCat.includes("baby");
       }
-      return prod.category === selectedCategory;
+      return prod.category === selectedCategory || prodCat === selectedCategory.toLowerCase();
     })
     .filter((prod) => selectedYarn === "All" || prod.yarn === selectedYarn)
     .filter((prod) => {
