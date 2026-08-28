@@ -20,7 +20,7 @@ const CheckoutScreen: React.FC = () => {
   const [stateProv, setStateProv] = useState("");
   const [zipCode, setZipCode] = useState("");
 
-  const [paymentMethod, setPaymentMethod] = useState<"easypaisa_jazzcash" | "cod" | "ubl_bank">("easypaisa_jazzcash");
+  const [paymentMethod, setPaymentMethod] = useState<"easypaisa_jazzcash" | "cod" | "ubl_bank" | "international_whatsapp">("easypaisa_jazzcash");
   const [senderAccount, setSenderAccount] = useState("");
   const [transactionId, setTransactionId] = useState("");
   const [screenshotBase64, setScreenshotBase64] = useState("");
@@ -97,6 +97,8 @@ const CheckoutScreen: React.FC = () => {
         ? "Cash on Delivery" 
         : paymentMethod === "ubl_bank" 
         ? "UBL Bank Transfer" 
+        : paymentMethod === "international_whatsapp"
+        ? "International Order (WhatsApp Confirmation)"
         : "Easypaisa & JazzCash",
       paymentDetails: (paymentMethod === "easypaisa_jazzcash" || paymentMethod === "ubl_bank") ? {
         methodName: paymentMethod === "ubl_bank" ? "UBL Bank Transfer" : "Easypaisa & JazzCash Mobile Transfer",
@@ -106,6 +108,9 @@ const CheckoutScreen: React.FC = () => {
         senderAccount,
         transactionId,
         screenshotBase64
+      } : paymentMethod === "international_whatsapp" ? {
+        methodName: "International Order (WhatsApp Confirmation)",
+        note: "Customer requested WhatsApp confirmation for international shipping rates & payment options"
       } : {
         methodName: "Cash on Delivery",
         note: "Payment to be collected upon delivery receipt"
@@ -188,6 +193,15 @@ const CheckoutScreen: React.FC = () => {
         </div>
 
         <div className="pt-6 flex flex-wrap items-center justify-center gap-4">
+          <a
+            href={`https://wa.me/923173004661?text=Hi!%20I%20just%20placed%20order%20%23${orderId}.%20Please%20confirm%20my%20order%20details.`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-8 py-4 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-all shadow-md flex items-center gap-2"
+          >
+            <span className="material-symbols-outlined text-base">chat</span>
+            <span>Confirm Order on WhatsApp</span>
+          </a>
           <Link
             to={RouteName.ORDERS}
             className="px-8 py-4 bg-[#8e4d31] text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#71361d] transition-all shadow-md"
@@ -253,6 +267,38 @@ const CheckoutScreen: React.FC = () => {
                 </button>
               </div>
             )}
+
+            {/* International Shipping Notice Card (Luxury Boutique Style) */}
+            <div className="p-5 bg-[#fbf9f5] border border-[#e4e2de] rounded-2xl shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[#585e4c]/10 text-[#585e4c] flex items-center justify-center flex-shrink-0">
+                  <span className="material-symbols-outlined text-2xl">public</span>
+                </div>
+                <div className="space-y-0.5">
+                  <div className="flex items-center gap-2">
+                    <h4 className="font-display font-semibold text-sm text-[#1b1c1a]">
+                      Worldwide Shipping Available ✈️
+                    </h4>
+                    <span className="px-2 py-0.5 bg-[#585e4c]/10 text-[#585e4c] text-[10px] font-bold uppercase rounded-md">
+                      Overseas
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#76786f]">
+                    Ordering outside Pakistan? Select <strong className="text-[#8e4d31] font-semibold">"International Order"</strong> under payment methods below.
+                  </p>
+                </div>
+              </div>
+
+              <a
+                href="https://wa.me/923173004661?text=Hi!%20I%20want%20to%20place%20an%20international%20order%20from%20outside%20Pakistan."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 bg-[#585e4c] hover:bg-[#484d3e] text-white text-xs font-bold rounded-xl flex-shrink-0 transition-all shadow-xs self-end sm:self-auto"
+              >
+                <span className="material-symbols-outlined text-base">chat</span>
+                <span>WhatsApp Support</span>
+              </a>
+            </div>
 
             {/* Contact & Shipping */}
             <div className="space-y-4">
@@ -534,6 +580,55 @@ const CheckoutScreen: React.FC = () => {
                   </div>
                   <span className="text-xs text-[#76786f]">Pay upon receipt</span>
                 </label>
+
+                {/* International / Overseas Order (WhatsApp Confirmation) Option */}
+                <label
+                  onClick={() => setPaymentMethod("international_whatsapp")}
+                  className={`flex flex-col gap-2 p-4 rounded-xl border cursor-pointer transition-all ${
+                    paymentMethod === "international_whatsapp"
+                      ? "bg-[#e8f8ef] border-[#25D366] ring-1 ring-[#25D366]"
+                      : "bg-[#fbf9f5] border-[#c7c7bd] hover:border-[#76786f]"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="radio"
+                        name="payment"
+                        checked={paymentMethod === "international_whatsapp"}
+                        onChange={() => setPaymentMethod("international_whatsapp")}
+                        className="text-[#25D366] focus:ring-0"
+                      />
+                      <span className="font-semibold text-sm text-[#1b1c1a]">
+                        ✈️ International / Overseas Order (WhatsApp Confirmation)
+                      </span>
+                    </div>
+                    <span className="px-2.5 py-0.5 bg-[#25D366] text-white text-[10px] font-bold rounded-full uppercase">
+                      Worldwide
+                    </span>
+                  </div>
+
+                  {paymentMethod === "international_whatsapp" && (
+                    <div className="mt-2 p-4 bg-white rounded-xl border border-[#c1ebd3] space-y-3 text-xs text-[#464840] animate-in fade-in duration-200">
+                      <div className="flex items-center gap-2 text-[#1c7843] font-bold text-sm border-b border-[#e8f8ef] pb-2">
+                        <span className="material-symbols-outlined text-lg">public</span>
+                        <span>Global Delivery & Live WhatsApp Support</span>
+                      </div>
+                      <div className="space-y-1.5 text-xs text-[#333]">
+                        <p>• <strong>Easy Process</strong>: Place your order now without online advance payment.</p>
+                        <p>• <strong>International Shipping</strong>: Shipping charges (DHL / SkyNet / FedEx) will be calculated based on your destination country & package weight.</p>
+                        <p>• <strong>Payment Link</strong>: Our team will contact you on <strong>WhatsApp (+92 317 3004661)</strong> with live shipping quotes & international card / remittance payment link.</p>
+                      </div>
+                      <div className="p-3 bg-[#e8f8ef] rounded-lg border border-[#c1ebd3] flex items-center justify-between gap-2 text-[11px] font-semibold text-[#1c7843]">
+                        <div className="flex items-center gap-1.5">
+                          <span className="material-symbols-outlined text-base">chat</span>
+                          <span>Assistance: +92 317 3004661</span>
+                        </div>
+                        <span className="text-[10px] font-bold uppercase tracking-wider bg-[#25D366] text-white px-2 py-0.5 rounded">Fast Reply</span>
+                      </div>
+                    </div>
+                  )}
+                </label>
               </div>
             </div>
 
@@ -543,6 +638,8 @@ const CheckoutScreen: React.FC = () => {
               className={`w-full py-4 rounded-xl text-xs font-bold uppercase tracking-widest transition-all shadow-md flex items-center justify-center gap-2 ${
                 isSubmitting
                   ? "bg-[#76786f] cursor-not-allowed text-white opacity-80"
+                  : paymentMethod === "international_whatsapp"
+                  ? "bg-[#25D366] hover:bg-[#20ba59] text-white"
                   : "bg-[#585e4c] hover:bg-[#717763] text-white"
               }`}
             >
@@ -551,6 +648,8 @@ const CheckoutScreen: React.FC = () => {
                   <span className="material-symbols-outlined animate-spin text-base">sync</span>
                   <span>Processing Order...</span>
                 </>
+              ) : paymentMethod === "international_whatsapp" ? (
+                <span>Place International Order & Connect on WhatsApp ✈️</span>
               ) : (
                 <span>Complete Order — {formatPrice(totalUSD)}</span>
               )}
@@ -591,24 +690,59 @@ const CheckoutScreen: React.FC = () => {
             </div>
 
             <div className="space-y-4 max-h-80 overflow-y-auto pr-2">
-              {cart.map((item) => (
-                <div key={item.id} className="flex gap-4 items-center">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-16 h-20 object-cover rounded-xl bg-white flex-shrink-0"
-                  />
-                  <div className="flex-grow min-w-0">
-                    <h4 className="font-display text-sm font-medium text-[#1b1c1a] truncate">
-                      {item.name}
-                    </h4>
-                    <p className="text-xs text-[#76786f]">Qty: {item.quantity}</p>
-                    <p className="text-xs font-bold text-[#8e4d31]">
-                      {formatPrice(item.price * item.quantity)}
-                    </p>
+              {cart.map((item) => {
+                const match = item.name.match(/^(.*?)\s*\((.*)\)$/);
+                const title = match ? match[1] : item.name;
+                const detailsString = match ? match[2] : "";
+                const details = detailsString
+                  ? detailsString.split(/,(?![^\(\)]*\))/).map((s) => s.trim())
+                  : [];
+
+                return (
+                  <div key={item.id} className="flex gap-3.5 items-start py-3 border-b border-[#e4e2de]/60 last:border-0">
+                    <img
+                      src={item.image}
+                      alt={title}
+                      className="w-16 h-20 object-cover rounded-xl bg-white flex-shrink-0 shadow-xs border border-[#e4e2de]"
+                    />
+                    <div className="flex-grow min-w-0 space-y-1.5">
+                      <h4 className="font-display text-xs font-semibold text-[#1b1c1a] leading-tight">
+                        {title}
+                      </h4>
+                      {details.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 pt-0.5">
+                          {details.map((d, idx) => {
+                            const isSize = d.toLowerCase().includes("size:");
+                            const isEmbroidery = d.toLowerCase().includes("embroidery:");
+
+                            return (
+                              <span
+                                key={idx}
+                                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10.5px] font-medium leading-tight border ${
+                                  isSize
+                                    ? "bg-[#8e4d31]/10 text-[#8e4d31] border-[#8e4d31]/20"
+                                    : isEmbroidery
+                                    ? "bg-purple-50 text-purple-800 border-purple-200"
+                                    : "bg-[#585e4c]/10 text-[#3a3f32] border-[#585e4c]/20"
+                                }`}
+                              >
+                                {isSize ? "📏 " : isEmbroidery ? "🪡 " : "🎨 "}
+                                <span>{d}</span>
+                              </span>
+                            );
+                          })}
+                        </div>
+                      )}
+                      <div className="flex items-center justify-between text-xs pt-1">
+                        <span className="text-[#76786f] text-[11px]">Qty: {item.quantity}</span>
+                        <span className="font-bold text-[#8e4d31]">
+                          {formatPrice(item.price * item.quantity)}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             <div className="space-y-3 pt-6 border-t border-[#e4e2de] text-sm">

@@ -8,14 +8,37 @@ const ProductDetailScreen: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { addToCart, formatPrice } = useCart();
 
-  const [selectedColor, setSelectedColor] = useState("Beige");
+  const [selectedColor, setSelectedColor] = useState("Same as Shown (Original Color)");
   const [customColorText, setCustomColorText] = useState("");
   const [selectedSize, setSelectedSize] = useState("0-3M");
+  const [customSizeText, setCustomSizeText] = useState("");
   const [personalization, setPersonalization] = useState("");
 
   const [productData, setProductData] = useState<any>(null);
   const [activeImg, setActiveImg] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const processColors = (rawColors?: string[]) => {
+    let list = rawColors && rawColors.length > 0 ? [...rawColors] : [];
+    // Ensure "Same as Shown (Original Color)" is at index 0
+    const hasOriginal = list.some(c => c.toLowerCase().includes("same as shown") || c.toLowerCase().includes("original"));
+    if (!hasOriginal) {
+      list.unshift("Same as Shown (Original Color)");
+    }
+    // Ensure "Custom Color" is available
+    if (!list.includes("Custom Color")) {
+      list.push("Custom Color");
+    }
+    return list;
+  };
+
+  const processSizes = (rawSizes?: string[]) => {
+    let list = rawSizes && rawSizes.length > 0 ? [...rawSizes] : ["Small", "Medium", "Large"];
+    if (!list.includes("Custom Size")) {
+      list.push("Custom Size");
+    }
+    return list;
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -24,8 +47,8 @@ const ProductDetailScreen: React.FC = () => {
       .then((data) => {
         if (data && data.name) {
           const imgs = data.images && data.images.length > 0 ? data.images : [data.imageUrl].filter(Boolean);
-          const availableColors = data.colors && data.colors.length > 0 ? data.colors : ["Beige", "Oatmeal", "Sage"];
-          const availableSizes = data.sizes && data.sizes.length > 0 ? data.sizes : ["0-3M", "3-6M", "6-12M"];
+          const availableColors = processColors(data.colors);
+          const availableSizes = processSizes(data.sizes);
 
           setProductData({
             id: data.id,
@@ -39,7 +62,7 @@ const ProductDetailScreen: React.FC = () => {
             sizes: availableSizes
           });
           setActiveImg(imgs[0] || "");
-          if (availableColors[0]) setSelectedColor(availableColors[0]);
+          setSelectedColor(availableColors[0]);
           if (availableSizes[0]) setSelectedSize(availableSizes[0]);
         }
       })
@@ -48,8 +71,8 @@ const ProductDetailScreen: React.FC = () => {
           const found = list.find((p) => p.id === id);
           if (found) {
             const imgs = found.images && found.images.length > 0 ? found.images : [found.imageUrl].filter(Boolean);
-            const availableColors = found.colors && found.colors.length > 0 ? found.colors : ["Beige", "Oatmeal", "Sage"];
-            const availableSizes = found.sizes && found.sizes.length > 0 ? found.sizes : ["0-3M", "3-6M", "6-12M"];
+            const availableColors = processColors(found.colors);
+            const availableSizes = processSizes(found.sizes);
             setProductData({
               id: found.id,
               name: found.name,
@@ -62,7 +85,7 @@ const ProductDetailScreen: React.FC = () => {
               sizes: availableSizes
             });
             setActiveImg(imgs[0] || "");
-            if (availableColors[0]) setSelectedColor(availableColors[0]);
+            setSelectedColor(availableColors[0]);
             if (availableSizes[0]) setSelectedSize(availableSizes[0]);
           }
         }).catch(() => {});
@@ -164,36 +187,34 @@ const ProductDetailScreen: React.FC = () => {
           {/* Color Selection */}
           <div className="space-y-3 pt-4 border-t border-[#f5f3ef]">
             <label className="text-xs font-bold uppercase tracking-widest text-[#585e4c] block">
-              Color: <span className="text-[#8e4d31] ml-1 font-bold">{selectedColor === "Custom Color" && customColorText ? `Custom (${customColorText})` : selectedColor || "Standard"}</span>
+              Color Selection: <span className="text-[#8e4d31] ml-1 font-bold">{selectedColor === "Custom Color" && customColorText ? `Custom (${customColorText})` : selectedColor}</span>
             </label>
             <div className="flex flex-wrap gap-2.5">
-              {(product.colors && product.colors.length > 0 ? product.colors : ["Beige", "Oatmeal", "Sage"]).map((c: string) => (
-                <button
-                  key={c}
-                  onClick={() => setSelectedColor(c)}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all ${
-                    selectedColor === c
-                      ? "bg-[#8e4d31] text-white border-[#8e4d31]"
-                      : "bg-white text-[#464840] border-[#c7c7bd] hover:border-[#8e4d31]"
-                  }`}
-                >
-                  {c}
-                </button>
-              ))}
+              {(product.colors || []).map((c: string) => {
+                const isOriginal = c.toLowerCase().includes("same as shown") || c.toLowerCase().includes("original");
+                const isCustom = c === "Custom Color";
 
-              {/* Custom Color Request Button */}
-              {!product.colors?.includes("Custom Color") && (
-                <button
-                  onClick={() => setSelectedColor("Custom Color")}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all flex items-center gap-1 ${
-                    selectedColor === "Custom Color"
-                      ? "bg-[#8e4d31] text-white border-[#8e4d31]"
-                      : "bg-amber-50 text-[#8e4d31] border-amber-300 hover:border-[#8e4d31]"
-                  }`}
-                >
-                  + Custom Shade
-                </button>
-              )}
+                return (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => setSelectedColor(c)}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all flex items-center gap-1.5 ${
+                      selectedColor === c
+                        ? "bg-[#8e4d31] text-white border-[#8e4d31] shadow-xs"
+                        : isOriginal
+                        ? "bg-emerald-50 text-[#1c7843] border-emerald-300 hover:border-[#8e4d31]"
+                        : isCustom
+                        ? "bg-amber-50 text-[#8e4d31] border-amber-300 hover:border-[#8e4d31]"
+                        : "bg-white text-[#464840] border-[#c7c7bd] hover:border-[#8e4d31]"
+                    }`}
+                  >
+                    {isOriginal && <span className="text-sm">📸</span>}
+                    {isCustom && <span className="text-sm">🎨</span>}
+                    <span>{c}</span>
+                  </button>
+                );
+              })}
             </div>
 
             {/* Custom Color Text Input */}
@@ -216,16 +237,17 @@ const ProductDetailScreen: React.FC = () => {
           {/* Size Selection */}
           <div className="space-y-3">
             <label className="text-xs font-bold uppercase tracking-widest text-[#585e4c] block">
-              Size Selection: <span className="text-[#585e4c] ml-1 font-bold">{selectedSize}</span>
+              Size Selection: <span className="text-[#585e4c] ml-1 font-bold">{selectedSize === "Custom Size" && customSizeText ? `Custom (${customSizeText})` : selectedSize}</span>
             </label>
             <div className="flex flex-wrap gap-2.5">
               {(product.sizes && product.sizes.length > 0 ? product.sizes : ["0-3M", "3-6M", "6-12M"]).map((s: string) => (
                 <button
                   key={s}
+                  type="button"
                   onClick={() => setSelectedSize(s)}
                   className={`px-4 py-2.5 rounded-xl text-xs font-bold border transition-all ${
                     selectedSize === s
-                      ? "bg-[#585e4c] text-white border-[#585e4c]"
+                      ? "bg-[#585e4c] text-white border-[#585e4c] shadow-xs"
                       : "bg-white text-[#464840] border-[#c7c7bd] hover:border-[#585e4c]"
                   }`}
                 >
@@ -233,6 +255,22 @@ const ProductDetailScreen: React.FC = () => {
                 </button>
               ))}
             </div>
+
+            {/* Custom Size Text Input */}
+            {selectedSize === "Custom Size" && (
+              <div className="pt-2 space-y-1 animate-in fade-in duration-200">
+                <label className="text-[11px] font-bold text-[#585e4c] block">
+                  📏 Specify your custom size / measurements (e.g. Chest 36", Length 24", Shoulder 15"):
+                </label>
+                <input
+                  type="text"
+                  value={customSizeText}
+                  onChange={(e) => setCustomSizeText(e.target.value)}
+                  placeholder="e.g. Chest 36 inches, Length 24 inches..."
+                  className="w-full bg-[#fcfbfa] border border-[#585e4c] rounded-xl px-3.5 py-2.5 text-xs font-medium focus:outline-none"
+                />
+              </div>
+            )}
           </div>
 
           {/* Optional Embroidery Personalization */}
@@ -254,10 +292,14 @@ const ProductDetailScreen: React.FC = () => {
           <div className="space-y-4 pt-4">
             <button
               onClick={() => {
-                const finalColor = selectedColor === "Custom Color" ? (customColorText ? `Custom (${customColorText})` : "Custom Shade") : selectedColor;
+                const rawColor = selectedColor === "Custom Color" ? (customColorText ? `Custom (${customColorText})` : "Custom Shade") : selectedColor;
+                const finalColor = rawColor.startsWith("Color:") ? rawColor : `Color: ${rawColor}`;
+                const rawSize = selectedSize === "Custom Size" ? (customSizeText ? `Custom (${customSizeText})` : "Custom Size") : selectedSize;
+                const finalSize = rawSize.startsWith("Size:") ? rawSize : `Size: ${rawSize}`;
+                
                 addToCart({
-                  id: `${product.id}-${finalColor}-${selectedSize}`,
-                  name: `${product.name} (${finalColor}${selectedSize ? `, ${selectedSize}` : ""}${personalization ? `, Embroidery: "${personalization}"` : ""})`,
+                  id: `${product.id}-${finalColor}-${finalSize}`,
+                  name: `${product.name} (${finalColor}${finalSize ? `, ${finalSize}` : ""}${personalization ? `, Embroidery: "${personalization}"` : ""})`,
                   price: product.price,
                   image: activeImg,
                   badge: product.badge,

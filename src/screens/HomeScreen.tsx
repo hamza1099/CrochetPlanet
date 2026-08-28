@@ -24,6 +24,7 @@ const HomeScreen: React.FC = () => {
 
   // Hero Sliding Carousel State & Data
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isTransitionEnabled, setIsTransitionEnabled] = useState(true);
   const [liveBanners, setLiveBanners] = useState<any[]>([]);
   const [livePopularCategories, setLivePopularCategories] = useState<any[]>([]);
   const [productsList, setProductsList] = useState<any[]>([]);
@@ -104,14 +105,27 @@ const HomeScreen: React.FC = () => {
     }))
     : defaultHeroSlides;
 
+  // Extended slides array with duplicated first slide for seamless forward infinite loop
+  const extendedSlides = heroSlides.length > 1 ? [...heroSlides, heroSlides[0]] : heroSlides;
 
-  // Auto-play timer for Hero Carousel
+  // Auto-play timer for Hero Carousel (Slowed down to 7s with smooth forward infinite scroll)
   useEffect(() => {
+    if (heroSlides.length <= 1) return;
+
     const slideTimer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 5000);
+      setIsTransitionEnabled(true);
+      setCurrentSlide((prev) => prev + 1);
+    }, 7000);
+
     return () => clearInterval(slideTimer);
   }, [heroSlides.length]);
+
+  const handleTransitionEnd = () => {
+    if (currentSlide >= heroSlides.length) {
+      setIsTransitionEnabled(false);
+      setCurrentSlide(0);
+    }
+  };
 
   // Default Popular Categories list matching user screenshot
   const defaultPopularCategories = [
@@ -239,65 +253,107 @@ const HomeScreen: React.FC = () => {
     <div className="space-y-20 font-body text-[#1b1c1a] bg-[#fbf9f5] min-h-screen pb-20">
 
       {/* =========================================================================
-          SECTION 1: SLIDING HERO CAROUSEL
-         ========================================================================= */}
-      <section className="max-w-[1440px] mx-auto px-4 md:px-8 pt-4 sm:pt-6">
+    SECTION 1: SLIDING HERO CAROUSEL
+   ========================================================================= */}
+      <section className="max-w-[1376px] mx-auto px-4 md:px-8 pt-4 sm:pt-6">
         {isLoading ? (
           <div className="w-full">
             <HeroSkeleton />
           </div>
         ) : (
-          /* Sliding Hero Panel (Smooth horizontal track animation) */
-          <div className="relative w-full overflow-hidden shadow-2xl rounded-3xl bg-[#1b1c1a] group cursor-pointer aspect-[4/3] sm:aspect-[16/10]">
+          <div className="relative w-full overflow-hidden rounded-3xl shadow-2xl group cursor-pointer bg-transparent aspect-[1376/768]">
 
-            {/* Smooth Sliding Track Container */}
+            {/* Sliding Track */}
             <div
-              className="flex transition-transform duration-700 ease-in-out w-full h-full"
-              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+              className={`flex w-full h-full ${isTransitionEnabled
+                ? "transition-transform duration-1000 ease-in-out"
+                : ""
+                }`}
+              style={{
+                transform: `translateX(-${currentSlide * 100}%)`,
+              }}
+              onTransitionEnd={handleTransitionEnd}
             >
-              {heroSlides.map((slide) => (
+              {extendedSlides.map((slide, idx) => (
                 <Link
-                  key={slide.id}
+                  key={`${slide.id}-${idx}`}
                   to={RouteName.COLLECTIONS}
                   className="w-full h-full flex-shrink-0 relative block"
                 >
                   <img
                     src={slide.image}
                     alt="Hero Banner"
-                    className="w-full h-full object-cover object-center block"
+                    className="w-full h-full object-contain object-center block"
                   />
                 </Link>
               ))}
             </div>
 
-            {/* Navigation Controls: Prev / Next Buttons */}
+            {/* Previous Button */}
             <button
               type="button"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                setCurrentSlide((prev) => (prev === 0 ? heroSlides.length - 1 : prev - 1));
+
+                if (currentSlide === 0) {
+                  setIsTransitionEnabled(false);
+                  setCurrentSlide(heroSlides.length);
+
+                  setTimeout(() => {
+                    setIsTransitionEnabled(true);
+                    setCurrentSlide(heroSlides.length - 1);
+                  }, 20);
+                } else {
+                  setIsTransitionEnabled(true);
+                  setCurrentSlide((prev) => prev - 1);
+                }
               }}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 backdrop-blur-md hover:bg-white text-white hover:text-[#1b1c1a] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shadow-md z-20"
+              className="absolute left-4 top-1/2 -translate-y-1/2
+                   w-10 h-10 rounded-full
+                   bg-black/40 backdrop-blur-md
+                   hover:bg-white
+                   text-white hover:text-[#1b1c1a]
+                   flex items-center justify-center
+                   transition-all
+                   opacity-0 group-hover:opacity-100
+                   shadow-md z-20"
               aria-label="Previous Slide"
             >
-              <span className="material-symbols-outlined">chevron_left</span>
+              <span className="material-symbols-outlined">
+                chevron_left
+              </span>
             </button>
 
+            {/* Next Button */}
             <button
               type="button"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                setCurrentSlide((prev) => (prev === heroSlides.length - 1 ? 0 : prev + 1));
+
+                setIsTransitionEnabled(true);
+                setCurrentSlide((prev) =>
+                  prev >= heroSlides.length ? 1 : prev + 1
+                );
               }}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 backdrop-blur-md hover:bg-white text-white hover:text-[#1b1c1a] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shadow-md z-20"
+              className="absolute right-4 top-1/2 -translate-y-1/2
+                   w-10 h-10 rounded-full
+                   bg-black/40 backdrop-blur-md
+                   hover:bg-white
+                   text-white hover:text-[#1b1c1a]
+                   flex items-center justify-center
+                   transition-all
+                   opacity-0 group-hover:opacity-100
+                   shadow-md z-20"
               aria-label="Next Slide"
             >
-              <span className="material-symbols-outlined">chevron_right</span>
+              <span className="material-symbols-outlined">
+                chevron_right
+              </span>
             </button>
 
-            {/* Slide Indicator Dots */}
+            {/* Slide Indicators */}
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20">
               {heroSlides.map((_, idx) => (
                 <button
@@ -306,9 +362,13 @@ const HomeScreen: React.FC = () => {
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
+
+                    setIsTransitionEnabled(true);
                     setCurrentSlide(idx);
                   }}
-                  className={`h-2.5 rounded-full transition-all ${currentSlide === idx ? "w-8 bg-[#8e4d31]" : "w-2.5 bg-white/70 hover:bg-white"
+                  className={`h-2.5 rounded-full transition-all ${currentSlide % heroSlides.length === idx
+                    ? "w-8 bg-[#8e4d31]"
+                    : "w-2.5 bg-white/70 hover:bg-white"
                     }`}
                   aria-label={`Go to slide ${idx + 1}`}
                 />

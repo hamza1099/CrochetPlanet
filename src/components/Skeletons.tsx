@@ -5,7 +5,7 @@ export const ProductCardSkeleton: React.FC = () => {
     <div className="bg-white rounded-2xl overflow-hidden border border-[#e4e2de] shadow-sm flex flex-col h-full animate-shimmer">
       {/* Aspect Ratio Image Skeleton with soft pulse */}
       <div className="aspect-[4/5] bg-gradient-to-r from-[#eae8e4] via-[#f5f3ef] to-[#eae8e4] w-full relative overflow-hidden" />
-      
+
       {/* Content Skeleton */}
       <div className="p-5 space-y-4 flex-1 flex flex-col justify-between">
         <div className="space-y-3">
@@ -37,7 +37,7 @@ export const ProductCardSkeleton: React.FC = () => {
 
 export const HeroSkeleton: React.FC = () => {
   return (
-    <div className="w-full aspect-[4/3] sm:aspect-[16/10] rounded-3xl bg-gradient-to-r from-[#eae8e4] via-[#f5f3ef] to-[#eae8e4] animate-shimmer shadow-lg flex items-end p-8">
+    <div className="w-full aspect-[4/3] sm:aspect-[2/1] md:aspect-[2.2/1] max-h-[500px] lg:max-h-[540px] rounded-3xl bg-gradient-to-r from-[#eae8e4] via-[#f5f3ef] to-[#eae8e4] animate-shimmer shadow-lg flex items-end p-8">
       <div className="space-y-3 w-full max-w-md">
         <div className="w-32 h-6 bg-white/60 rounded-full" />
         <div className="w-3/4 h-8 bg-white/60 rounded-xl" />

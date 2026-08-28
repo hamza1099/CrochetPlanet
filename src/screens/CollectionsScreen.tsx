@@ -11,6 +11,7 @@ import { fetchProductsApi, fetchPopularCategoriesApi } from "../service/networkS
 
 const OFFICIAL_ADMIN_CATEGORIES = [
   "All",
+  "Flowers & Bouquets",
   "Baby Collection",
   "Women's Fashion",
   "Accessories",

@@ -58,6 +58,7 @@ const Navbar: React.FC = () => {
 
   const categoriesList = [
     "All",
+    "Flowers & Bouquets",
     "Baby Collection",
     "Women's Fashion",
     "Accessories",
