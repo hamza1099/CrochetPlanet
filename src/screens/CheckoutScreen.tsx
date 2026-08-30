@@ -10,6 +10,7 @@ const CheckoutScreen: React.FC = () => {
   const { user } = useAuth();
   const [orderComplete, setOrderComplete] = useState(false);
   const [orderId, setOrderId] = useState("");
+  const [lastOrderDetails, setLastOrderDetails] = useState<any>(null);
 
   const [firstName, setFirstName] = useState(user?.name ? user.name.split(" ")[0] : "");
   const [lastName, setLastName] = useState(user?.name ? user.name.split(" ").slice(1).join(" ") : "");
@@ -125,6 +126,7 @@ const CheckoutScreen: React.FC = () => {
       }
       
       setOrderId(finalId);
+      setLastOrderDetails({ ...orderPayload, id: finalId, totalUSD });
 
       // Save order ID and customer phone to local storage for quick tracking on this device
       try {
@@ -142,6 +144,33 @@ const CheckoutScreen: React.FC = () => {
 
       setToast({ message: `Order #${finalId} placed successfully!`, type: "success" });
       setOrderComplete(true);
+
+      // Prepare rich WhatsApp notification message to store admin (+92 317 3004661)
+      const itemsFormatted = cart.map(i => `• ${i.name} (Qty: ${i.quantity})`).join("\n");
+      const waText = 
+        `🛍️ *NEW ORDER RECEIVED!*\n` +
+        `-----------------------------------\n` +
+        `📌 *Tracking ID:* #${finalId}\n` +
+        `👤 *Customer Name:* ${orderPayload.customer.name}\n` +
+        `📞 *Customer Phone:* ${orderPayload.customer.phone}\n` +
+        `📍 *Delivery Address:* ${orderPayload.customer.address}, ${orderPayload.customer.city}\n` +
+        `💳 *Payment Method:* ${orderPayload.paymentMethod}\n` +
+        `💰 *Total Amount:* $${totalUSD.toFixed(2)} USD (Rs. ${Math.round(totalUSD * 280).toLocaleString()} PKR)\n\n` +
+        `🛒 *Ordered Items:* \n${itemsFormatted}\n` +
+        `-----------------------------------\n` +
+        `Please confirm & process this order.`;
+
+      const ownerWaUrl = `https://wa.me/923173004661?text=${encodeURIComponent(waText)}`;
+      
+      // Auto open WhatsApp in a new tab for immediate admin notification
+      setTimeout(() => {
+        try {
+          window.open(ownerWaUrl, "_blank");
+        } catch (e) {
+          console.warn("Auto open WhatsApp blocked by browser pop-up setting:", e);
+        }
+      }, 400);
+
       clearCart();
     } catch (err: any) {
       console.error("Saving order via Firebase error:", err);
@@ -156,6 +185,23 @@ const CheckoutScreen: React.FC = () => {
 
 
   if (orderComplete) {
+    const itemsFormatted = lastOrderDetails?.items ? lastOrderDetails.items.map((i: any) => `• ${i.name} (Qty: ${i.quantity})`).join("\n") : "";
+    const waText = lastOrderDetails ? 
+      `🛍️ *NEW ORDER RECEIVED!*\n` +
+      `-----------------------------------\n` +
+      `📌 *Tracking ID:* #${orderId}\n` +
+      `👤 *Customer Name:* ${lastOrderDetails.customer.name}\n` +
+      `📞 *Customer Phone:* ${lastOrderDetails.customer.phone}\n` +
+      `📍 *Delivery Address:* ${lastOrderDetails.customer.address}, ${lastOrderDetails.customer.city}\n` +
+      `💳 *Payment Method:* ${lastOrderDetails.paymentMethod}\n` +
+      `💰 *Total Amount:* $${lastOrderDetails.totalUSD ? lastOrderDetails.totalUSD.toFixed(2) : '0.00'} USD (Rs. ${Math.round((lastOrderDetails.totalUSD || 0) * 280).toLocaleString()} PKR)\n\n` +
+      `🛒 *Ordered Items:* \n${itemsFormatted}\n` +
+      `-----------------------------------\n` +
+      `Please confirm & process this order.` : 
+      `Hi! I just placed order #${orderId}. Please confirm my order details.`;
+
+    const ownerWaUrl = `https://wa.me/923173004661?text=${encodeURIComponent(waText)}`;
+
     return (
       <div className="max-w-[800px] mx-auto px-6 py-20 font-body text-center space-y-6">
         <div className="w-20 h-20 bg-[#585e4c]/10 text-[#585e4c] rounded-full flex items-center justify-center mx-auto">
@@ -194,17 +240,17 @@ const CheckoutScreen: React.FC = () => {
 
         <div className="pt-6 flex flex-wrap items-center justify-center gap-4">
           <a
-            href={`https://wa.me/923173004661?text=Hi!%20I%20just%20placed%20order%20%23${orderId}.%20Please%20confirm%20my%20order%20details.`}
+            href={ownerWaUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="px-8 py-4 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-all shadow-md flex items-center gap-2"
           >
             <span className="material-symbols-outlined text-base">chat</span>
-            <span>Confirm Order on WhatsApp</span>
+            <span>Send Order Notification to Admin WhatsApp</span>
           </a>
           <Link
             to={RouteName.ORDERS}
-            className="px-8 py-4 bg-[#8e4d31] text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#71361d] transition-all shadow-md"
+            className="px-8 py-4 bg-[#8e4d31] text-[#ffffff] rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#71361d] transition-all shadow-md"
           >
             Track Order Live →
           </Link>

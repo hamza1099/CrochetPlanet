@@ -185,7 +185,9 @@ export const MyOrdersScreen: React.FC = () => {
                               ? "w-3/4"
                               : ord.status === "Processing"
                               ? "w-1/2"
-                              : "w-1/4"
+                              : ord.status === "Confirmed"
+                              ? "w-1/4"
+                              : "w-0"
                           }`}
                         />
                       </div>
@@ -198,6 +200,27 @@ export const MyOrdersScreen: React.FC = () => {
                         </div>
                         <span className="text-[11px] font-bold uppercase tracking-wider text-[#585e4c]">
                           Placed
+                        </span>
+                      </div>
+
+                      <div className="flex flex-col items-center">
+                        <div
+                          className={`w-8 h-8 rounded-full border-2 flex items-center justify-center mb-2 shadow-sm ${
+                            ord.status === "Confirmed" || ord.status === "Processing" || ord.status === "Shipped" || ord.status === "Delivered"
+                              ? "border-[#585e4c] bg-[#585e4c] text-white"
+                              : "border-[#c7c7bd] bg-white text-gray-400"
+                          }`}
+                        >
+                          <span className="material-symbols-outlined text-sm">verified</span>
+                        </div>
+                        <span
+                          className={`text-[11px] font-bold uppercase tracking-wider ${
+                            ord.status === "Confirmed" || ord.status === "Processing" || ord.status === "Shipped" || ord.status === "Delivered"
+                              ? "text-[#585e4c]"
+                              : "text-[#76786f]"
+                          }`}
+                        >
+                          Confirmed
                         </span>
                       </div>
 
